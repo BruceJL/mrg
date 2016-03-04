@@ -8,6 +8,14 @@ import random
 from Entry import Entry
 from RoundRobinMatch import RoundRobinMatch
 
+from odf.opendocument import OpenDocumentText
+from odf.table import Table, TableColumn, TableRow, TableCell
+from odf.style import Style, TextProperties, ParagraphProperties, ListLevelProperties, FontFace,\
+    TableCellProperties, TableRowProperties, TableColumnProperties, TableProperties
+from odf import text
+from odf.text import P, H, A, S, List, ListItem, ListStyle, ListLevelStyleBullet, ListLevelStyleNumber, ListLevelStyleBullet, Span
+from odf.draw import Frame, Image
+
 
 #from settingsInteraction import settingsInteractionInstance
 
@@ -82,12 +90,162 @@ class Event(object):
 
             
                        
-    def printRingAssignments(self):
+    def makeOdfSchedules(self):
+        document = OpenDocumentText()
+        
+        #Load necessary Graphics objects and constants
+        diagonalImagePath = "diagonal.png"
+        diagonalImageHref = document.addPicture(diagonalImagePath)
+        diagonalImage = Image(href=diagonalImageHref, type="simple", show="embed", actuate="onLoad")
+        nameColumnWidth = 1.75
+        nameRowHeight = 1.75
+        normalColumnWidth = 0.75
+        normalRowHeight= 0.75
+        
+        #Document style object. Libreoffice only seems to work with automaticStyles and not plain ol' Styles.
+        styles = document.automaticstyles
+
+        #Top Row Style
+        topRowStyleName = "TopRowStyle"
+        s = Style(name=topRowStyleName, family="table-row", displayname="Regular Table Row")
+        t = TableRowProperties(minrowheight=str(nameRowHeight) + "in")
+        s.addElement(t)
+        styles.addElement(s)
+        
+        #Regular Row Style
+        normalRowStyleName = "NormalRowStyle"
+        s = Style(name = normalRowStyleName, family="table-row", displayname="Normal Table Row")
+        t = TableRowProperties(minrowheight=str(normalRowHeight) + "in")
+        s.addElement(t)
+        styles.addElement(s)
+        
+        #Left Column Style
+        leftColumnStyleName = "LeftColumnStyle"
+        s = Style(name=leftColumnStyleName, family="table-column", displayname="Left Table Column")
+        t = TableColumnProperties(columnwidth=str(nameColumnWidth) + "in")
+        s.addElement(t)
+        styles.addElement(s)
+        
+        #Normal Column Style
+        normalColumnStyleName = "NormalColumnStyle"
+        s = Style(name=normalColumnStyleName, family="table-column", displayname="Normal Table Column")
+        t = TableColumnProperties(columnwidth=str(normalColumnWidth) + "in")
+        s.addElement(t)
+        styles.addElement(s)
+             
+        #Text Cell Style
+        textCellStyleName = "TextCellStyle"  
+        s = Style(name=textCellStyleName, family="table-cell", displayname="Text Cell")
+        t = TableCellProperties(verticalalign="middle", padding="0.1in", borderright="0.05pt solid #000000", bordertop="0.05pt solid #000000", borderleft='0.05pt solid #000000', borderbottom='0.05pt solid #000000')        
+        s.addElement(t)
+        styles.addElement(s)
+        
+        #Image Cell style
+        imageCellStyleName = "ImageCellStyle"
+        s = Style(name=imageCellStyleName, family="table-cell", displayname="Image Cell")
+        t = TableCellProperties(verticalalign="middle", borderright="0.05pt solid #000000", bordertop="0.05pt solid #000000", borderleft='0.05pt solid #000000', borderbottom='0.05pt solid #000000')
+        s.addElement(t)
+        styles.addElement(s)
+         
+        #top row robot name cell
+        topRowRobotNameCellStyleName = "TopRowRobotNameTableCellStyle"  
+        s = Style(name=topRowRobotNameCellStyleName, family="table-cell", displayname="Top Row Robot Name Cell Style")
+        t = TableCellProperties(writingmode="tb-rl", verticalalign="middle", padding="0.1in", borderright="0.05pt solid #000000", bordertop="0.05pt solid #000000", borderleft='0.05pt solid #000000', borderbottom='0.05pt solid #000000')        
+        s.addElement(t)
+        styles.addElement(s)
+        
+        #Greyed out table cell style
+        greyTableCellStyleName = "GreyTableCell"
+        s = Style(name=greyTableCellStyleName, family="table-cell", displayname="Greyed Out Table Cell Style") 
+        t = TableCellProperties(backgroundcolor='#808080', borderright="0.05pt solid #000000", bordertop="0.05pt solid #000000", borderleft='0.05pt solid #000000', borderbottom='0.05pt solid #000000')
+        s.addElement(t)
+        styles.addElement(s)
+        
+        #Robot Name Paragraph Style
+        robotNameParagraphStyleName = "RobotNameParagraphStyle"
+        s = Style(name = robotNameParagraphStyleName, family="paragraph", displayname="Robot Name Paragraph Style")
+        t = ParagraphProperties(textalign="end")
+        s.addElement(t)
+        t = TextProperties(fontsize="16pt", fontsizecomplex="16pt", fontsizeasian="16pt")
+        s.addElement(t)
+        styles.addElement(s)       
+        
+        #Heading Text
+        headingParagraphStyleName = "HeadingParagraphStyle"
+        s = Style(name = headingParagraphStyleName, family="paragraph", displayname="Robot Name Paragraph Style")
+        t = ParagraphProperties(breakbefore="page")
+        s.addElement(t)
+        t = TextProperties(fontsize="20pt", fontsizecomplex="20pt", fontsizeasian="20pt")
+        s.addElement(t)
+        styles.addElement(s)
+        
         for i in range(0, len(self.roundRobinMatches)):
-            self.roundRobinMatches[i].makeOdfScoreSheet()
             print(self.roundRobinMatches[i].name)
             for j in range(0, len(self.roundRobinMatches[i].entries)):
                 print("\t" + self.roundRobinMatches[i].entries[j].robotName + " : " + self.roundRobinMatches[i].entries[j].school)
+
+            #Table Style
+            scoreCardTableStyleName = "ScoreCardTableStyle" + str(i)
+            tableWidth = nameColumnWidth + (len(self.roundRobinMatches[i].entries)-1) * normalColumnWidth
+            s = Style(name=scoreCardTableStyleName, family="table", displayname="Score Card Table " + str(i) )
+            t = TableProperties(align="center", width=str(tableWidth) + "in")
+            s.addElement(t)
+            styles.addElement(s)
+                
+            #Make the table
+            #The table has room for n-1 robots on any row/column to minimize the size of the table.
+            #The cells which are of no use are greyed out.       
+        
+            h=H(outlinelevel=1, text=self.roundRobinMatches[i].name + " Scoresheet", stylename=headingParagraphStyleName)
+            document.text.addElement(h)
+            p = P(text="Mark the winner with a 'W' in the triangle nearest to the winners name.")
+            document.text.addElement(p)
+        
+            table = Table(name="Table" + str(i), stylename=scoreCardTableStyleName)
+            table.addElement(TableColumn(stylename=leftColumnStyleName))
+            table.addElement(TableColumn(stylename=normalColumnStyleName, numbercolumnsrepeated=len(self.roundRobinMatches[i].entries)-1))
+        
+            #Row 1
+            tr = TableRow(stylename=topRowStyleName)
+            table.addElement(tr)
+            #Add a greyed out cell here
+            tc = TableCell(valuetype="string", stylename=greyTableCellStyleName)
+            tr.addElement(tc)
+                
+            #Populate the first row with  the rest of the robot names (1 per column).
+            for j in range(1,len(self.roundRobinMatches[i].entries),1):
+                tc = TableCell(valuetype="string", stylename=topRowRobotNameCellStyleName)
+                tc.addElement(P(text=self.roundRobinMatches[i].entries[j].robotName, stylename=robotNameParagraphStyleName))
+                tr.addElement(tc)
+                    
+             #Populate the remaining cells
+            for j in range(0,len(self.roundRobinMatches[i].entries)-1,1):
+                tr = TableRow(stylename=normalRowStyleName)
+                table.addElement(tr)
+                tc = TableCell(valuetype="string", stylename=textCellStyleName)
+                tc.addElement(P(text=self.roundRobinMatches[i].entries[j].robotName, stylename=robotNameParagraphStyleName))
+                tr.addElement(tc)
+                for k in range(0,len(self.roundRobinMatches[i].entries),1):
+                    if(k<j):
+                        tc = TableCell(stylename=greyTableCellStyleName)
+                    else:
+                        tc = TableCell(valuetype="string", stylename=imageCellStyleName)
+                        p = P()
+                        tc.addElement(p)
+                        f = Frame(name="diagonal", anchortype="as-char", width=str(normalColumnWidth) + "in", height=str(normalRowHeight) + "in")
+                        p.addElement(f)
+                        diagonalImage = Image(href=diagonalImageHref, type="simple", show="embed", actuate="onLoad")
+                        f.addElement(diagonalImage)
+                    tr.addElement(tc)
+                                        
+            document.text.addElement(table)
+            document.text.addElement(text.SoftPageBreak())
+            
+        document.save("./ScoreSheets/" + self.competition, True)
+                
+    def makeOdfLabels(self):
+        print("Making Labels.")
+        
                     
     def calculateTotalTime(self):
         """calculate the total time this Event is likely to take"""
