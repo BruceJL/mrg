@@ -22,6 +22,7 @@ class Entry(object):
         self.driver1Grade = driver2Grade
         self.driver3 = driver3
         self.driver3Grade = driver3Grade
+        self.letter = ""
         
     def isEqualTo(self, obj):
         """check if obj is equal to this Entry (test purposes only?)"""

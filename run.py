@@ -63,27 +63,27 @@ for entry in entry_list:
 
 
 event_list['MS1'].createRoundRobinTournaments()
-event_list['MS1'].printRingAssignments()
+event_list['MS1'].makeNewOdfSchedules()
 print("\n")
 
 event_list['MS2'].createRoundRobinTournaments()
-event_list['MS2'].printRingAssignments()   
+event_list['MS2'].makeNewOdfSchedules()   
 print("\n")
 
 event_list['MS3'].createRoundRobinTournaments()
-event_list['MS3'].printRingAssignments()
+event_list['MS3'].makeNewOdfSchedules()
 print("\n")
 
 event_list['MSA'].createRoundRobinTournaments()
-event_list['MSA'].printRingAssignments()
+event_list['MSA'].makeNewOdfSchedules()
 print("\n")
 
 event_list['PST'].createRoundRobinTournaments()
-event_list['PST'].printRingAssignments()
+event_list['PST'].makeNewOdfSchedules()
 print("\n")
 
 event_list['PSA'].createRoundRobinTournaments()
-event_list['PSA'].printRingAssignments()
+event_list['PSA'].makeNewOdfSchedules()
 print("\n")
 
     

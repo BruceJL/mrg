@@ -6,15 +6,17 @@ import math
 import random
 
 from Entry import Entry
-from RoundRobinMatch import RoundRobinMatch
+from RoundRobin import RoundRobinTournament
 
 from odf.opendocument import OpenDocumentText
 from odf.table import Table, TableColumn, TableRow, TableCell
 from odf.style import Style, TextProperties, ParagraphProperties, ListLevelProperties, FontFace,\
-    TableCellProperties, TableRowProperties, TableColumnProperties, TableProperties
-from odf import text
+    TableCellProperties, TableRowProperties, TableColumnProperties, TableProperties,\
+    PageLayoutProperties, SectionProperties, Columns, Column
+from odf import text, draw, table, style, text
 from odf.text import P, H, A, S, List, ListItem, ListStyle, ListLevelStyleBullet, ListLevelStyleNumber, ListLevelStyleBullet, Span
 from odf.draw import Frame, Image
+from odf.office import MasterStyles
 
 
 #from settingsInteraction import settingsInteractionInstance
@@ -27,7 +29,7 @@ class Event(object):
     def __init__(self, competition, minEntriesPerRing, maxEntriesPerRing, maxRings):
         self.competition = competition
         self.entries = []
-        self.roundRobinMatches = []
+        self.roundRobinTournaments = []
         self.minEntriesPerRing = minEntriesPerRing
         self.maxEntriesPerRing = maxEntriesPerRing
         self.maxRings = maxRings
@@ -62,9 +64,9 @@ class Event(object):
         print(self.competition + " - using " + str(self.rings) + " rings with an average of " + str(len(self.entries)/self.rings) + " robots per ring." )
             
         #Build the array to hold the rings and their entries.    
-        self.roundRobinMatches = []
+        self.roundRobinTournaments = []
         for i in range(0, self.rings, 1):
-            self.roundRobinMatches.append(RoundRobinMatch(self.competition + " Ring " + str(i+1)))
+            self.roundRobinTournaments.append(RoundRobinTournament(self.competition + " Ring " + str(i+1)))
             
         i=0
         j=0
@@ -81,13 +83,229 @@ class Event(object):
             entries = self.schoolEntries[key]
             while len(entries):
                 index = math.floor(random.random()*len(entries))
-                self.roundRobinMatches[i].addEntry(entries[index])
+                self.roundRobinTournaments[i].addEntry(entries[index])
                 entries.remove(entries[index])
                 i = i+1
                 if(i == self.rings):
                     i=0
                     j=j+1
+                    
+        #Build the match Schedule
+        for i in range(0, len(self.roundRobinTournaments), 1):
+            print("Ring " + str(i) + " schedule")
+            self.roundRobinTournaments[i].createRoundRobinMatches()
+            for j in range(0, len(self.roundRobinTournaments[i].matches)):
+                print("\t" + self.roundRobinTournaments[i].matches[j].contestant1.robotName + " VS " + self.roundRobinTournaments[i].matches[j].contestant2.robotName)
+        
+    def makeNewOdfSchedules(self):
+        document = OpenDocumentText()
+        
+        nameColumnWidth = 1.25
+        rowHeight = 0.25
+        letterColumnWidth = 0.25
+        wlColumnWidth = 0.25
 
+        
+        styles = document.automaticstyles
+        #Page layout style
+        pageLayoutStyleName = "PageLayoutStyleName"
+        s = style.PageLayout(name=pageLayoutStyleName)
+        t = style.PageLayoutProperties(writingmode="lr-tb", margintop ="0.5in", marginbottom="0.5in", marginleft="0.5in", marginright="0.5in", printorientation="portrait", pageheight="11in", pagewidth="8.5in")
+        s.addElement(t)
+        styles.addElement(s)
+        
+        masterpage = style.MasterPage(name="Standard", pagelayoutname=pageLayoutStyleName)
+        document.masterstyles.addElement(masterpage)
+        
+        #Section Style
+        sectionStyleName = "SectionStyleName"
+        s = Style(name=sectionStyleName, family="section", displayname="Section Style")
+        t = SectionProperties(editable="false", dontbalancetextcolumns="false")
+        c = Columns(columngap="0in", columncount="2")
+        c1 = Column(endindent="0in", startindent="0in", relwidth="5400*")
+        c2 = Column(endindent="0in", startindent="0in", relwidth="5400*")
+        c.addElement(c1)
+        c.addElement(c2)
+        t.addElement(c)
+        s.addElement(t)
+        styles.addElement(s)
+        
+        #Table Style
+        scoreCardTableStyleName = "ScoreCardTableStyle"
+        tableWidth = 2*nameColumnWidth  + 2*letterColumnWidth + 2*wlColumnWidth
+        s = Style(name=scoreCardTableStyleName, family="table", displayname="Score Card Table ")
+        t = TableProperties(align="center", width=str(tableWidth) + "in")
+        s.addElement(t)
+        s.addElement(t)
+        styles.addElement(s)
+        
+        #Row style
+        rowStyleName = "RowStyleName"
+        s = Style(name = rowStyleName, family="table-row", displayname="Normal Table Row")
+        t = TableRowProperties(minrowheight=str(rowHeight) + "in")        
+        s.addElement(t)
+        styles.addElement(s)
+        
+        #Even Row cell style
+        evenRowCellStyleName = "EvenRowCellStyleName"
+        s = Style(name=evenRowCellStyleName, family="table-cell", displayname="Text Cell")
+        t = TableCellProperties(backgroundcolor='#C0C0C0', verticalalign="middle", padding="0.05in", borderright="0.05pt solid #000000", bordertop="0.05pt solid #000000", borderleft='0.05pt solid #000000', borderbottom='0.05pt solid #000000')        
+        s.addElement(t)
+        styles.addElement(s)
+        
+        #Odd row cell style
+        oddRowCellStyleName = "OddRowCellStyleName"
+        s = Style(name=oddRowCellStyleName, family="table-cell", displayname="Text Cell")
+        t = TableCellProperties(verticalalign="middle", padding="0.05in", borderright="0.05pt solid #000000", bordertop="0.05pt solid #000000", borderleft='0.05pt solid #000000', borderbottom='0.05pt solid #000000')        
+        s.addElement(t)
+        styles.addElement(s)
+        
+        #letter Column Style
+        letterColumnStyleName = "LetterColumnStyle"
+        s = Style(name=letterColumnStyleName, family="table-column", displayname="Left Table Column")
+        t = TableColumnProperties(columnwidth=str(letterColumnWidth) + "in")
+        s.addElement(t)
+        styles.addElement(s)
+        
+        #letter Column Style
+        wlColumnStyleName = "WLColumnStyle"
+        s = Style(name=wlColumnStyleName, family="table-column", displayname="Left Table Column")
+        t = TableColumnProperties(columnwidth=str(wlColumnWidth) + "in")
+        s.addElement(t)
+        styles.addElement(s)
+        
+        #letter Column Style
+        nameColumnStyleName = "NameColumnStyle"
+        s = Style(name=nameColumnStyleName, family="table-column", displayname="Left Table Column")
+        t = TableColumnProperties(columnwidth=str(nameColumnWidth) + "in")
+        s.addElement(t)
+        styles.addElement(s)
+        
+        #Robot Name Paragraph Style
+        robotNameParagraphStyleName = "RobotNameParagraphStyle"
+        s = Style(name = robotNameParagraphStyleName, family="paragraph", displayname="Robot Name Paragraph Style")
+        t = ParagraphProperties(textalign="center")
+        s.addElement(t)
+        t = TextProperties(fontsize="12pt", fontsizecomplex="12pt", fontsizeasian="12pt")
+        s.addElement(t)
+        styles.addElement(s)
+        
+        #Heading Text
+        headingParagraphStyleName = "HeadingParagraphStyle"
+        s = Style(name = headingParagraphStyleName, family="paragraph", displayname="Robot Name Paragraph Style")
+        t = ParagraphProperties(breakbefore="page", textalign="center")
+        s.addElement(t)
+        t = TextProperties(fontsize="20pt", fontsizecomplex="20pt", fontsizeasian="20pt")
+        s.addElement(t)
+        styles.addElement(s)
+        
+        for i in range(0, len(self.roundRobinTournaments), 1):
+            h=H(outlinelevel=1, text=self.roundRobinTournaments[i].name + " Scoresheet", stylename=headingParagraphStyleName)
+            document.text.addElement(h)
+            p = P(text="Mark the winner with a 'W' in the box next to the winners name. Best 2 out of 3.")
+            document.text.addElement(p)
+            
+            table = Table(name="Table" + str(i), stylename=scoreCardTableStyleName)
+            table.addElement(TableColumn(stylename=letterColumnStyleName))
+            table.addElement(TableColumn(stylename=nameColumnStyleName))
+            table.addElement(TableColumn(stylename=wlColumnStyleName))
+            table.addElement(TableColumn(stylename=wlColumnStyleName))
+            table.addElement(TableColumn(stylename=nameColumnStyleName))
+            table.addElement(TableColumn(stylename=letterColumnStyleName))
+        
+                
+            #Populate the first row with  the rest of the robot names (1 per column).
+            for j in range(0, len(self.roundRobinTournaments[i].matches)):
+                if(j%2==0):
+                    columnStyle = evenRowCellStyleName
+                else:
+                    columnStyle = oddRowCellStyleName
+                    
+                tr1 = TableRow(stylename=rowStyleName)
+                tr2 = TableRow(stylename=rowStyleName)
+                
+                table.addElement(tr1)
+                table.addElement(tr2)
+                
+                tc = TableCell(valuetype="string", stylename=columnStyle, numberrowsspanned="2")
+                tr1.addElement(tc)
+                tc.addElement(P(text=self.roundRobinTournaments[i].matches[j].contestant1.letter, stylename=robotNameParagraphStyleName))
+                tc = TableCell(valuetype="string", stylename=columnStyle)
+                tr2.addElement(tc)
+                
+                tc = TableCell(valuetype="string", stylename=columnStyle, numberrowsspanned="2") 
+                tr1.addElement(tc)
+                tc.addElement(P(text=self.roundRobinTournaments[i].matches[j].contestant1.robotName, stylename=robotNameParagraphStyleName))
+                tc = TableCell(valuetype="string", stylename=columnStyle)
+                tr2.addElement(tc)
+                
+                tc = TableCell(valuetype="string", stylename=columnStyle)
+                tr1.addElement(tc)
+                tc = TableCell(valuetype="string", stylename=columnStyle)
+                tr2.addElement(tc)
+                
+                tc = TableCell(valuetype="string", stylename=columnStyle)
+                tr1.addElement(tc)
+                tc = TableCell(valuetype="string", stylename=columnStyle)
+                tr2.addElement(tc)
+                
+                tc = TableCell(valuetype="string", stylename=columnStyle, numberrowsspanned="2") 
+                tr1.addElement(tc) 
+                tc.addElement(P(text=self.roundRobinTournaments[i].matches[j].contestant2.robotName, stylename=robotNameParagraphStyleName))
+                tc = TableCell(valuetype="string", stylename=columnStyle)
+                tr2.addElement(tc)
+                
+                tc = TableCell(valuetype="string", stylename=columnStyle, numberrowsspanned="2")
+                tr1.addElement(tc)
+                tc.addElement(P(text=self.roundRobinTournaments[i].matches[j].contestant2.letter, stylename=robotNameParagraphStyleName))
+                tc = TableCell(valuetype="string", stylename=columnStyle)
+                tr2.addElement(tc)
+                
+            #If the table is two long break it into two columns.
+            if(len(self.roundRobinTournaments[i].matches)*rowHeight>6.5):    
+                section = text.Section(name="Section" + str(i), stylename=sectionStyleName)
+                section.addElement(table)
+                document.text.addElement(section)
+            else:
+                document.text.addElement(table)
+            
+            #Add a score summary table on the bottom of the page.     
+            summaryColumnWidth = 7.5/len(self.roundRobinTournaments[i].entries)
+            if(summaryColumnWidth >1.5):
+                summaryColumnWidth=1.5
+            summaryTableWidth = summaryColumnWidth*len(self.roundRobinTournaments[i].entries)
+            
+            summaryTableStyleName = "SummaryTableStyleName" + str(i)
+            s = Style(name=summaryTableStyleName, family="table", displayname="Summary Table" + str(i))
+            t = TableProperties(align="center", width=str(summaryTableWidth) + "in")
+            s.addElement(t)
+            s.addElement(t)
+            styles.addElement(s)
+            
+            summaryColumnStyleName = "SummaryColumnStyle" + str(i)
+            s = Style(name=summaryColumnStyleName, family="table-column", displayname="Summary Table Column " + str(i))
+            t = TableColumnProperties(columnwidth=str(summaryColumnWidth) + "in")
+            s.addElement(t)
+            styles.addElement(s)
+            
+            table = Table(name="SummaryTable" + str(i), stylename=summaryTableStyleName)
+            table.addElement(TableColumn(stylename=summaryColumnStyleName, numbercolumnsrepeated=len(self.roundRobinTournaments[i].entries)))
+            tr1 = TableRow(stylename=rowStyleName)
+            tr2 = TableRow(stylename=rowStyleName)
+            table.addElement(tr1)
+            for j in range(0,len(self.roundRobinTournaments[i].entries),1):
+                tc = TableCell(valuetype="string", stylename=oddRowCellStyleName)
+                tc.addElement(P(text=self.roundRobinTournaments[i].entries[j].robotName, stylename=robotNameParagraphStyleName))
+                tr1.addElement(tc)
+                tc = TableCell(valuetype="string", stylename=oddRowCellStyleName)
+                tr2.addElement(tc)
+            table.addElement(tr1)
+            table.addElement(tr2)
+            document.text.addElement(P(text=""))
+            document.text.addElement(table)
+            
+            
+        document.save("./ScoreSheets/" + self.competition, True)
             
                        
     def makeOdfSchedules(self):
@@ -198,7 +416,7 @@ class Event(object):
         
             h=H(outlinelevel=1, text=self.roundRobinMatches[i].name + " Scoresheet", stylename=headingParagraphStyleName)
             document.text.addElement(h)
-            p = P(text="Mark the winner with a 'W' in the triangle nearest to the winners name.")
+            p = P(text="Mark the winner with a 'W' in the box next to the winners name. Best 2 out of 3.")
             document.text.addElement(p)
         
             table = Table(name="Table" + str(i), stylename=scoreCardTableStyleName)
