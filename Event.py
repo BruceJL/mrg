@@ -33,12 +33,15 @@ class Event(object):
         self.minEntriesPerRing = minEntriesPerRing
         self.maxEntriesPerRing = maxEntriesPerRing
         self.maxRings = maxRings
+        self.version = 0
+        self.checksString = ""
         #self.totalTime = datetime.timedelta(seconds=0)
 
     def createRoundRobinTournaments(self):                
         bestRemainder = len(self.entries)
         bestRings = 0
         self.rings = 0
+        self.version += 1
         numEntries = len(self.entries)
     
         #Locate a solution that uses the maximum number of rings with a zero remainder
@@ -97,6 +100,94 @@ class Event(object):
             for j in range(0, len(self.roundRobinTournaments[i].matches)):
                 print("\t" + self.roundRobinTournaments[i].matches[j].contestant1.robotName + " VS " + self.roundRobinTournaments[i].matches[j].contestant2.robotName)
         
+        
+    def makeOdf5160Labels(self):
+        #This will generate an ODF files for 5160 labels for a given event.
+        labelWidth = 2.625
+        labelHeight = 1
+        numLabelRows = 10
+        numLabelColumns = 3
+        labelSheetWidth = 8.5
+        labelSheetHeight = 11
+        
+        leftRightMargin = (labelSheetWidth - numLabelColumns * labelWidth)/2
+        topBottomMargin = (labelSheetHeight - numLabelRows * labelHeight)/2
+        
+        tableWidth = numLabelColumns * labelWidth
+        tableHeight = numLabelRows * labelHeight
+        
+        document = OpenDocumentText()
+        styles = document.automaticstyles    
+        
+        #Setup the page layout.
+        pageLayoutStyleName = "PageLayoutStyleName"
+        s = style.PageLayout(name=pageLayoutStyleName)
+        t = style.PageLayoutProperties(writingmode="lr-tb", margintop=str(topBottomMargin) + "in", marginbottom=str(topBottomMargin) + "in",
+                                        marginleft=str(leftRightMargin) + "in", marginright=str(leftRightMargin) + "in", printorientation="portrait",
+                                        pageheight=str(labelSheetHeight) + "in", pagewidth=str(labelSheetWidth) + "in")
+        s.addElement(t)
+        styles.addElement(s)
+        
+        masterpage = style.MasterPage(name="Standard", pagelayoutname=pageLayoutStyleName)
+        document.masterstyles.addElement(masterpage)
+        
+        #Setup the table layout
+        #Table Style
+        labelTableStyleName = "LabelTableStyle"
+        s = Style(name=labelTableStyleName, family="table", displayname="Label Table")
+        t = TableProperties(align="center", width=str(tableWidth) + "in")
+        s.addElement(t)
+        styles.addElement(s)
+        
+        #label Row style
+        labelRowStyleName = "LabelRowStyleName"
+        s = Style(name = labelRowStyleName, family="table-row", displayname="Label Row")
+        t = TableRowProperties(minrowheight=str(labelHeight) + "in")        
+        s.addElement(t)
+        styles.addElement(s)
+        
+        #label Column Style
+        labelColumnStyleName = "labelColumnStyle"
+        s = Style(name=labelColumnStyleName, family="table-column", displayname="Label Table Column")
+        t = TableColumnProperties(columnwidth=str(labelWidth) + "in")
+        s.addElement(t)
+        styles.addElement(s)
+        
+        #cell style
+        labelCellStyleName = "LabelCellStyleName"
+        s = Style(name=labelCellStyleName, family="table-cell", displayname="Text Cell")
+        t = TableCellProperties(verticalalign="middle", padding="0.05in")        
+        s.addElement(t)
+        styles.addElement(s)
+        
+        #Paragraph Style
+        labelParagraphStyleName = "LabelParagraphStyle"
+        s = Style(name = labelParagraphStyleName, family="paragraph", displayname="Label Paragraph Style")
+        t = ParagraphProperties(textalign="center")
+        s.addElement(t)
+        t = TextProperties(fontsize="10pt", fontsizecomplex="10pt", fontsizeasian="10pt")
+        s.addElement(t)
+        styles.addElement(s)
+        
+        index = 0
+        for i in range(0, len(self.roundRobinTournaments), 1):
+            for j in range(0, len(self.roundRobinTournaments[i].entries),1):
+                if(index % 30 == 0): #Start a new page.
+                    table = Table(name="Table" + str(i), stylename=labelTableStyleName)
+                    table.addElement(TableColumn(stylename=labelColumnStyleName, numbercolumnsrepeated=str(numLabelColumns)))
+                    document.text.addElement(table)
+                if(index % 3 == 0): #Start a new row
+                    tr = TableRow(stylename=labelRowStyleName)
+                    table.addElement(tr)
+                tc = TableCell(valuetype="string", stylename=labelCellStyleName)
+                tr.addElement(tc)
+                tc.addElement(P(text="MRG 2016 - " + self.roundRobinTournaments[i].name + " - "  + "V" + str(self.version), stylename=labelParagraphStyleName))
+                tc.addElement(P(text= self.roundRobinTournaments[i].entries[j].letter + " - " + self.roundRobinTournaments[i].entries[j].robotName, stylename=labelParagraphStyleName))
+                tc.addElement(P(text="[ ]Weight  [ ]Size", stylename=labelParagraphStyleName))
+                index += 1
+        
+        document.save("./ScoreSheets/" + self.competition + "-labels", True)
+        
     def makeNewOdfSchedules(self):
         document = OpenDocumentText()
         
@@ -104,7 +195,6 @@ class Event(object):
         rowHeight = 0.25
         letterColumnWidth = 0.25
         wlColumnWidth = 0.25
-
         
         styles = document.automaticstyles
         #Page layout style
@@ -200,7 +290,7 @@ class Event(object):
         styles.addElement(s)
         
         for i in range(0, len(self.roundRobinTournaments), 1):
-            h=H(outlinelevel=1, text=self.roundRobinTournaments[i].name + " Scoresheet", stylename=headingParagraphStyleName)
+            h=H(outlinelevel=1, text=self.roundRobinTournaments[i].name + " Score Sheet - Revision " + str (self.version), stylename=headingParagraphStyleName)
             document.text.addElement(h)
             p = P(text="Mark the winner with a 'W' in the box next to the winners name. Best 2 out of 3.")
             document.text.addElement(p)
@@ -304,6 +394,9 @@ class Event(object):
             document.text.addElement(P(text=""))
             document.text.addElement(table)
             
+         #TODO add a section to record the 1st through 4th place finishers
+         
+         #TODO add checkboxes for the "Entered on Scoreboard" and "Entered on spreadsheet."   
             
         document.save("./ScoreSheets/" + self.competition, True)
             
@@ -435,34 +528,6 @@ class Event(object):
                 tc = TableCell(valuetype="string", stylename=topRowRobotNameCellStyleName)
                 tc.addElement(P(text=self.roundRobinMatches[i].entries[j].robotName, stylename=robotNameParagraphStyleName))
                 tr.addElement(tc)
-                    
-             #Populate the remaining cells
-            for j in range(0,len(self.roundRobinMatches[i].entries)-1,1):
-                tr = TableRow(stylename=normalRowStyleName)
-                table.addElement(tr)
-                tc = TableCell(valuetype="string", stylename=textCellStyleName)
-                tc.addElement(P(text=self.roundRobinMatches[i].entries[j].robotName, stylename=robotNameParagraphStyleName))
-                tr.addElement(tc)
-                for k in range(0,len(self.roundRobinMatches[i].entries),1):
-                    if(k<j):
-                        tc = TableCell(stylename=greyTableCellStyleName)
-                    else:
-                        tc = TableCell(valuetype="string", stylename=imageCellStyleName)
-                        p = P()
-                        tc.addElement(p)
-                        f = Frame(name="diagonal", anchortype="as-char", width=str(normalColumnWidth) + "in", height=str(normalRowHeight) + "in")
-                        p.addElement(f)
-                        diagonalImage = Image(href=diagonalImageHref, type="simple", show="embed", actuate="onLoad")
-                        f.addElement(diagonalImage)
-                    tr.addElement(tc)
-                                        
-            document.text.addElement(table)
-            document.text.addElement(text.SoftPageBreak())
-            
-        document.save("./ScoreSheets/" + self.competition, True)
-                
-    def makeOdfLabels(self):
-        print("Making Labels.")
         
                     
     def calculateTotalTime(self):
@@ -512,11 +577,3 @@ class Event(object):
         
         for e in self.entries:
             e.export(csvFile, depth+1)
-
-    def toWordFile(self, document):
-        """Export to docx for printer, document is from docx module"""
-        # Number the entries like 1.
-        for i in range(len(self.entries)):
-            entry = self.entries[i]
-            p = document.add_paragraph("{0}.\t".format(i+1))
-            entry.toWordFile(p)
