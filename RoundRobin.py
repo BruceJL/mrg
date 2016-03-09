@@ -3,11 +3,12 @@ from math import floor
 
 class RoundRobinTournament(object):
 
-    def __init__(self, name):
+    def __init__(self, name, event):
         self.name = name
         self.entries = []
         self.matches = []
         self.letterIndex = 65 # The Letter A
+        self.event = event
         
     def addEntry(self, entry):
         self.entries.append(entry)

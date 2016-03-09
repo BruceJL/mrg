@@ -69,7 +69,7 @@ class Event(object):
         #Build the array to hold the rings and their entries.    
         self.roundRobinTournaments = []
         for i in range(0, self.rings, 1):
-            self.roundRobinTournaments.append(RoundRobinTournament(self.competition + " Ring " + str(i+1)))
+            self.roundRobinTournaments.append(RoundRobinTournament(self.competition + " Ring " + str(i+1), self))
             
         i=0
         j=0
@@ -192,7 +192,7 @@ class Event(object):
         document = OpenDocumentText()
         
         nameColumnWidth = 1.25
-        rowHeight = 0.25
+        rowHeight = 0.15
         letterColumnWidth = 0.25
         wlColumnWidth = 0.25
         
@@ -200,7 +200,8 @@ class Event(object):
         #Page layout style
         pageLayoutStyleName = "PageLayoutStyleName"
         s = style.PageLayout(name=pageLayoutStyleName)
-        t = style.PageLayoutProperties(writingmode="lr-tb", margintop ="0.5in", marginbottom="0.5in", marginleft="0.5in", marginright="0.5in", printorientation="portrait", pageheight="11in", pagewidth="8.5in")
+        t = style.PageLayoutProperties(writingmode="lr-tb", margintop ="0.5in", marginbottom="0.5in", marginleft="0.5in",
+                                       marginright="0.5in", printorientation="portrait", pageheight="11in", pagewidth="8.5in")
         s.addElement(t)
         styles.addElement(s)
         
@@ -280,6 +281,14 @@ class Event(object):
         s.addElement(t)
         styles.addElement(s)
         
+        judgeTimerStyleName = "JudgeTimerStyleName"
+        s = Style(name = judgeTimerStyleName, family="paragraph", displayname="Judge Timer Paragraph Style")
+        t = ParagraphProperties(textalign="right")
+        s.addElement(t)
+        t = TextProperties(fontsize="12pt")
+        s.addElement(t)
+        styles.addElement(s)
+        
         #Heading Text
         headingParagraphStyleName = "HeadingParagraphStyle"
         s = Style(name = headingParagraphStyleName, family="paragraph", displayname="Robot Name Paragraph Style")
@@ -289,10 +298,20 @@ class Event(object):
         s.addElement(t)
         styles.addElement(s)
         
+        wlParagraphStyleName = "WLParagraphStyle"
+        s = Style(name = wlParagraphStyleName, family="paragraph", displayname="WL Paragraph Style")
+        t = ParagraphProperties(breakbefore="page", textalign="center")
+        s.addElement(t)
+        t = TextProperties(fontsize="9pt", fontsizecomplex="9pt", fontsizeasian="9pt")
+        s.addElement(t)
+        styles.addElement(s)
+        
+        
         for i in range(0, len(self.roundRobinTournaments), 1):
             h=H(outlinelevel=1, text=self.roundRobinTournaments[i].name + " Score Sheet - Revision " + str (self.version), stylename=headingParagraphStyleName)
             document.text.addElement(h)
-            p = P(text="Mark the winner with a 'W' in the box next to the winners name. Best 2 out of 3.")
+            document.text.addElement(P(text=""))
+            p = P(text="Judge:___________________   Timer:__________________", stylename=judgeTimerStyleName)
             document.text.addElement(p)
             
             table = Table(name="Table" + str(i), stylename=scoreCardTableStyleName)
@@ -317,42 +336,62 @@ class Event(object):
                 table.addElement(tr1)
                 table.addElement(tr2)
                 
+                #Letter Column
                 tc = TableCell(valuetype="string", stylename=columnStyle, numberrowsspanned="2")
-                tr1.addElement(tc)
                 tc.addElement(P(text=self.roundRobinTournaments[i].matches[j].contestant1.letter, stylename=robotNameParagraphStyleName))
+                tr1.addElement(tc)
+                
                 tc = TableCell(valuetype="string", stylename=columnStyle)
+                tc.addElement(P(text="", stylename=wlParagraphStyleName))
                 tr2.addElement(tc)
                 
+                #Name Column
                 tc = TableCell(valuetype="string", stylename=columnStyle, numberrowsspanned="2") 
-                tr1.addElement(tc)
                 tc.addElement(P(text=self.roundRobinTournaments[i].matches[j].contestant1.robotName, stylename=robotNameParagraphStyleName))
-                tc = TableCell(valuetype="string", stylename=columnStyle)
-                tr2.addElement(tc)
-                
-                tc = TableCell(valuetype="string", stylename=columnStyle)
                 tr1.addElement(tc)
-                tc = TableCell(valuetype="string", stylename=columnStyle)
-                tr2.addElement(tc)
                 
                 tc = TableCell(valuetype="string", stylename=columnStyle)
+                tc.addElement(P(text="", stylename=wlParagraphStyleName))
+                tr2.addElement(tc)
+                
+                #W/L column
+                tc = TableCell(valuetype="string", stylename=columnStyle)
+                tc.addElement(P(text="", stylename=wlParagraphStyleName))
                 tr1.addElement(tc)
+                
                 tc = TableCell(valuetype="string", stylename=columnStyle)
+                tc.addElement(P(text="", stylename=wlParagraphStyleName))
                 tr2.addElement(tc)
                 
+                #W/L column
+                tc = TableCell(valuetype="string", stylename=columnStyle)
+                tc.addElement(P(text="", stylename=wlParagraphStyleName))
+                tr1.addElement(tc)
+                
+                tc = TableCell(valuetype="string", stylename=columnStyle)
+                tc.addElement(P(text="", stylename=wlParagraphStyleName))
+                tr2.addElement(tc)
+                
+                #Name column
                 tc = TableCell(valuetype="string", stylename=columnStyle, numberrowsspanned="2") 
-                tr1.addElement(tc) 
                 tc.addElement(P(text=self.roundRobinTournaments[i].matches[j].contestant2.robotName, stylename=robotNameParagraphStyleName))
+                tr1.addElement(tc)
+                 
                 tc = TableCell(valuetype="string", stylename=columnStyle)
+                tc.addElement(P(text="", stylename=wlParagraphStyleName))
                 tr2.addElement(tc)
                 
+                #Letter column
                 tc = TableCell(valuetype="string", stylename=columnStyle, numberrowsspanned="2")
-                tr1.addElement(tc)
                 tc.addElement(P(text=self.roundRobinTournaments[i].matches[j].contestant2.letter, stylename=robotNameParagraphStyleName))
+                tr1.addElement(tc)
+                
                 tc = TableCell(valuetype="string", stylename=columnStyle)
+                tc.addElement(P(text="", stylename=wlParagraphStyleName))
                 tr2.addElement(tc)
                 
             #If the table is two long break it into two columns.
-            if(len(self.roundRobinTournaments[i].matches)*rowHeight>6.5):    
+            if(2*len(self.roundRobinTournaments[i].matches)*rowHeight>6.0):    
                 section = text.Section(name="Section" + str(i), stylename=sectionStyleName)
                 section.addElement(table)
                 document.text.addElement(section)
@@ -393,6 +432,9 @@ class Event(object):
             table.addElement(tr2)
             document.text.addElement(P(text=""))
             document.text.addElement(table)
+            document.text.addElement(P(text=""))
+            document.text.addElement(P(text=""))
+            document.text.addElement(P(text="1st:________________     2nd:________________     3rd:________________     4th:________________"))
             
          #TODO add a section to record the 1st through 4th place finishers
          
