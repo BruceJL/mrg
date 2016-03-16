@@ -64,7 +64,7 @@ Driver(s): {driver1}, {driver2}, {driver3}
 School: {school}
 Coach: {coach}
 
-Please follow this link to confirm, edit or cancel you registration.
+Please follow this link to confirm, edit or cancel your registration.
 
  http://mbrobotgames.ca/mrgwp/confirm/?token={token}
 
