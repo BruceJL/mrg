@@ -2,6 +2,7 @@
 
 import smtplib
 import csv
+import sys
 
 def prompt(prompt):
     return raw_input(prompt).strip()
@@ -10,11 +11,12 @@ def send_email(toaddr, message, subject="",cc="",bcc=""):
     """Send the actual email"""
 
     username = "webster@mbrobotgames.ca"
-    password = "qLXIBC9T8B"
+    password = "REDACTED"
 
-    fromaddr = "noreply@mbrobotgames.ca"
-
-    message = "Subject:{subject}\n\n{message}".format(
+    fromaddr = "webster@mbrobotgames.ca"#"noreply@mbrobotgames.ca"
+    
+    #message = "Subject:{subject}\n\n{message}".format(
+    message = "Subject:{subject}\r\nFrom:{sender}\r\nTo:{to}\r\nCC:{cc}\r\n{message}".format(
         subject=subject,
         message=message,
         sender=fromaddr,
@@ -22,20 +24,26 @@ def send_email(toaddr, message, subject="",cc="",bcc=""):
         cc=cc)
 
     try:
-        toaddr = toaddr+","+cc+","+bcc
+        #toaddr = toaddr+","+cc+","+bcc
         print "Sending email to",toaddr
 
-        server = smtplib.SMTP('mail.swd.ca:587')
-        server.starttls() # depends on server encryption
+        server = smtplib.SMTP_SSL('mail.swd.ca',465)
+        # server.starttls() # depends on server encryption
         server.login(username,password)
         server.sendmail(fromaddr, toaddr, message)
         server.quit()
+        print "Success: check your outbox"
     except Exception as e:
         print "Error sending message",e
 
+go = raw_input("WOAH! ARE YOU SURE YOU WANT TO SEND EMAILS TO EVERYONE IN THE CSV? [y/N]\n?> ")
+if go != 'Y' and go != 'y':
+    print 'Bailing out. WHEE!'
+    sys.exit(0)
+
 lines = []
 
-with open('2015_Registration_Test4.csv', 'rb') as csvfile:
+with open('pre-reg-2016-03-15.csv', 'rb') as csvfile:
     csvReader = csv.reader(csvfile, delimiter=',', quotechar='"')
     for row in csvReader:
         lines.insert(len(lines),row)
@@ -72,7 +80,7 @@ If you Confirm your entry, with or without changes, you will be transferred to a
 
 Please print that page and bring it to the registration desk on Saturday as proof that you confirmed and are eligible for the $5.00 entry fee.
 
-Please Confirm or Cancel as soon as possible but no later than Thursday at 9:00AM.
+Please Confirm or Cancel as soon as possible but no later than Thursday at 9:00PM.
 
 Thanks for helping us improve the games!
 
@@ -88,8 +96,8 @@ Thanks for helping us improve the games!
     school=school,
     token=token)
 
-    subject = "Manitoba Robot Games Confirmation for robot {robot}".format(robot=robot)
-    print "email is "+email
-    print "subject is "+subject
+    subject = "Manitoba Robot Games Confirmation for Robot {robot}".format(robot=robot)
+    print "To: "+email
+    print "Subject: "+subject
     print message
-    # send_email("umcarr77@gmail.com",message,subject)
+    send_email(email,message,subject)
