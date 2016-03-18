@@ -14,7 +14,7 @@ def importEntries(file):
             if(row['robot'] != ''):
                 entry = Entry(row['Entry Id'], row['robot'], row['coach'], row['school'], row['comp'], row['driver1'], row['1stGr'], row['driver2'], row['2Gr'], row['driver3'], row['3Gr'])
                 entries.append(entry)
-    return entries    
+    return entries
 
 def createEvents():
     events = {}
@@ -53,6 +53,12 @@ def createEvents():
     
     events['NXT'] = Event("NXT", 0, 0, 0)
     events['NXT'].checksString = "[ ] Weight  [ ] Size"
+
+    events['RC1'] = Event("RC1", 0, 0, 0)
+    events['RC1'].checksString = "[ ] Weight  [ ] Size"
+
+    events['MSR'] = Event("MSR", 0, 0, 0)
+    events['MSR'].checksString = "[ ] Weight  [ ] Size"
     
     return events
 
@@ -78,6 +84,11 @@ def createResources():
     return resources  
 
 class FrontEnd(object):
+
+    def __init__(self):
+        self.entry_list = {}
+        self.event_list = {}
+        self.resource_list = {}
 
     def BuildTournaments(self, fileName):
         #Script execution starts here.
@@ -109,17 +120,16 @@ class FrontEnd(object):
    
     def saveState(self):
         fileName = './data/data.dat'
-        fout = open(fileName, 'wb')
-        p = pickle.Pickler(fout)
-        p.dump(self)
-        fout.close()
+        with open(fileName, 'wb') as f:
+            pickle.dump(self, f)
                  
     def loadState(self):
         fileName = './data/data.dat'
-        fin = open(fileName, 'rb')
-        p = pickle.Unpickler(fin)
-        self = p.load()
-        fin.close()
+        with open(fileName, 'rb') as f:
+            theObject = pickle.load(f)
+            self.entry_list = theObject.entry_list
+            self.event_list = theObject.event_list
+            self.resource_list = theObject.resource_list
   
     def makeOdfScoreSheet(self, event):
         self.event_list[event].makeOdfSchedules()
@@ -130,9 +140,30 @@ class FrontEnd(object):
     #def changeRobotName(self, oldRobotName, newRobotName):
         
 fe = FrontEnd()         
-fileName = '2015_Registration_Test4.csv'
-#fe.BuildTournaments(fileName)
+fileName = 'pre-reg-2016-03-17.csv'
+
+# fe.BuildTournaments(fileName)
+
 fe.loadState()
+# fe.saveState()
+
 fe.makeOdfScoreSheet('MS1')
 fe.makeOdf5160Labels('MS1')
-fe.saveState()
+
+fe.makeOdfScoreSheet('MS2')
+fe.makeOdf5160Labels('MS2')
+
+fe.makeOdfScoreSheet('MS3')
+fe.makeOdf5160Labels('MS3')
+
+fe.makeOdfScoreSheet('MSR')
+fe.makeOdf5160Labels('MSR')
+
+fe.makeOdfScoreSheet('MSA')
+fe.makeOdf5160Labels('MSA')
+
+fe.makeOdfScoreSheet('PST')
+fe.makeOdf5160Labels('PST')
+
+fe.makeOdfScoreSheet('PSA')
+fe.makeOdf5160Labels('PSA')

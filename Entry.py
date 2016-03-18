@@ -3,8 +3,8 @@
 import datetime
 import csv
 
-from utilities import requiredFieldIsGood, optionalFieldIsGood, convertStringToTimedelta
-from test.test_generators import email_tests
+# from utilities import requiredFieldIsGood, optionalFieldIsGood, convertStringToTimedelta
+# from test.test_generators import email_tests
   
 
 class Entry(object):
