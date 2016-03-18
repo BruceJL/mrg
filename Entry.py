@@ -11,7 +11,8 @@ class Entry(object):
     
     #school,coach,email,ph,Address(street Address),Address(Address Line 2),Address(City),Address(State / Province),Address (Zip / Postal Code),Address(Country),comments,Created By (User Id),Entry Id,Entry Date,Source Url,Transaction Id,Payment Amount,Payment Date,Payment Status,Post Id,User Agent,User IP
     """holds Entry data as strings"""
-    def __init__(self, robotName="", coach="", school="", competition="", driver1="", driver1Grade="", driver2="", driver2Grade="", driver3="", driver3Grade=""):
+    def __init__(self, id="", robotName="", coach="", school="", competition="", driver1="", driver1Grade="", driver2="", driver2Grade="", driver3="", driver3Grade=""):
+        self.id = id
         self.robotName = robotName
         self.coach = coach
         self.school = school

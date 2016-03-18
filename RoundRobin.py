@@ -9,7 +9,7 @@ class RoundRobinTournament(object):
         self.matches = []
         self.letterIndex = 65 # The Letter A
         self.event = event
-        
+            
     def addEntry(self, entry):
         self.entries.append(entry)
         entry.letter = chr(self.letterIndex)

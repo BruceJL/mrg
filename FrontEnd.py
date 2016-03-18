@@ -2,6 +2,8 @@ from Entry import Entry
 from Event import Event
 from Resource import Resource
 import csv
+import pickle
+
 
 def importEntries(file):
     """import entries from a CSV file"""
@@ -10,9 +12,9 @@ def importEntries(file):
         reader = csv.DictReader(csvfile)
         for row in reader:
             if(row['robot'] != ''):
-                entry = Entry(row['robot'], row['coach'], row['school'], row['comp'], row['driver1'], row['1stGr'], row['driver2'], row['2Gr'], row['driver3'], row['3Gr'])
+                entry = Entry(row['Entry Id'], row['robot'], row['coach'], row['school'], row['comp'], row['driver1'], row['1stGr'], row['driver2'], row['2Gr'], row['driver3'], row['3Gr'])
                 entries.append(entry)
-    return entries
+    return entries    
 
 def createEvents():
     events = {}
@@ -73,49 +75,64 @@ def createResources():
     resources.append(Resource("Line Follower Track 01", 18, 18, "line_follower_track"))
     resources.append(Resource("Line Follower Track 02", 18, 18, "line_follower_track"))
     resources.append(Resource("Tractor Pull Track", 18, 18, "tractor_pull_track"))
-    return resources
+    return resources  
+
+class FrontEnd(object):
+
+    def BuildTournaments(self, fileName):
+        #Script execution starts here.
+        #fileName = '2015_Registration_Test4.csv'
+        self.entry_list = importEntries(fileName)
+        self.event_list = createEvents()
+        self.resource_list = createResources()
+        
+        for entry in self.entry_list:
+            self.event_list[entry.competition].addEntry(entry)
+            
+        self.event_list['MS1'].createRoundRobinTournaments()
+        #event_list['MS1'].saveFile('./data/MS1.dat');
+        
+        self.event_list['MS2'].createRoundRobinTournaments()
+        #event_list['MS2'].saveFile('./data/MS2.dat');
+        
+        self.event_list['MS3'].createRoundRobinTournaments()
+        #event_list['MS3'].saveFile('./data/MS3.dat');
+        
+        self.event_list['MSA'].createRoundRobinTournaments()
+        #event_list['MSA'].saveFile('./data/MSA.dat');
+        
+        self.event_list['PST'].createRoundRobinTournaments()
+        #event_list['PST'].saveFile('./data/PST.dat');
+        
+        self.event_list['PSA'].createRoundRobinTournaments()
+        #event_list['PSA'].saveFile('./data/PSA.dat');
+   
+    def saveState(self):
+        fileName = './data/data.dat'
+        fout = open(fileName, 'wb')
+        p = pickle.Pickler(fout)
+        p.dump(self)
+        fout.close()
+                 
+    def loadState(self):
+        fileName = './data/data.dat'
+        fin = open(fileName, 'rb')
+        p = pickle.Unpickler(fin)
+        self = p.load()
+        fin.close()
+  
+    def makeOdfScoreSheet(self, event):
+        self.event_list[event].makeOdfSchedules()
     
+    def makeOdf5160Labels(self, event):
+        self.event_list[event].makeOdf5160Labels()
 
-#Script execution starts here.
-entry_list = importEntries('2015_Registration_Test4.csv')
-event_list = createEvents()
-resource_list = createResources()
-
-for entry in entry_list:
-    event_list[entry.competition].addEntry(entry)
-
-event_list['MS1'].createRoundRobinTournaments()
-event_list['MS1'].makeNewOdfSchedules()
-event_list['MS1'].makeOdf5160Labels()
-print("\n")
-
-event_list['MS2'].createRoundRobinTournaments()
-event_list['MS2'].makeNewOdfSchedules()
-event_list['MS2'].makeOdf5160Labels()   
-print("\n")
-
-event_list['MS3'].createRoundRobinTournaments()
-event_list['MS3'].makeNewOdfSchedules()
-event_list['MS3'].makeOdf5160Labels()
-print("\n")
-
-event_list['MSA'].createRoundRobinTournaments()
-event_list['MSA'].makeNewOdfSchedules()
-event_list['MSA'].makeOdf5160Labels()
-print("\n")
-
-event_list['PST'].createRoundRobinTournaments()
-event_list['PST'].makeNewOdfSchedules()
-event_list['PST'].makeOdf5160Labels()
-print("\n")
-
-event_list['PSA'].createRoundRobinTournaments()
-event_list['PSA'].makeNewOdfSchedules()
-event_list['PSA'].makeOdf5160Labels()
-print("\n")
-
-    
-#for key, Event in event_list.items():
-#    print("Competition: " + Event.competition)
-    #for Entry in Event.entries:
-        #print("\t" + Entry.robotName)
+    #def changeRobotName(self, oldRobotName, newRobotName):
+        
+fe = FrontEnd()         
+fileName = '2015_Registration_Test4.csv'
+#fe.BuildTournaments(fileName)
+fe.loadState()
+fe.makeOdfScoreSheet('MS1')
+fe.makeOdf5160Labels('MS1')
+fe.saveState()
