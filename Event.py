@@ -63,7 +63,7 @@ class Event(object):
     #        self.roundRobinTournaments.append(p.load())
         
 
-    def createRoundRobinTournaments(self):                
+    def createRoundRobinTournaments(self):
         bestRemainder = len(self.entries)
         bestRings = 0
         self.rings = 0
@@ -125,7 +125,6 @@ class Event(object):
             self.roundRobinTournaments[i].createRoundRobinMatches()
             for j in range(0, len(self.roundRobinTournaments[i].matches)):
                 print("\t" + self.roundRobinTournaments[i].matches[j].contestant1.robotName + " VS " + self.roundRobinTournaments[i].matches[j].contestant2.robotName)
-        
         
     def makeOdf5160Labels(self):
         #This will generate an ODF files for 5160 labels for a given event.
@@ -195,11 +194,11 @@ class Event(object):
         s.addElement(t)
         styles.addElement(s)
         
-        index = 0
-        for i in range(0, len(self.roundRobinTournaments), 1):
-            for j in range(0, len(self.roundRobinTournaments[i].entries),1):
+        if(self.competition in ('LFA', 'TPM', 'NXT', 'RC1', 'JC1')):
+            index = 0
+            for j in range(0, len(self.entries),1):
                 if(index % 30 == 0): #Start a new page.
-                    table = Table(name="Table" + str(i), stylename=labelTableStyleName)
+                    table = Table(name="Table", stylename=labelTableStyleName)
                     table.addElement(TableColumn(stylename=labelColumnStyleName, numbercolumnsrepeated=str(numLabelColumns)))
                     document.text.addElement(table)
                 if(index % 3 == 0): #Start a new row
@@ -207,10 +206,27 @@ class Event(object):
                     table.addElement(tr)
                 tc = TableCell(valuetype="string", stylename=labelCellStyleName)
                 tr.addElement(tc)
-                tc.addElement(P(text="MRG 2016 - " + self.roundRobinTournaments[i].name + " - "  + "V" + str(self.version), stylename=labelParagraphStyleName))
-                tc.addElement(P(text= self.roundRobinTournaments[i].entries[j].letter + " - " + self.roundRobinTournaments[i].entries[j].robotName + " #" + self.roundRobinTournaments[i].entries[j].id, stylename=labelParagraphStyleName))
+                tc.addElement(P(text="MRG 2016 - " + self.competition + " - "  + "V" + str(self.version), stylename=labelParagraphStyleName))
+                tc.addElement(P(text=self.entries[j].robotName + " #" + self.entries[j].id, stylename=labelParagraphStyleName))
                 tc.addElement(P(text="[ ]Weight  [ ]Size", stylename=labelParagraphStyleName))
                 index += 1
+        else:
+            index = 0
+            for i in range(0, len(self.roundRobinTournaments), 1):
+                for j in range(0, len(self.roundRobinTournaments[i].entries),1):
+                    if(index % 30 == 0): #Start a new page.
+                        table = Table(name="Table" + str(i), stylename=labelTableStyleName)
+                        table.addElement(TableColumn(stylename=labelColumnStyleName, numbercolumnsrepeated=str(numLabelColumns)))
+                        document.text.addElement(table)
+                    if(index % 3 == 0): #Start a new row
+                        tr = TableRow(stylename=labelRowStyleName)
+                        table.addElement(tr)
+                    tc = TableCell(valuetype="string", stylename=labelCellStyleName)
+                    tr.addElement(tc)
+                    tc.addElement(P(text="MRG 2016 - " + self.roundRobinTournaments[i].name + " - "  + "V" + str(self.version), stylename=labelParagraphStyleName))
+                    tc.addElement(P(text= self.roundRobinTournaments[i].entries[j].letter + " - " + self.roundRobinTournaments[i].entries[j].robotName + " #" + self.roundRobinTournaments[i].entries[j].id, stylename=labelParagraphStyleName))
+                    tc.addElement(P(text="[ ]Weight  [ ]Size", stylename=labelParagraphStyleName))
+                    index += 1
         
         document.save("./ScoreSheets/" + self.competition + "-labels", True)
         
@@ -331,7 +347,6 @@ class Event(object):
         t = TextProperties(fontsize="9pt", fontsizecomplex="9pt", fontsizeasian="9pt")
         s.addElement(t)
         styles.addElement(s)
-        
         
         for i in range(0, len(self.roundRobinTournaments), 1):
             h=H(outlinelevel=1, text=self.roundRobinTournaments[i].name + " Score Sheet - Revision " + str (self.version), stylename=headingParagraphStyleName)

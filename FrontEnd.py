@@ -20,46 +20,46 @@ def createEvents():
     events = {}
     events['MS1'] = Event("MS1", 4, 6, 10) #minimum 4 robots per ring, max 6 robots, max 10 rings.
     events['MS1'].checksString = "[ ] Weight  [ ] Size"
-    
+
     events['MS2'] = Event("MS2", 4, 6, 10)
     events['MS2'].checksString = "[ ] Weight  [ ] Size"
-    
+
     events['MS3'] = Event("MS3", 4, 6, 10)
     events['MS3'].checksString = "[ ] Weight  [ ] Size"
-    
+
     events['MSA'] = Event("MSA", 4, 6, 10)
     events['MSA'].checksString = "[ ] Weight  [ ] Size  [   sec] Delay"
-    
+
+    events['MSR'] = Event("MSR", 0, 6, 10)
+    events['MSR'].checksString = "[ ] Weight  [ ] Size"
+
     events['PST'] = Event("PST", 4, 8, 4)
     events['PST'].checksString = "[ ] Weight  [ ] Size"
-    
+
     events['PSA'] = Event("PSA", 4, 8, 4)
     events['PSA'].checksString = "[ ] Weight  [ ] Size  [   sec] Delay"
-    
+
     events['SSA'] = Event("SSA", 0, 0, 0) #Superscramble only has one course.
     events['SSA'].checksString = "[ ] Weight  [ ] Size"
-    
+
     events['SSB'] = Event("SSB", 0, 0, 0)
     events['SSB'].checksString = "[ ] Weight  [ ] Size"
-    
+
     events['JC1'] = Event("JC1", 0, 0, 0)
     events['JC1'].checksString = "[ ] Weight  [ ] Size"
-    
+
     events['LFA'] = Event("LFA", 0, 0, 0)
     events['LFA'].checksString = "[ ] Weight  [ ] Size"
-    
+
     events['TPM'] = Event("TPM", 0, 0, 0)
     events['TPM'].checksString = "[ ] Weight  [ ] Size"
-    
+
     events['NXT'] = Event("NXT", 0, 0, 0)
     events['NXT'].checksString = "[ ] Weight  [ ] Size"
 
     events['RC1'] = Event("RC1", 0, 0, 0)
     events['RC1'].checksString = "[ ] Weight  [ ] Size"
 
-    events['MSR'] = Event("MSR", 0, 0, 0)
-    events['MSR'].checksString = "[ ] Weight  [ ] Size"
-    
     return events
 
 def createResources():
@@ -81,7 +81,7 @@ def createResources():
     resources.append(Resource("Line Follower Track 01", 18, 18, "line_follower_track"))
     resources.append(Resource("Line Follower Track 02", 18, 18, "line_follower_track"))
     resources.append(Resource("Tractor Pull Track", 18, 18, "tractor_pull_track"))
-    return resources  
+    return resources
 
 class FrontEnd(object):
 
@@ -96,33 +96,35 @@ class FrontEnd(object):
         self.entry_list = importEntries(fileName)
         self.event_list = createEvents()
         self.resource_list = createResources()
-        
+
         for entry in self.entry_list:
             self.event_list[entry.competition].addEntry(entry)
-            
+
         self.event_list['MS1'].createRoundRobinTournaments()
         #event_list['MS1'].saveFile('./data/MS1.dat');
-        
+
         self.event_list['MS2'].createRoundRobinTournaments()
         #event_list['MS2'].saveFile('./data/MS2.dat');
-        
+
         self.event_list['MS3'].createRoundRobinTournaments()
         #event_list['MS3'].saveFile('./data/MS3.dat');
-        
+
         self.event_list['MSA'].createRoundRobinTournaments()
         #event_list['MSA'].saveFile('./data/MSA.dat');
-        
+
+        self.event_list['MSR'].createRoundRobinTournaments()
+
         self.event_list['PST'].createRoundRobinTournaments()
         #event_list['PST'].saveFile('./data/PST.dat');
-        
+
         self.event_list['PSA'].createRoundRobinTournaments()
         #event_list['PSA'].saveFile('./data/PSA.dat');
-   
+
     def saveState(self):
         fileName = './data/data.dat'
         with open(fileName, 'wb') as f:
             pickle.dump(self, f)
-                 
+
     def loadState(self):
         fileName = './data/data.dat'
         with open(fileName, 'rb') as f:
@@ -130,16 +132,16 @@ class FrontEnd(object):
             self.entry_list = theObject.entry_list
             self.event_list = theObject.event_list
             self.resource_list = theObject.resource_list
-  
+
     def makeOdfScoreSheet(self, event):
         self.event_list[event].makeOdfSchedules()
-    
+
     def makeOdf5160Labels(self, event):
         self.event_list[event].makeOdf5160Labels()
 
     #def changeRobotName(self, oldRobotName, newRobotName):
-        
-fe = FrontEnd()         
+
+fe = FrontEnd()
 fileName = 'pre-reg-2016-03-17.csv'
 
 # fe.BuildTournaments(fileName)
@@ -147,23 +149,47 @@ fileName = 'pre-reg-2016-03-17.csv'
 fe.loadState()
 # fe.saveState()
 
+# Round Robin
 fe.makeOdfScoreSheet('MS1')
 fe.makeOdf5160Labels('MS1')
 
 fe.makeOdfScoreSheet('MS2')
 fe.makeOdf5160Labels('MS2')
 
-fe.makeOdfScoreSheet('MS3')
+# fe.makeOdfScoreSheet('MS3')
 fe.makeOdf5160Labels('MS3')
 
-fe.makeOdfScoreSheet('MSR')
+# fe.makeOdfScoreSheet('MSR')
 fe.makeOdf5160Labels('MSR')
 
-fe.makeOdfScoreSheet('MSA')
+# fe.makeOdfScoreSheet('MSA')
 fe.makeOdf5160Labels('MSA')
 
-fe.makeOdfScoreSheet('PST')
+# fe.makeOdfScoreSheet('PST')
 fe.makeOdf5160Labels('PST')
 
-fe.makeOdfScoreSheet('PSA')
+# fe.makeOdfScoreSheet('PSA')
 fe.makeOdf5160Labels('PSA')
+
+# fe.makeOdfScoreSheet('SSA')
+fe.makeOdf5160Labels('SSA')
+
+# fe.makeOdfScoreSheet('SSB')
+fe.makeOdf5160Labels('SSB')
+
+# Has unique score sheet
+fe.makeOdf5160Labels('LFA')
+
+# Timed with weights (make in excel for now)
+# fe.makeOdfScoreSheet('TPM')
+fe.makeOdf5160Labels('TPM')
+
+# Has unique score sheet
+fe.makeOdf5160Labels('NXT')
+
+# Other
+# fe.makeOdfScoreSheet('RC1')
+fe.makeOdf5160Labels('RC1')
+
+# fe.makeOdfScoreSheet('JC1')
+fe.makeOdf5160Labels('JC1')
