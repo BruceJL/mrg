@@ -482,7 +482,20 @@ class Event(object):
          #TODO add checkboxes for the "Entered on Scoreboard" and "Entered on spreadsheet."   
             
         document.save("./ScoreSheets/" + self.competition, True)
-                    
+
+    def makeParticipationCSV(self):
+        fout = open('./ScoreSheets/'+self.competition+'-participation.csv', 'w')
+        # for entry in copy of self.entries sorted by school
+        for entry in sorted(self.entries, key=lambda x: x.school):
+            s = ""
+            if(entry.driver1):
+                s += "{driver},{robot},{school},{competition}\n".format(driver=entry.driver1,robot=entry.robotName,school=entry.school,competition=self.competition)
+            if(entry.driver2):
+                s += "{driver},{robot},{school},{competition}\n".format(driver=entry.driver2,robot=entry.robotName,school=entry.school,competition=self.competition)
+            if(entry.driver3):
+                s += "{driver},{robot},{school},{competition}\n".format(driver=entry.driver3,robot=entry.robotName,school=entry.school,competition=self.competition)                
+            fout.write(s)
+        fout.close()
                     
     def calculateTotalTime(self):
         """calculate the total time this Event is likely to take"""

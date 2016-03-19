@@ -139,6 +139,9 @@ class FrontEnd(object):
     def makeOdf5160Labels(self, event):
         self.event_list[event].makeOdf5160Labels()
 
+    def makeParticipationCSV(self, event):
+        self.event_list[event].makeParticipationCSV()
+
     #def changeRobotName(self, oldRobotName, newRobotName):
 
 fe = FrontEnd()
@@ -152,44 +155,58 @@ fe.loadState()
 # Round Robin
 fe.makeOdfScoreSheet('MS1')
 fe.makeOdf5160Labels('MS1')
+fe.makeParticipationCSV('MS1')
 
 fe.makeOdfScoreSheet('MS2')
 fe.makeOdf5160Labels('MS2')
+fe.makeParticipationCSV('MS2')
 
 # fe.makeOdfScoreSheet('MS3')
 fe.makeOdf5160Labels('MS3')
+fe.makeParticipationCSV('MS3')
 
 # fe.makeOdfScoreSheet('MSR')
 fe.makeOdf5160Labels('MSR')
+fe.makeParticipationCSV('MSR')
 
 # fe.makeOdfScoreSheet('MSA')
 fe.makeOdf5160Labels('MSA')
+fe.makeParticipationCSV('MSA')
 
 # fe.makeOdfScoreSheet('PST')
 fe.makeOdf5160Labels('PST')
+fe.makeParticipationCSV('PST')
 
 # fe.makeOdfScoreSheet('PSA')
 fe.makeOdf5160Labels('PSA')
+fe.makeParticipationCSV('PSA')
 
 # fe.makeOdfScoreSheet('SSA')
 fe.makeOdf5160Labels('SSA')
+fe.makeParticipationCSV('SSA')
 
 # fe.makeOdfScoreSheet('SSB')
 fe.makeOdf5160Labels('SSB')
+fe.makeParticipationCSV('SSB')
 
 # Has unique score sheet
 fe.makeOdf5160Labels('LFA')
+fe.makeParticipationCSV('LFA')
 
 # Timed with weights (make in excel for now)
 # fe.makeOdfScoreSheet('TPM')
 fe.makeOdf5160Labels('TPM')
+fe.makeParticipationCSV('TPM')
 
 # Has unique score sheet
 fe.makeOdf5160Labels('NXT')
+fe.makeParticipationCSV('NXT')
 
 # Other
 # fe.makeOdfScoreSheet('RC1')
 fe.makeOdf5160Labels('RC1')
+# fe.makeParticipationCSV('RC1')
 
 # fe.makeOdfScoreSheet('JC1')
 fe.makeOdf5160Labels('JC1')
+fe.makeParticipationCSV('JC1')
