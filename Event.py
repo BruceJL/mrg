@@ -101,9 +101,19 @@ class Event(object):
             entries = school_entries[key]
             while len(entries):
                 index = math.floor(random.random() * len(entries))
-                self.round_robin_tournaments[round_robin_keys[i % length]].add_entry(entries[index])
-                entries.remove(entries[index])
-                i += 1
+                found = 0
+
+                #TODO fix the following logic as it may paint itself into a corner. e.g. the only entry remaining
+                #is a duplicate entry
+                #for tournament in self.round_robin_tournaments:
+                #    for event_entry in tournament.event_entries:
+                #        if event_entry.entry.driver1 == entries[index].driver1:
+                #            found = 1
+
+                if not found:
+                    self.round_robin_tournaments[round_robin_keys[i % length]].add_entry(entries[index])
+                    entries.remove(entries[index])
+                    i += 1
 
     def update_round_robin_assignments(self, number_rings):
         sql = []
@@ -634,13 +644,24 @@ class Event(object):
         s = Style(name=robot_name_paragraph_style_name, family="paragraph", displayname="Robot Name Paragraph Style")
         t = ParagraphProperties(textalign="center")
         s.addElement(t)
-        t = TextProperties(fontsize="12pt")
+        t = TextProperties(fontsize="12pt",  fontsizecomplex="12pt",  fontsizeasian="12pt")
         s.addElement(t)
         styles.addElement(s)
 
-        # Robot Detail paragraph style
-        robot_detail_paragraph_style_name = "RobotNameParagraphStyle"
-        s = Style(name=robot_detail_paragraph_style_name, family="paragraph", displayname="Robot detail Paragraph Style")
+        # Summary Robot Name paragraph style
+        robot_summary_name_paragraph_style_name = "RobotSummaryNameParagraphStyle"
+        s = Style(name=robot_summary_name_paragraph_style_name, family="paragraph",
+                  displayname="Robot detail Paragraph Style")
+        t = ParagraphProperties(textalign="left")
+        s.addElement(t)
+        t = TextProperties(fontsize="10pt", fontsizecomplex="10pt", fontsizeasian="10pt",
+                           fontweightcomplex="Bold", fontweightasian="bold", fontweight="bold")
+        s.addElement(t)
+        styles.addElement(s)
+
+        # Summary Robot Detail paragraph style
+        robot_summary_detail_paragraph_style_name = "RobotSummaryDetailParagraphStyle"
+        s = Style(name=robot_summary_detail_paragraph_style_name, family="paragraph", displayname="Robot detail Paragraph Style")
         t = ParagraphProperties(textalign="left")
         s.addElement(t)
         t = TextProperties(fontsize="8pt", fontsizecomplex="8pt", fontsizeasian="8pt")
@@ -815,39 +836,52 @@ class Event(object):
             s.addElement(t)
             styles.addElement(s)
 
-            summary_column_style_name = "SummaryColumnStyle" + str(tournament.ring)
-            s = Style(name=summary_column_style_name, family="table-column",
-                      displayname="Summary Table Column " + str(tournament.ring))
-            t = TableColumnProperties(columnwidth=str(summary_column_width) + "in")
+            summary_info_column_style_name = "SummaryInfoColumnStyle" + str(tournament.ring)
+            s = Style(name=summary_info_column_style_name, family="table-column",
+                      displayname="Summary Info Table Column " + str(tournament.ring))
+            t = TableColumnProperties(columnwidth=str(summary_column_width-0.375) + "in")
+            s.addElement(t)
+            styles.addElement(s)
+
+            summary_spacer_column_style_name = "SummarySpacerColumnStyle" + str(tournament.ring)
+            s = Style(name=summary_spacer_column_style_name, family="table-column",
+                      displayname="Summary Spacer Table Column " + str(tournament.ring))
+            t = TableColumnProperties(columnwidth="0.375in")
+            s.addElement(t)
+            styles.addElement(s)
+
+            summary_cell_style_name = "SummaryCellStyleName"
+            s = Style(name=summary_cell_style_name, family="table-cell", displayname="Text Cell")
+            t = TableCellProperties(verticalalign="", padding="0.01in", borderright="0.05pt solid #000000",
+                                    bordertop="0.05pt solid #000000", borderleft='0.05pt solid #000000',
+                                    borderbottom='0.05pt solid #000000')
             s.addElement(t)
             styles.addElement(s)
 
             summary_table = Table(name="SummaryTable" + str(tournament.ring), stylename=summary_table_style_name)
-            summary_table.addElement(TableColumn(stylename=summary_column_style_name,
-                                               numbercolumnsrepeated=4))
+            for i in range(0, 4):
+                summary_table.addElement(TableColumn(stylename=summary_info_column_style_name))
+                summary_table.addElement(TableColumn(stylename=summary_spacer_column_style_name))
 
 
             for j in range(0, len(tournament.event_entries), 1):
                 if j % 4 == 0:
                     tr1 = TableRow(stylename=row_style_name)
-                    tr2 = TableRow(stylename=row_style_name)
                     summary_table.addElement(tr1)
-                    summary_table.addElement(tr2)
 
-                tc = TableCell(valuetype="string", stylename=odd_row_cell_style_name)
+                tc = TableCell(valuetype="string", stylename=summary_cell_style_name)
                 tc.addElement(
-                    P(text=tournament.event_entries[j].entry.robotName,
-                      stylename=robot_name_paragraph_style_name))
+                    P(text=tournament.event_entries[j].letter + " -  " + tournament.event_entries[j].entry.robotName,
+                      stylename=robot_summary_name_paragraph_style_name))
                 tc.addElement(
                     P(text=tournament.event_entries[j].entry.driver1,
-                      stylename=robot_detail_paragraph_style_name))
+                      stylename=robot_summary_detail_paragraph_style_name))
                 tc.addElement(
                     P(text=tournament.event_entries[j].entry.school,
-                      stylename=robot_detail_paragraph_style_name))
+                      stylename=robot_summary_detail_paragraph_style_name))
                 tr1.addElement(tc)
-
-                tc = TableCell(valuetype="string", stylename=odd_row_cell_style_name)
-                tr2.addElement(tc)
+                tc = TableCell(valuetype="string", stylename=summary_cell_style_name)
+                tr1.addElement(tc)
 
             document.text.addElement(P(text=""))
             document.text.addElement(summary_table)
