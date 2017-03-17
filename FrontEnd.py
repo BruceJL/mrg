@@ -1,212 +1,225 @@
+import tkinter
+from tkinter import messagebox
+
 from Entry import Entry
 from Event import Event
+from Event import EventError
+from RoundRobin import RoundRobinError
+from EventEntry import EventEntry
 from Resource import Resource
-import csv
-import pickle
+from pymysql import connect, cursors
+import os
 
 
-def importEntries(file):
+# Defines and returns the database connection
+def createDatabaseConnection():
+    return connect(
+                   # host='registration',
+                   host='localhost',
+                   port=3306,
+                   # port=9999,
+                   user='mrg-sign-in',
+                   passwd='Swordfish',
+                   db='mrg_db',
+                   autocommit=True)
+
+
+# Creates the static resources which can be assigned for the competitions. Not currently used.
+def create_resources():
+    resources = [Resource("Mini Ring 01", 12, 12, "mini_ring"), Resource("Mini Ring 02", 12, 12, "mini_ring"),
+                 Resource("Mini Ring 03", 12, 12, "mini_ring"), Resource("Mini Ring 04", 12, 12, "mini_ring"),
+                 Resource("Mini Ring 05", 12, 12, "mini_ring"), Resource("Mini Ring 06", 12, 12, "mini_ring"),
+                 Resource("Mini Ring 07", 12, 12, "mini_ring"), Resource("Mini Ring 08", 12, 12, "mini_ring"),
+                 Resource("Mini Ring 09", 12, 12, "mini_ring"), Resource("Mini Ring 10", 12, 12, "mini_ring"),
+                 Resource("Prairie Ring 01", 18, 18, "prairie_ring"),
+                 Resource("Prairie Ring 02", 18, 18, "prairie_ring"),
+                 Resource("Prairie Ring 03", 18, 18, "prairie_ring"),
+                 Resource("Prairie Ring 04", 18, 18, "prairie_ring"),
+                 Resource("Line Follower Track 01", 18, 18, "line_follower_track"),
+                 Resource("Line Follower Track 02", 18, 18, "line_follower_track"),
+                 Resource("Tractor Pull Track", 18, 18, "tractor_pull_track")]
+    return resources
+
+
+'''def import_entries(file):
     """import entries from a CSV file"""
     entries = []
     with open(file, 'rt') as csvfile:
         reader = csv.DictReader(csvfile)
         for row in reader:
-            if(row['robot'] != ''):
-                entry = Entry(row['Entry Id'], row['robot'], row['coach'], row['school'], row['comp'], row['driver1'], row['1stGr'], row['driver2'], row['2Gr'], row['driver3'], row['3Gr'])
+            if row['robot'] != '':
+                entry = Entry(row['Entry Id'], row['robot'], row['coach'], row['school'], row['comp'], row['driver1'],
+                              row['1stGr'], row['driver2'], row['2Gr'], row['driver3'], row['3Gr'])
                 entries.append(entry)
-    return entries
+    return entries'''
 
-def createEvents():
-    events = {}
-    events['MS1'] = Event("MS1", 4, 6, 10) #minimum 4 robots per ring, max 6 robots, max 10 rings.
-    events['MS1'].checksString = "[ ] Weight  [ ] Size"
 
-    events['MS2'] = Event("MS2", 4, 6, 10)
-    events['MS2'].checksString = "[ ] Weight  [ ] Size"
-
-    events['MS3'] = Event("MS3", 4, 6, 10)
-    events['MS3'].checksString = "[ ] Weight  [ ] Size"
-
-    events['MSA'] = Event("MSA", 4, 6, 10)
-    events['MSA'].checksString = "[ ] Weight  [ ] Size  [   sec] Delay"
-
-    events['MSR'] = Event("MSR", 0, 6, 10)
-    events['MSR'].checksString = "[ ] Weight  [ ] Size"
-
-    events['PST'] = Event("PST", 4, 8, 4)
-    events['PST'].checksString = "[ ] Weight  [ ] Size"
-
-    events['PSA'] = Event("PSA", 4, 8, 4)
-    events['PSA'].checksString = "[ ] Weight  [ ] Size  [   sec] Delay"
-
-    events['SSA'] = Event("SSA", 0, 0, 0) #Superscramble only has one course.
-    events['SSA'].checksString = "[ ] Weight  [ ] Size"
-
-    events['SSB'] = Event("SSB", 0, 0, 0)
-    events['SSB'].checksString = "[ ] Weight  [ ] Size"
-
-    events['JC1'] = Event("JC1", 0, 0, 0)
-    events['JC1'].checksString = "[ ] Weight  [ ] Size"
-
-    events['LFA'] = Event("LFA", 0, 0, 0)
-    events['LFA'].checksString = "[ ] Weight  [ ] Size"
-
-    events['TPM'] = Event("TPM", 0, 0, 0)
-    events['TPM'].checksString = "[ ] Weight  [ ] Size"
-
-    events['NXT'] = Event("NXT", 0, 0, 0)
-    events['NXT'].checksString = "[ ] Weight  [ ] Size"
-
-    events['RC1'] = Event("RC1", 0, 0, 0)
-    events['RC1'].checksString = "[ ] Weight  [ ] Size"
-
-    return events
-
-def createResources():
-    resources = []
-    resources.append(Resource("Mini Ring 01", 12, 12, "mini_ring"))
-    resources.append(Resource("Mini Ring 02", 12, 12, "mini_ring"))
-    resources.append(Resource("Mini Ring 03", 12, 12, "mini_ring"))
-    resources.append(Resource("Mini Ring 04", 12, 12, "mini_ring"))
-    resources.append(Resource("Mini Ring 05", 12, 12, "mini_ring"))
-    resources.append(Resource("Mini Ring 06", 12, 12, "mini_ring"))
-    resources.append(Resource("Mini Ring 07", 12, 12, "mini_ring"))
-    resources.append(Resource("Mini Ring 08", 12, 12, "mini_ring"))
-    resources.append(Resource("Mini Ring 09", 12, 12, "mini_ring"))
-    resources.append(Resource("Mini Ring 10", 12, 12, "mini_ring"))
-    resources.append(Resource("Prairie Ring 01", 18, 18, "prairie_ring"))
-    resources.append(Resource("Prairie Ring 02", 18, 18, "prairie_ring"))
-    resources.append(Resource("Prairie Ring 03", 18, 18, "prairie_ring"))
-    resources.append(Resource("Prairie Ring 04", 18, 18, "prairie_ring"))
-    resources.append(Resource("Line Follower Track 01", 18, 18, "line_follower_track"))
-    resources.append(Resource("Line Follower Track 02", 18, 18, "line_follower_track"))
-    resources.append(Resource("Tractor Pull Track", 18, 18, "tractor_pull_track"))
-    return resources
-
-class FrontEnd(object):
-
+class Frontend(object):
     def __init__(self):
-        self.entry_list = {}
-        self.event_list = {}
         self.resource_list = {}
 
-    def BuildTournaments(self, fileName):
-        #Script execution starts here.
-        #fileName = '2015_Registration_Test4.csv'
-        self.entry_list = importEntries(fileName)
-        self.event_list = createEvents()
-        self.resource_list = createResources()
+        conn = createDatabaseConnection()
+        self.cursor = conn.cursor(cursors.DictCursor)
+        self.events = self.get_event_list_from_database()
 
-        for entry in self.entry_list:
-            self.event_list[entry.competition].addEntry(entry)
+        self.event_list = list(self.events)
+        self.event_list.sort()
 
-        self.event_list['MS1'].createRoundRobinTournaments()
-        #event_list['MS1'].saveFile('./data/MS1.dat');
+        window = tkinter.Tk()
+        window.title("MRG Administrative Interface")
+        self.selected_competition = tkinter.StringVar()
+        self.selected_competition.set(self.event_list[0])
 
-        self.event_list['MS2'].createRoundRobinTournaments()
-        #event_list['MS2'].saveFile('./data/MS2.dat');
+        # competition selection option
+        option_menu_competition = tkinter.OptionMenu(window, self.selected_competition, *self.event_list)
+        option_menu_competition.pack()
 
-        self.event_list['MS3'].createRoundRobinTournaments()
-        #event_list['MS3'].saveFile('./data/MS3.dat');
+        # Make labels button
+        btn_create_label_sheets = tkinter.Button(window, text="Create labels", command=self.gui_make_odf_label_sheets)
+        btn_create_label_sheets.pack()
 
-        self.event_list['MSA'].createRoundRobinTournaments()
-        #event_list['MSA'].saveFile('./data/MSA.dat');
+        # Number of rings entry
+        number_rings_label = tkinter.Label(window, text="Number of Rings:")
+        number_rings_label.pack()
 
-        self.event_list['MSR'].createRoundRobinTournaments()
+        self.number_rings = tkinter.Spinbox(window, from_=0, to=20)
+        self.number_rings.pack()
 
-        self.event_list['PST'].createRoundRobinTournaments()
-        #event_list['PST'].saveFile('./data/PST.dat');
+        # Reset competition rings
+        btn_reset_competition_ring_assignments = tkinter.Button(window, text="Reset Ring Assignments",
+                                                                command=self.gui_reset_competition_ring_assignments)
+        btn_reset_competition_ring_assignments.pack()
 
-        self.event_list['PSA'].createRoundRobinTournaments()
-        #event_list['PSA'].saveFile('./data/PSA.dat');
+        # Slot entries button
+        btn_slot_checked_in_entries = tkinter.Button(window, text="Slot Checked-in entries",
+                                                     command=self.gui_slot_checked_in_entries)
+        btn_slot_checked_in_entries.pack()
 
-    def saveState(self):
-        fileName = './data/data.dat'
-        with open(fileName, 'wb') as f:
-            pickle.dump(self, f)
+        # Create score sheets button
+        btn_create_score_sheets = tkinter.Button(window, text="Create scoresheets",
+                                                 command=self.gui_make_odf_score_sheet)
+        btn_create_score_sheets.pack()
 
-    def loadState(self):
-        fileName = './data/data.dat'
-        with open(fileName, 'rb') as f:
-            theObject = pickle.load(f)
-            self.entry_list = theObject.entry_list
-            self.event_list = theObject.event_list
-            self.resource_list = theObject.resource_list
+        # Run the window
+        window.mainloop()
+        print("Closing connection")
+        conn.close()
 
-    def makeOdfScoreSheet(self, event):
-        self.event_list[event].makeOdfSchedules()
+    # Slot all the checked in entries.
+    def gui_slot_checked_in_entries(self):
+        competition = self.selected_competition.get()
+        number_rings = int(self.number_rings.get())
 
-    def makeOdf5160Labels(self, event):
-        self.event_list[event].makeOdf5160Labels()
+        self.get_event_entries_from_database(competition)
+        self.build_ring_assignments_from_database(competition)
+
+        event = self.events[competition]
+
+        try:
+            sql = event.update_round_robin_assignments(number_rings)
+            for query in sql:
+                print(query)
+                self.cursor.execute(query)
+        except EventError as err:
+            tkinter.messagebox.showinfo("Failed", err)
+
+    print("All done!")
+
+    # Delete all of the ring assignments for a given competition
+    def gui_reset_competition_ring_assignments(self):
+        result = tkinter.messagebox.askokcancel("Are you sure",
+                                                "This will delete all the current ring assignments and "
+                                                "cannot be undone.")
+        if result:
+            competition = self.selected_competition.get()
+            s = "DELETE from `ring-assignment` where competition='{}'"
+            s = s.format(competition)
+            print(s)
+            self.cursor.execute(s)
+
+    # Make labels for robots
+    def gui_make_odf_label_sheets(self):
+        competition = self.selected_competition.get()
+        self.get_event_entries_from_database(competition)
+        event = self.events[competition]
+
+        filename = event.make_odf5160_labels()
+        filename = os.path.realpath(filename) + ".odt"
+        print(filename)
+        os.startfile(filename)
+
+    # Make scoresheets for robots
+    def gui_make_odf_score_sheet(self):
+        # Get the current competition
+        competition = self.selected_competition.get()
+        self.get_event_entries_from_database(competition)
+        self.build_ring_assignments_from_database(competition)
+        event = self.events[competition]
+        try:
+            event.rebuild_matches()
+            filename = event.make_odf_schedules()
+            filename = os.path.realpath(filename) + ".odt"
+            print(filename)
+            os.startfile(filename)
+        except RoundRobinError as err:
+            tkinter.messagebox.showinfo("Failed", err)
+
+    # Gets the list of events types from the database.
+    def get_event_list_from_database(self):
+        self.cursor.execute("""SELECT * FROM competition""")
+        data = self.cursor.fetchall()
+        events = {}
+
+        for row in data:
+            if row['name'] != '':
+                event = Event(row['name'], row['minRobotsPerRing'], row['maxRobotsPerRing'], row['rings'])
+                #event.checksString = row['checkString']
+                events[row['name']] = event
+        return events
+
+    # Gets all the entries for a given event from the database
+    def get_event_entries_from_database(self, competition):
+        sql = "SELECT * FROM robot WHERE comp = %s;"
+        self.cursor.execute(sql, competition)
+        data = self.cursor.fetchall()
+
+        entries = []
+        for row in data:
+            if row['robot'] != '':
+                entry = Entry(row['id'], row['robot'], row['coach'], row['school'], row['comp'], row['driver1'],
+                              row['driver1Gr'], row['driver2'], row['driver2Gr'], row['driver3'], row['driver3Gr'],
+                              row['signedIn'], row['measured'])
+                entries.append(entry)
+
+        # Note that this rebuilds the entries data form the database every time.
+        self.events[competition].entries = entries
+
+    # Gets the ring assignments (EventEntry's) for a given competition from the database
+    def build_ring_assignments_from_database(self, competition):
+        event = self.events[competition]
+        event.reset_round_robin_tournaments()
+        sql = "SELECT * FROM `ring-assignment` WHERE competition=%s;"
+        self.cursor.execute(sql, competition)
+        data = self.cursor.fetchall()
+
+        for row in data:
+            robot_id = row['robot']
+            found_entry = None
+            event = self.events[competition]
+
+            for entry in event.entries:
+                if entry.id == robot_id:
+                    found_entry = entry
+                    break
+
+            if found_entry is not None:
+                event_entry = EventEntry(found_entry, row['letter'], row['placed'])
+                # Crashes here cause this tournament may not exist.
+                if not row['ring'] in event.round_robin_tournaments:
+                    event.create_ring(row['ring'])
+                event.round_robin_tournaments[row['ring']].event_entries.append(event_entry)
 
     def makeParticipationCSV(self, event):
-        self.event_list[event].makeParticipationCSV()
+        self.event_list[event].make_participation_csv()
 
-    #def changeRobotName(self, oldRobotName, newRobotName):
-
-fe = FrontEnd()
-fileName = 'pre-reg-2016-03-17.csv'
-
-# fe.BuildTournaments(fileName)
-
-fe.loadState()
-# fe.saveState()
-
-# Round Robin
-fe.makeOdfScoreSheet('MS1')
-fe.makeOdf5160Labels('MS1')
-fe.makeParticipationCSV('MS1')
-
-fe.makeOdfScoreSheet('MS2')
-fe.makeOdf5160Labels('MS2')
-fe.makeParticipationCSV('MS2')
-
-# fe.makeOdfScoreSheet('MS3')
-fe.makeOdf5160Labels('MS3')
-fe.makeParticipationCSV('MS3')
-
-# fe.makeOdfScoreSheet('MSR')
-fe.makeOdf5160Labels('MSR')
-fe.makeParticipationCSV('MSR')
-
-# fe.makeOdfScoreSheet('MSA')
-fe.makeOdf5160Labels('MSA')
-fe.makeParticipationCSV('MSA')
-
-# fe.makeOdfScoreSheet('PST')
-fe.makeOdf5160Labels('PST')
-fe.makeParticipationCSV('PST')
-
-# fe.makeOdfScoreSheet('PSA')
-fe.makeOdf5160Labels('PSA')
-fe.makeParticipationCSV('PSA')
-
-# fe.makeOdfScoreSheet('SSA')
-fe.makeOdf5160Labels('SSA')
-fe.makeParticipationCSV('SSA')
-
-# fe.makeOdfScoreSheet('SSB')
-fe.makeOdf5160Labels('SSB')
-fe.makeParticipationCSV('SSB')
-
-# Has unique score sheet
-fe.makeOdf5160Labels('LFA')
-fe.makeParticipationCSV('LFA')
-
-# Timed with weights (make in excel for now)
-# fe.makeOdfScoreSheet('TPM')
-fe.makeOdf5160Labels('TPM')
-fe.makeParticipationCSV('TPM')
-
-# Has unique score sheet
-fe.makeOdf5160Labels('NXT')
-fe.makeParticipationCSV('NXT')
-
-# Other
-# fe.makeOdfScoreSheet('RC1')
-fe.makeOdf5160Labels('RC1')
-# fe.makeParticipationCSV('RC1')
-
-# fe.makeOdfScoreSheet('JC1')
-fe.makeOdf5160Labels('JC1')
-fe.makeParticipationCSV('JC1')
+fe = Frontend()
