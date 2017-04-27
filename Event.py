@@ -48,8 +48,8 @@ class Event(object):
                 num_entries += 1
 
         max_entries =  self.max_entries_per_ring * self.max_rings
-        if num_entries > max_entries:
-            raise EventError("There are more entries than allowed! ({} > {})".format(str(num_entries), str(max_entries)))
+        # if num_entries > max_entries:
+         #   raise EventError("There are more entries than allowed! ({} > {})".format(str(num_entries), str(max_entries)))
 
         if num_entries == 0:
             raise EventError("There are no entries to slot!")

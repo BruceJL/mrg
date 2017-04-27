@@ -14,8 +14,8 @@ import os
 # Defines and returns the database connection
 def createDatabaseConnection():
     return connect(
-                   # host='registration',
-                   host='localhost',
+                   host='192.168.11.2',
+                   # host='localhost',
                    port=3306,
                    # port=9999,
                    user='mrg-sign-in',
