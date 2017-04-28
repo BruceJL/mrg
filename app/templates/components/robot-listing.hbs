@@ -1,0 +1,12 @@
+<tr>
+	<td>{{item.id}}</td>
+	<td>{{#link-to edit-link item}}{{item.robot}}{{/link-to}}</td>
+	<td>{{item.comp.name}}</td>
+	<td>{{item.school}}</td>
+	<td>{{item.driver1}}</td>
+	<td>{{#if model.late}}LATE{{/if}}</td>
+	<td>{{item.formattedInvoicedDollars}}</td>
+	<td>{{item.formattedPaidDollars}}</td>
+	<td class="centered">{{item.formattedSignedIn}}</td>
+	<td class="centered">{{item.formattedMeasured}}</td>
+</tr>

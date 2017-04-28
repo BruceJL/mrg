@@ -1,0 +1,66 @@
+<div class="container">
+  	<div class="menu">
+      	<h1 class="left">
+        	Manitoba Robot Games Sign-in System
+        </h1>
+		<nav>
+			<ul>
+			<li>{{#link-to 'robots'}}Robot Index{{/link-to}}</li>
+
+			<li class="dropdown">
+			<a href="javascript:void(0)" class="dropbtn">Competitions</a>
+			<div class="dropdown-content">
+      			{{#link-to 'competitions.show' 'MSR'}}MSR{{/link-to}}
+      			{{#link-to 'competitions.show' 'MS1'}}MS1{{/link-to}}
+      			{{#link-to 'competitions.show' 'MS2'}}MS2{{/link-to}}
+      			{{#link-to 'competitions.show' 'MS3'}}MS3{{/link-to}}
+      			{{#link-to 'competitions.show' 'MSA'}}MSA{{/link-to}}
+      			{{#link-to 'competitions.show' 'PST'}}PST{{/link-to}}
+      			{{#link-to 'competitions.show' 'PSA'}}PSA{{/link-to}}
+      			{{#link-to 'competitions.show' 'SSA'}}SSA{{/link-to}}
+      			{{#link-to 'competitions.show' 'SSB'}}SSB{{/link-to}}
+      			{{#link-to 'competitions.show' 'TPM'}}TPM{{/link-to}}
+      			{{#link-to 'competitions.show' 'NXT'}}NXT{{/link-to}}
+      			{{#link-to 'competitions.show' 'JC1'}}JC1{{/link-to}}
+      			{{#link-to 'competitions.show' 'LFA'}}LFA{{/link-to}}
+      			{{#link-to 'competitions.show' 'RC1'}}RC1{{/link-to}}
+    		</div>
+    		</li>
+
+			<li class="dropdown">
+    		<a href="javascript:void(0)" class="dropbtn">Ring Assignments</a>
+    		<div class="dropdown-content">
+      			{{#link-to 'ring-assignments' 'MSR'}}MSR{{/link-to}}
+      			{{#link-to 'ring-assignments' 'MS1'}}MS1{{/link-to}}
+      			{{#link-to 'ring-assignments' 'MS2'}}MS2{{/link-to}}
+      			{{#link-to 'ring-assignments' 'MS3'}}MS3{{/link-to}}
+      			{{#link-to 'ring-assignments' 'MSA'}}MSA{{/link-to}}
+      			{{#link-to 'ring-assignments' 'PST'}}PST{{/link-to}}
+      			{{#link-to 'ring-assignments' 'PSA'}}PSA{{/link-to}}
+    		</div>
+    		</li>
+
+      <li class="dropdown">
+      <a href="javascript:void(0)" class="dropbtn">Checked-In Index</a>
+      <div class="dropdown-content">
+            {{#link-to 'checkin' 'MSR'}}MSR{{/link-to}}
+            {{#link-to 'checkin' 'MS1'}}MS1{{/link-to}}
+            {{#link-to 'checkin' 'MS2'}}MS2{{/link-to}}
+            {{#link-to 'checkin' 'MS3'}}MS3{{/link-to}}
+            {{#link-to 'checkin' 'MSA'}}MSA{{/link-to}}
+            {{#link-to 'checkin' 'PST'}}PST{{/link-to}}
+            {{#link-to 'checkin' 'PSA'}}PSA{{/link-to}}
+            {{#link-to 'checkin' 'SSA'}}SSA{{/link-to}}
+            {{#link-to 'checkin' 'SSB'}}SSB{{/link-to}}
+            {{#link-to 'checkin' 'TPM'}}TPM{{/link-to}}
+            {{#link-to 'checkin' 'NXT'}}NXT{{/link-to}}
+            {{#link-to 'checkin' 'JC1'}}JC1{{/link-to}}
+            {{#link-to 'checkin' 'LFA'}}LFA{{/link-to}}
+            {{#link-to 'checkin' 'RC1'}}RC1{{/link-to}}
+        </div>
+        </li>
+			</ul>
+		</nav>   	
+  	</div>
+  	{{outlet}}
+</div>

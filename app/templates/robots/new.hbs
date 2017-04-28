@@ -1,0 +1,14 @@
+&nbsp;
+{{#with (changeset model RobotValidation) as |changeset|}}
+{{action changeset validate}}
+<p>Adding a new Entry!</p>
+<form>
+<table class='form'>
+    <col width = "125">
+    <col width = "100">
+    <col width = "200">
+    {{robot-detail changeset=changeset competitions=competitions updateCompetition='updateCompetition' model=model}}
+</table>
+<button {{action 'save' changeset}} disabled={{changeset.isInvalid}}>Save Changes</button>
+</form>
+{{/with}}

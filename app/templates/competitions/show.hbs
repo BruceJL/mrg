@@ -1,0 +1,27 @@
+<h2>{{model.longName}}</h2>
+<p>
+	Total spaces: {{model.maxEntries}}<br/>
+	Competitors Registered: {{model.robotCount}}<br/>
+	Competitors Checked-in: {{model.robotCountCheckedIn}}<br/>
+	Spaces Unclaimed: {{model.unclaimedSpaces}}<br/>
+	Spaces Not Checked-in: {{model.uncheckedinSpaces}}<br/>
+	{{#link-to 'robots.new' (query-params competition=model.name)}}New Entry{{/link-to}}<br/><br/>
+	Filter by robot name:{{input value=robotFilter}}<br/>
+</p>
+<table class='list'>
+	<tr>
+		<th>#</th>
+		<th>Robot</th>
+		<th>Competition</th>
+		<th>School</th>
+		<th>Driver</th>
+		<th>Late</th>
+		<th>Invoiced</th>
+		<th>Paid</th>
+		<th>Checked In</th>
+		<th>Measured</th></tr>
+
+		{{#each filteredRobotsByName as |robot|}}
+			{{robot-listing edit-link="competitions.robot" item=robot}}
+		{{/each}}
+</table>

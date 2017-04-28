@@ -1,0 +1,3 @@
+{{input value=(get changeset propertyName)
+		update=(action (mut (get changeset propertyName)))
+		class=(if (get changeset.error propertyName) "full-width-error" "full-width")}}

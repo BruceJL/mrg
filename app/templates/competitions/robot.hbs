@@ -1,0 +1,4 @@
+&nbsp;
+{{#with (changeset model RobotValidation) as |changeset|}}
+	{{robot-edit competitions=competitions changeset=changeset done='done' updateCompetition='updateCompetition' model=model}}
+{{/with}}
