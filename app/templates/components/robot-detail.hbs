@@ -6,7 +6,7 @@
     <td>
     <select onchange={{action (action "updateCompetition" changeset) value="target.value"}}>
         {{#each competitions as |competitionOption|}}
-            <option value={{competitionOption.id}} selected={{eq changeset.comp.id competitionOption.id}}>{{competitionOption.name}}</option>
+            <option value={{competitionOption.id}} selected={{eq changeset.competition.id competitionOption.id}}>{{competitionOption.name}}</option>
         {{/each}}
     </select>
     </td>

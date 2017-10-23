@@ -6,7 +6,7 @@ export default Ember.Route.extend({
 		store.findAll('competition');
 		var competition = store.peekRecord('competition', transition.queryParams.competition);
 		console.log('creating a new robot in ' + competition.get('name'));
-		var robot = store.createRecord('robot', { comp: competition });
+		var robot = store.createRecord('robot', { competition: competition });
 		if(competition === "RC1"){
 			Ember.set(robot, 'invoiced', "5.00");
 		} else {

@@ -11,8 +11,8 @@ export default Ember.Controller.extend({
 		},
 
 		updateCompetition(changeset, id){
-			var comp = this.get('store').peekRecord('competition', id);    	
-			changeset.set('comp', comp);			
+			var competition = this.get('store').peekRecord('competition', id);    	
+			changeset.set('competition', competition);			
 		},
 
 		changeRobotStatus(property, value){

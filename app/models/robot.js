@@ -13,8 +13,8 @@ function formatDollars(amount){
 export default DS.Model.extend({
 
 	robot: DS.attr('string'),
-	//comp: DS.attr('string'),
-	comp: DS.belongsTo('competition'),
+	//competition: DS.attr('string'),
+	competition: DS.belongsTo('competition'),
 	driver1: DS.attr('string'),
 	driver1Gr: DS.attr('string'),
 	driver2: DS.attr('string'),

@@ -10,14 +10,14 @@ export default Ember.Controller.extend({
 	actions: {
 		done(){
 			var model = this.get('model');
-			var competition = Ember.get(model, 'comp');
+			var competition = Ember.get(model, 'competition');
 			this.transitionToRoute('competitions.show', competition);
 			//history.back();
 		},
 		
 		updateCompetition(changeset, id){
-			var comp = this.get('store').peekRecord('competition', id);    	
-			changeset.set('comp', comp);			
+			var competition = this.get('store').peekRecord('competition', id);    	
+			changeset.set('competition', competition);			
 		}, 
 
 		changeRobotStatus(property, value){

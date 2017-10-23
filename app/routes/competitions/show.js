@@ -4,7 +4,7 @@ import Ember from 'ember';
 //http://yoranbrondsema.com/live-polling-system-ember-js/
 const Pollster = Ember.Object.extend({
   interval: function() {
-    return 10000; // Time between polls (in ms)
+    return 5000; // Time between polls (in ms)
   }.property().readOnly(),
 
   // Schedules the function `f` to be executed every `interval` time.
@@ -35,23 +35,23 @@ export default Ember.Route.extend({
 		console.log("moving to: " + params.competition_id);
     var store = this.get('store');
     //TODO figure out a way to load just the robots for a given competition.
-    store.findAll('robot');
+    //store.findAll('robot');
 		return store.findRecord('competition', params.competition_id, {include: 'robot'});
 	},
 
 	setupController: function(controller, model) {
-    	this._super(controller, model);
-    	if (Ember.isNone(this.get('pollster'))) {
-       		var inst = this;
-        	this.set('pollster', Pollster.create({
-          		onPoll: function() {
-            		console.log("Model reload!");
-            		inst.get('store').findAll('robot');
-          		}
-        	}));
-      	}
-   		this.get('pollster').start();
-   	},
+    this._super(controller, model);
+    if (Ember.isNone(this.get('pollster'))) {
+     		var inst = this;
+      	this.set('pollster', Pollster.create({
+         		onPoll: function() {
+           		console.log("Model reload!");
+           		inst.get('store').findAll('robot');
+         		}
+       	}));
+     	}
+   	this.get('pollster').start();
+  },
 
    	  // This is called upon exiting the Route
   	deactivate: function() {

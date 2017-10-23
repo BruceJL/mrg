@@ -3,9 +3,9 @@ import DS from 'ember-data';
 import ENV from 'mrg-sign-in/config/environment';
 
 var hostValue = '';
-var nameSpace = 'api';
+var nameSpace = 'mrg';
 if (ENV.environment === 'development') {
-	hostValue = 'http://registration';
+	hostValue = 'http://registration:5000';
 	//hostValue = 'http://localhost:1337';
 	//nameSpace = '';
 }
