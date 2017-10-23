@@ -34,9 +34,10 @@ export default Ember.Route.extend({
 	model(params) {
 		console.log("moving to: " + params.competition_id);
     var store = this.get('store');
-    //TODO figure out a way to load just the robots for a given competition.
-    //store.findAll('robot');
-		return store.findRecord('competition', params.competition_id, {include: 'robot'});
+    this.set('params', params);
+		return store.findRecord('competition', 
+      params.competition_id, 
+      {include: 'robot'});
 	},
 
 	setupController: function(controller, model) {
@@ -46,7 +47,10 @@ export default Ember.Route.extend({
       	this.set('pollster', Pollster.create({
          		onPoll: function() {
            		console.log("Model reload!");
-           		inst.get('store').findAll('robot');
+              // TODO update this query so that we only pull the robots
+              // that are in the competition, and not the competition itself.
+           		inst.get('store').findRecord('competition',
+                inst.get('params').competition_id, {include: 'robot'});
          		}
        	}));
      	}

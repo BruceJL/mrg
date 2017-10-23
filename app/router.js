@@ -18,7 +18,7 @@ Router.map(function() {
     });
 
     this.route('ring-assignments', { path: 'ring-assignments/:competition_id'});
-    this.route('checkin', {path: 'checkin/:competition_id'})
+    this.route('checkin', {path: 'checkin/:competition_id'});
 });
 
 export default Router;

@@ -30,8 +30,10 @@ const Pollster = Ember.Object.extend({
 
 export default Ember.Route.extend({
 	model(params) {
-	   this.get('store').findAll('robot');
-	   return this.get('store').find('competition', params.competition_id);
+     this.set('params', params);
+	   return this.get('store').findRecord('competition',
+       params.competition_id, 
+       {include: 'robot'});
 	}, 
 
 	setupController: function(controller, model) {
@@ -41,7 +43,10 @@ export default Ember.Route.extend({
         	this.set('pollster', Pollster.create({
           		onPoll: function() {
             		console.log("Model reload!");
-            		inst.get('store').findAll('robot');
+                // TODO update this query so that we only pull the robots
+                // that are in the competition, and not the competition itself.
+                inst.get('store').findRecord('competition',
+                  inst.get('params').competition_id, {include: 'robot'});
           		}
         	}));
       	}
