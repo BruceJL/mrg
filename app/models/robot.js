@@ -13,7 +13,6 @@ function formatDollars(amount){
 export default DS.Model.extend({
 
 	robot: DS.attr('string'),
-	//competition: DS.attr('string'),
 	competition: DS.belongsTo('competition'),
 	driver1: DS.attr('string'),
 	driver1Gr: DS.attr('string'),
@@ -31,6 +30,7 @@ export default DS.Model.extend({
 	signedIn: DS.attr('boolean'),
 	late: DS.attr('boolean'),
 	measured: DS.attr('boolean'),
+	withdrawn: DS.attr('boolean'),
 
 	isPaid: Ember.computed('paid', function(){
 		var paid = this.get('paid');
@@ -51,9 +51,11 @@ export default DS.Model.extend({
 		return formatDollars(invoiced);
 	}),
 
-	formattedSignedIn: Ember.computed('signedIn', function(){
+	formattedSignedIn: Ember.computed('signedIn', 'withdrawn', function(){
 		if(this.get('signedIn') === true){
 			return "IN";
+		} else if(this.get('withdrawn') === true){
+			return "WITHDRAWN";
 		} else {
 			return "";
 		}
@@ -73,5 +75,5 @@ export default DS.Model.extend({
 		} else {
 			return "ON TIME";
 		}
-	})
+	}),
 });

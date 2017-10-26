@@ -14,14 +14,16 @@
         </tr>
         <tr><td colspan="3"><hr/></td></tr>
         <tr>
-            <td>
-                Checked in:</td><td>{{model.formattedSignedIn}}
-            </td>
+            <td>Checked in:</td>
+            <td>{{model.formattedSignedIn}}</td>
             <td>
                 {{#if changeset.signedIn}}
                     <button {{action 'signOut' changeset}}>Cancel Check in</button>
+                {{else if changeset.withdrawn}}
+                    <button {{action 'reinstate' changeset}}>Reinstate</button>
                 {{else}}
                     <button {{action 'signIn' changeset}}>Check in</button>
+                    <button {{action 'withdraw' changeset}}>Withdraw</button>
                 {{/if}}
             </td>
         </tr>

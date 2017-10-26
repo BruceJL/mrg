@@ -2,7 +2,7 @@
 <table class='list'>
 <th>Name</th><th>School</th><th>Driver</th><th>Signed-In</th>
 {{#each sortedAssignments as |item|}}
-	<tr>
+	<tr class={{if item.withdrawn "strikeout" "normal"}}>
 	<td>{{item.robot}}</td>
 	<td>{{item.school}}</td>
 	<td>{{item.driver1}}</td>

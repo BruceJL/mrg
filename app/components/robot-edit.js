@@ -30,7 +30,7 @@ export default Ember.Component.extend({
 		signOut(changeset){
 			//this.sendAction('changeRobotStatus', 'signedIn', false);
 			changeset.set('signedIn', false);
-			changeset.save();
+			changeset.save()
 		},
 
 		toggleMeasured(changeset){
@@ -38,6 +38,16 @@ export default Ember.Component.extend({
 			this.get('changeset').toggleProperty('measured');
 			this.get('changeset').save();
 		},
+
+		withdraw(changeset){
+    		changeset.set('withdrawn', true)
+    		changeset.save()
+    	},
+
+    	reinstate(changeset){
+    		changeset.set('withdrawn', false)
+    		changeset.save()
+    	},
 
 		done(){
 			this.sendAction('done');

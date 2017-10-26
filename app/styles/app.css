@@ -23,7 +23,7 @@ table.data td{
 }
 
 table.data td.info{
-	border-bottom:1pt solid black
+	border-bottom:1pt solid black;
 }
 
 table.data td.label {
@@ -53,6 +53,12 @@ table.list td{
 
 table.list td.centered{
 	text-align: center;
+}
+
+table.list tr.normal{}
+
+table.list tr.strikeout {
+	text-decoration:line-through;
 }
 
 input.full-width{
