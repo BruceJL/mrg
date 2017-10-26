@@ -3,50 +3,44 @@ import Ember from 'ember';
 
 export default Ember.Component.extend({
 	actions: {
-		paid5Dollars(){
-			//this.sendAction('changeRobotStatus', 'paid', 5.00);
-			Ember.set(this.get('changeset'), 'paid', 5.00);
-			this.get('changeset').save();
+		paid5Dollars(changeset){
+			changeset.set('paid', 5.00);
+			changeset.save();
 		},
 
-		paid10Dollars(){
-			//this.sendAction('changeRobotStatus', 'paid', 10.00);
-			Ember.set(this.get('changeset'), 'paid', 10.00);
-			this.get('changeset').save();
+		paid10Dollars(changeset){
+			changeset.set('paid', 10.00);
+			changeset.save();
 		},                 
 
-		refund(){
-			//this.sendAction('changeRobotStatus', 'paid', 0.00);
-			Ember.set(this.get('changeset'), 'paid', 0.00);
-			this.get('changeset').save();
+		refund(changeset){
+			changeset.set('paid', 0.00);
+			changeset.save();
 		},
 
 		signIn(changeset){
-			//this.sendAction('changeRobotStatus', 'signedIn', true);
 			changeset.set('signedIn', true);
 		    changeset.save();
 		},
 
 		signOut(changeset){
-			//this.sendAction('changeRobotStatus', 'signedIn', false);
 			changeset.set('signedIn', false);
-			changeset.save()
+			changeset.save();
 		},
 
 		toggleMeasured(changeset){
-			//this.sendAction('changeRobotStatus', 'measured', function(){
-			this.get('changeset').toggleProperty('measured');
-			this.get('changeset').save();
+			changeset.toggleProperty('measured');
+			changeset.save();
 		},
 
 		withdraw(changeset){
-    		changeset.set('withdrawn', true)
-    		changeset.save()
+    		changeset.set('withdrawn', true);
+    		changeset.save();
     	},
 
     	reinstate(changeset){
-    		changeset.set('withdrawn', false)
-    		changeset.save()
+    		changeset.set('withdrawn', false);
+    		changeset.save();
     	},
 
 		done(){
