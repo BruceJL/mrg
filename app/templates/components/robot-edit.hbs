@@ -33,17 +33,17 @@
             <td>{{model.formattedPaidDollars}}</td>
             <td>
                 {{#if model.isPaid}}
-                    <button {{action 'refund'}}>Refund</button>
+                    <button {{action 'refund' changeset}}>Refund</button>
                 {{else}}
-                    <button {{action 'paid5Dollars'}}>Paid $5.00</button>
-                    <button {{action 'paid10Dollars'}}>Paid $10.00</button>
+                    <button {{action 'paid5Dollars' changeset}}>Paid $5.00</button>
+                    <button {{action 'paid10Dollars' changeset}}>Paid $10.00</button>
                 {{/if}}
             </td>
         </tr>
         <tr>
             <td>Measured:</td>
             <td>{{model.formattedMeasured}}</td>
-            <td><button {{action 'toggleMeasured'}}>Toggle</button></td>
+            <td><button {{action 'toggleMeasured' changeset}}>Toggle</button></td>
         </tr>
         <tr>
             <td>Late:</td>
