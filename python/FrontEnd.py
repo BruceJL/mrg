@@ -14,7 +14,7 @@ import os
 # Defines and returns the database connection
 def createDatabaseConnection():
     return connect(
-                   host='192.168.11.2',
+                   host='registration',
                    # host='localhost',
                    port=3306,
                    # port=9999,
@@ -179,14 +179,14 @@ class Frontend(object):
 
     # Gets all the entries for a given event from the database
     def get_event_entries_from_database(self, competition):
-        sql = "SELECT * FROM robot WHERE comp = %s;"
+        sql = "SELECT * FROM robot WHERE competition = %s;"
         self.cursor.execute(sql, competition)
         data = self.cursor.fetchall()
 
         entries = []
         for row in data:
             if row['robot'] != '':
-                entry = Entry(row['id'], row['robot'], row['coach'], row['school'], row['comp'], row['driver1'],
+                entry = Entry(row['id'], row['robot'], row['coach'], row['school'], row['competition'], row['driver1'],
                               row['driver1Gr'], row['driver2'], row['driver2Gr'], row['driver3'], row['driver3Gr'],
                               row['signedIn'], row['measured'])
                 entries.append(entry)

@@ -462,15 +462,109 @@ class Event(object):
             table_cell.addElement(P(text=robot_name, stylename=robot_name_style_name))
             table_cell.addElement(P(text=driver_name, stylename=driver_style_name))
             table_cell.addElement(P(text=school_name, stylename=school_style_name))
-            p = P(text="Mass", stylename=measurement_style_name)
-            p.addElement(Span(text="r", stylename=wingdings_text_style))
-            p.addText(" Size")
-            p.addElement(Span(text="r", stylename=wingdings_text_style))
-            if self.competition == "MSA" or self.competition == "PSA":
-                p.addText(" Delay")
+
+
+            def add_mass_checkbox(p):
+                p.addText("Mass")
                 p.addElement(Span(text="r", stylename=wingdings_text_style))
-            p.addText(" Li")
-            p.addElement(Span(text="r", stylename=wingdings_text_style))
+                return p
+
+            def add_size_checkbox(p):
+                p.addText("Size")
+                p.addElement(Span(text="r", stylename=wingdings_text_style))
+                return p
+
+            def add_delay_checkbox(p):
+                p.addText("Delay")
+                p.addElement(Span(text="r", stylename=wingdings_text_style))
+                return p
+
+            def add_lipo_checkbox(p):
+                p.addText("Li")
+                p.addElement(Span(text="r", stylename=wingdings_text_style))
+                return p
+
+            def add_space(p):
+                p.addText(" ")
+                return p
+
+            p = P(text="", stylename=measurement_style_name)
+            if self.competition == "PST":
+                p = add_mass_checkbox(p)
+                p = add_space(p)
+                p = add_size_checkbox(p)
+                p = add_space(p)
+                p = add_lipo_checkbox(p)
+               
+            elif self.competition == "PSA":
+                p = add_mass_checkbox(p)
+                p = add_space(p)
+                p = add_size_checkbox(p)
+                p = add_space(p)
+                p = add_delay_checkbox(p)
+                p = add_space(p)
+                p = add_lipo_checkbox(p)
+
+            elif self.competition == "MS1":
+                p = add_mass_checkbox(p)
+                p = add_space(p)
+                p = add_lipo_checkbox(p)
+
+            elif self.competition == "MS2":
+                p = add_mass_checkbox(p)
+                p = add_space(p)
+                p = add_lipo_checkbox(p)
+
+            elif self.competition == "MS3":
+                p = add_mass_checkbox(p)
+                p = add_space(p)
+                p = add_lipo_checkbox(p)
+
+            elif self.competition == "MSR":
+                p = add_mass_checkbox(p)                
+
+            elif self.competition == "MSA":
+                p = add_mass_checkbox(p)
+                p = add_space(p)
+                p = add_delay_checkbox(p)
+                p = add_space(p)
+                p = add_lipo_checkbox(p)
+
+            elif self.competition == 'TPM':
+                p = add_mass_checkbox(p)
+                p = add_space(p)
+                p = add_size_checkbox(p)
+                p = add_space(p)
+                p = add_lipo_checkbox(p)
+
+            elif self.competition == 'LFA':
+                p = add_size_checkbox(p)
+                p = add_space(p)
+                p = add_lipo_checkbox(p)
+
+            elif self.competition == 'SSA':
+                p = add_mass_checkbox(p)
+                p = add_space(p)
+                p = add_size_checkbox(p)
+                p = add_space(p)
+                p = add_lipo_checkbox(p)
+
+            elif self.competition == 'SSB':
+                p = add_mass_checkbox(p)
+                p = add_space(p)
+                p = add_size_checkbox(p)
+                p = add_space(p)
+                p = add_lipo_checkbox(p)
+
+            elif self.competition == 'JC1':
+                p = add_mass_checkbox(p)
+                p = add_space(p)
+                p = add_size_checkbox(p)
+                p = add_space(p)
+                p = add_lipo_checkbox(p)
+
+            elif self.competition == 'NXT':
+                pass
 
             table_cell.addElement(p)
             sub_table_tr.addElement(table_cell)

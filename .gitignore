@@ -19,3 +19,6 @@ testem.log
 # yarn files
 yarn-error.log
 yarn.lock
+
+# python files
+/python/__pycache__
