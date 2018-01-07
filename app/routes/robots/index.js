@@ -55,6 +55,5 @@ export default Ember.Route.extend({
   // This is called upon exiting the Route
   deactivate: function() {
     this.get('pollster').stop();
-  },  
+  },
 });
-

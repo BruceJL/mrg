@@ -7,6 +7,8 @@ export default Ember.Route.extend({
 		var competition = store.peekRecord('competition', transition.queryParams.competition);
 		console.log('creating a new robot in ' + competition.get('name'));
 		var robot = store.createRecord('robot', { competition: competition });
+		Ember.set(robot, 'tookPayment', " ");
+		Ember.set(robot, 'paid', " ");
 		if(competition === "RC1"){
 			Ember.set(robot, 'invoiced', "5.00");
 		} else {
@@ -14,7 +16,7 @@ export default Ember.Route.extend({
 		}
 		return robot;
 	},
-	
+
 	setupController: function(controller, model) {
     	this._super(controller, model);
     	controller.set('competitions', this.get('store').peekAll('competition'));
