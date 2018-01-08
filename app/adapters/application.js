@@ -6,7 +6,7 @@ import ENV from 'mrg-sign-in/config/environment';
 var hostValue = '';
 var nameSpace = 'api/mrg';
 if (ENV.environment === 'development') {
-	hostValue = 'http://registration:5000';
+	hostValue = 'http://registration';
 	//hostValue = 'http://localhost:1337';
 	//nameSpace = '';
 }
