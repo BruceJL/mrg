@@ -4,7 +4,7 @@ import Ember from 'ember';
 //http://yoranbrondsema.com/live-polling-system-ember-js/
 const Pollster = Ember.Object.extend({
   interval: function() {
-    return 5000; // Time between polls (in ms)
+    return 10000; // Time between polls (in ms)
   }.property().readOnly(),
 
   // Schedules the function `f` to be executed every `interval` time.
@@ -17,11 +17,13 @@ const Pollster = Ember.Object.extend({
 
   // Stops the pollster
   stop: function() {
+    console.log("Stopping Pollster");
     Ember.run.cancel(this.get('timer'));
   },
 
   // Starts the pollster, i.e. executes the `onPoll` function every interval.
   start: function() {
+    console.log("Starting Pollster");
     this.set('timer', this.schedule(this.get('onPoll')));
   },
 
@@ -30,25 +32,27 @@ const Pollster = Ember.Object.extend({
   }
 });
 
+
 export default Ember.Route.extend({
 	model(params) {
-		console.log("moving to: " + params.competition_id);
+		console.log("Changing route to: " + params.competition_id);
     var store = this.get('store');
     this.set('params', params);
-		return store.findRecord('competition', 
-      params.competition_id, 
+		return store.findRecord('competition',
+      params.competition_id,
       {include: 'robot'});
 	},
 
-	setupController: function(controller, model) {
-    this._super(controller, model);
+	activate: function(controller, model) {
+    //this._super(controller, model);
     if (Ember.isNone(this.get('pollster'))) {
-     		var inst = this;
+        var inst = this;
+        console.log("Activating route for "
+          + inst.get('params').competition_id + "!")
       	this.set('pollster', Pollster.create({
          		onPoll: function() {
-           		console.log("Model reload!");
-              // TODO update this query so that we only pull the robots
-              // that are in the competition, and not the competition itself.
+           		console.log("Model reload for "
+                + inst.get('params').competition_id + "!");
            		inst.get('store').findRecord('competition',
                 inst.get('params').competition_id, {include: 'robot'});
          		}
@@ -57,8 +61,11 @@ export default Ember.Route.extend({
    	this.get('pollster').start();
   },
 
-   	  // This is called upon exiting the Route
-  	deactivate: function() {
-	    this.get('pollster').stop();
-  	}
-  });
+	  // This is called upon exiting the Route
+	deactivate: function() {
+    console.log("Deactivating route for "
+      + this.get('params').competition_id + "!");
+    this.get('pollster').stop();
+  }
+
+});

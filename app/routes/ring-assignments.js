@@ -33,9 +33,9 @@ export default Ember.Route.extend({
 		this.get('store').findAll('robot');
 		this.get('store').findAll('ring-assignment');
 	  return this.get('store').find('competition', params.competition_id);
-	}, 
+	},
 
-	setupController: function(controller, model) {
+	activate: function(controller, model) {
     this._super(controller, model);
     if (Ember.isNone(this.get('pollster'))) {
        		var inst = this;

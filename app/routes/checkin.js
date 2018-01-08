@@ -1,5 +1,7 @@
 import Ember from 'ember';
 
+//The following update routine is stolen and cleaned up a bit from:
+//http://yoranbrondsema.com/live-polling-system-ember-js/
 const Pollster = Ember.Object.extend({
   interval: function() {
     return 10000; // Time between polls (in ms)
@@ -15,11 +17,13 @@ const Pollster = Ember.Object.extend({
 
   // Stops the pollster
   stop: function() {
+    console.log("Stopping Pollster");
     Ember.run.cancel(this.get('timer'));
   },
 
   // Starts the pollster, i.e. executes the `onPoll` function every interval.
   start: function() {
+    console.log("Starting Pollster");
     this.set('timer', this.schedule(this.get('onPoll')));
   },
 
@@ -28,20 +32,24 @@ const Pollster = Ember.Object.extend({
   }
 });
 
+
 export default Ember.Route.extend({
 	model(params) {
      this.set('params', params);
 	   return this.get('store').findRecord('competition',
        params.competition_id, {include: 'robot'});
-	}, 
+	},
 
-	setupController: function(controller, model) {
-    	this._super(controller, model);
+	activate: function(controller, model) {
+    	//this._super(controller, model);
     	if (Ember.isNone(this.get('pollster'))) {
        		var inst = this;
+          console.log("Creating Pollster for "
+            + inst.get('params').competition_id + "!")
         	this.set('pollster', Pollster.create({
           		onPoll: function() {
-            		console.log("Model reload!");
+                console.log("Model reload for "
+                  + inst.get('params').competition_id + "!");
                 inst.get('store').findRecord('competition',
                   inst.get('params').competition_id, {include: 'robot'});
           		}
@@ -52,6 +60,8 @@ export default Ember.Route.extend({
 
    	  // This is called upon exiting the Route
   	deactivate: function() {
+      console.log("Deactivating route for "
+        + this.get('params').competition_id + "!");
 	    this.get('pollster').stop();
   	}
 });
