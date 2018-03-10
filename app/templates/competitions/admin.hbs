@@ -1,0 +1,4 @@
+<h2>{{model.longName}}</h2>
+<p> Clicking the "Set Measurement Time" button will cause all robot in this competition to be marked as "not measured" and set the competition "Measurement Start Time" to right now. This is useful when a reweigh of robots is required.</p>
+<button {{action 'setMeasurementTime' model}}>Set Measurment Time</button><br/>
+<p><b>Current Measurement Time:</b> {{moment-format model.registrationTime 'LTS'}}</p>

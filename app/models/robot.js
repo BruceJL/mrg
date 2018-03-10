@@ -31,11 +31,12 @@ export default DS.Model.extend({
 	late: DS.attr('boolean'),
 	measured: DS.attr('boolean'),
 	withdrawn: DS.attr('boolean'),
+	measurements: DS.hasMany('robot-measurement'),
 
 	isPaid: Ember.computed('paid', function(){
 		var paid = this.get('paid');
 		if(paid > 0){
-			return true; 
+			return true;
 		} else{
 			return false;
 		}

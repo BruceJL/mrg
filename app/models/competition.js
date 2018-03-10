@@ -8,10 +8,15 @@ export default DS.Model.extend({
 	ringAssignments: DS.hasMany('ring-assignments'),
 	robotsPerRing: DS.attr('number'),
 	maxEntries: DS.attr('number'),
+	registrationTime: DS.attr('date'),
+	measureMass: DS.attr('boolean'),
+	measureSize: DS.attr('boolean'),
+	measureTime: DS.attr('boolean'),
+	measureScratch: DS.attr('boolean'),
 	robots: DS.hasMany('robot'),
 
 	robotCount: Ember.computed('robots.@each', function(){
-		return Ember.get(this, 'robots.length');	
+		return Ember.get(this, 'robots.length');
 	}),
 
 	robotCountCheckedIn: Ember.computed('robots.@each.signedIn', function(){

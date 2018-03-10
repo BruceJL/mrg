@@ -36,8 +36,8 @@ export default Ember.Route.extend({
 		return this.get('store').findAll('robot', {reload: true});
 	},
 
-  setupController: function(controller, model) {
-    this._super(controller, model);
+  activate: function(controller, model) {
+    //this._super(controller, model);
     if (Ember.isNone(this.get('pollster'))) {
       var inst = this;
       this.set('pollster', Pollster.create({
@@ -49,7 +49,7 @@ export default Ember.Route.extend({
     }
     this.get('pollster').start();
 
-    controller.set('competitions', this.get('store').findAll('competition'));
+    this.set('competitions', this.get('store').findAll('competition'));
   },
 
   // This is called upon exiting the Route
