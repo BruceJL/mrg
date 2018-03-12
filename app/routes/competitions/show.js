@@ -1,37 +1,5 @@
 import Ember from 'ember';
-
-//The following update routine is stolen and cleaned up a bit from:
-//http://yoranbrondsema.com/live-polling-system-ember-js/
-const Pollster = Ember.Object.extend({
-  interval: function() {
-    return 10000; // Time between polls (in ms)
-  }.property().readOnly(),
-
-  // Schedules the function `f` to be executed every `interval` time.
-  schedule: function(f) {
-    return Ember.run.later(this, function() {
-      f.apply(this);
-      this.set('timer', this.schedule(f));
-    }, this.get('interval'));
-  },
-
-  // Stops the pollster
-  stop: function() {
-    console.log("Stopping Pollster");
-    Ember.run.cancel(this.get('timer'));
-  },
-
-  // Starts the pollster, i.e. executes the `onPoll` function every interval.
-  start: function() {
-    console.log("Starting Pollster");
-    this.set('timer', this.schedule(this.get('onPoll')));
-  },
-
-  onPoll: function(){
-    // Issue JSON request and add data to the store
-  }
-});
-
+import Pollster from '../pollster';
 
 export default Ember.Route.extend({
 	model(params) {
