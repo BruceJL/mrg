@@ -19,28 +19,40 @@ function getTotalDollars(items, property){
 
 export default Ember.Controller.extend({
 
-	queryParams: ['schoolFilter', 'robotFilter'],
+	queryParams: ['schoolFilter', 'robotFilter', 'robotIDFilter'],
 
-	filteredRobots: Ember.computed('model', 'robotFilter', 'schoolFilter', function(){
-		var returnRobots = Ember.get(this, 'model');
-		var robotFilter = Ember.get(this, 'robotFilter');
-		var schoolFilter = Ember.get(this, 'schoolFilter');
-		var regex;
+	filteredRobots: Ember.computed('model', 'robotFilter', 'schoolFilter', 'robotIDFilter', function(){
+		let returnRobots = Ember.get(this, 'model');
+		let robotFilter = Ember.get(this, 'robotFilter');
+		let schoolFilter = Ember.get(this, 'schoolFilter');
+		let robotIDFilter = Ember.get(this, 'robotIDFilter');
+		let regex;
 
-		if(schoolFilter && schoolFilter.length>1){
-			regex = new RegExp(schoolFilter, "i");
-			returnRobots = returnRobots.filter(function(item) {
-				var data = item.get('school');
-				return regex.test(data);	
+    if(robotIDFilter && robotIDFilter.length>2){
+			returnRobots = returnRobots.filter(function(i) {
+				if(i.get('id') == robotIDFilter){
+					return true;
+				} else {
+					return false;
+				}
 			});
-		} 
+		} else {
 
-		if(robotFilter && robotFilter.length>1){
-			regex = new RegExp(robotFilter, "i");
-			returnRobots = returnRobots.filter(function(item) {
-				var data = item.get('robot');
-				return regex.test(data);	
-			});
+			if(schoolFilter && schoolFilter.length>1){
+				regex = new RegExp(schoolFilter, "i");
+				returnRobots = returnRobots.filter(function(item) {
+					let data = item.get('school');
+					return regex.test(data);
+				});
+			}
+
+			if(robotFilter && robotFilter.length>1){
+				regex = new RegExp(robotFilter, "i");
+				returnRobots = returnRobots.filter(function(item) {
+					let data = item.get('robot');
+					return regex.test(data);
+				});
+			}
 		}
 
 		//Return the results of the two filters.
@@ -48,12 +60,12 @@ export default Ember.Controller.extend({
 	}),
 
 	invoicedTotal: Ember.computed('filteredRobots', function(){
-		var items = Ember.get(this, 'filteredRobots');
+		let items = Ember.get(this, 'filteredRobots');
 		return getTotalDollars(items, 'invoiced');
 	}),
 
 	paidTotal: Ember.computed('filteredRobots', function(){
-		var items = Ember.get(this, 'filteredRobots');
+		let items = Ember.get(this, 'filteredRobots');
 		return getTotalDollars(items, 'paid');
 	}),
 
