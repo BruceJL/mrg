@@ -1,0 +1,57 @@
+<div>
+<table>
+	<tr><td colspan='2'><b>Filters:</b></td></tr>
+	<tr>
+		<td>School:</td>
+		<td>{{input value=schoolFilter}}</td>
+	</tr>
+	<tr>
+		<td><b>TOTAL:</b></td>
+		<td>{{invoicedTotal}}</td>
+	</tr>
+  <tr>
+		<td>Count: </td>
+		<td>{{totalRobots}}</td>
+	</tr>
+	<tr>
+		<td colspan='2'><button {{action 'pay'}} disabled={{isPayDisabled}}>Pay</button></td>
+	</tr>
+</table>
+</div>
+
+<table class='list'>
+	<tr>
+		<th>#</th>
+		<th>Robot</th>
+		<th>Competition</th>
+		<th>School</th>
+		<th>Driver</th>
+		<th>Late</th>
+		<th>Invoiced</th>
+		<th>Paid</th>
+		<th>Signed In</th>
+		<th>Paying</th>
+	</tr>
+	{{#each filteredRobots as |item|}}
+		<tr>
+			<td>{{item.id}}</td>
+			<td>{{#link-to "robots.edit" item.id}}{{item.robot}}{{/link-to}}</td>
+			<td>{{item.competition.name}}</td>
+			<td>{{item.school}}</td>
+			<td>{{item.driver1}}</td>
+			<td>{{#if item.late}}LATE{{/if}}</td>
+			<td>{{item.formattedInvoicedDollars}}</td>
+			<td>{{item.formattedPaidDollars}}</td>
+			<td class="centered">{{item.formattedSignedIn}}</td>
+			<td>
+		  {{#if item.isPayable}}
+				{{input type="checkbox"
+								checked=false
+								click=(action 'checkboxClicked' item)}}
+			{{/if}}
+		</td>
+		</tr>
+	{{/each}}
+</table>
+
+{{outlet}}

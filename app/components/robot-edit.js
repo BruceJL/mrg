@@ -73,14 +73,6 @@ export default Ember.Component.extend({
 		rollback(changeset){
 			console.log("edit.js rollback");
 			changeset.rollback();
-		},
-
-		measurementPass(model){
-			this.createMeasurement("Pass", model);
-		},
-
-		measurementFail(Model){
-			this.createMeasurement("Fail", model);
 		}
 	}
 });

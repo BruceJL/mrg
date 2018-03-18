@@ -10,6 +10,7 @@ Router.map(function() {
     this.route('robots', function() {
         this.route('edit', { path: '/:robot_id'});
         this.route('new');
+        this.route('bulk-payment');
   	});
 
     this.route('competitions', function() {

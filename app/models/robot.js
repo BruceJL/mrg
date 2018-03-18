@@ -42,6 +42,14 @@ export default DS.Model.extend({
 		}
 	}),
 
+	isPayable: Ember.computed('withdrawn', 'paid', function(){
+		let paid = this.get('paid');
+		let withdrawn = this.get('withdrawn');
+
+		return ((paid === null || paid === 0) && (!withdrawn));
+
+	}),
+
 	formattedPaidDollars: Ember.computed('paid', function(){
 		var paid = this.get('paid');
   		return formatDollars(paid);

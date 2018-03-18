@@ -30,7 +30,7 @@ export default Ember.Controller.extend({
 		  robot: robot,
 			result: value,
 			type: type.toString(),
-			datetime: date	
+			datetime: date
 		});
 
 		measurement.save().then(()=> {
@@ -169,11 +169,13 @@ export default Ember.Controller.extend({
 		},
 
 		withdraw(changeset){
+			console.log("withdrawing!");
   		changeset.set('withdrawn', true);
   		changeset.save();
   	},
 
   	reinstate(changeset){
+			console.log("reinstating!");
   		changeset.set('withdrawn', false);
   		changeset.save();
   	},
@@ -184,6 +186,7 @@ export default Ember.Controller.extend({
 
 		//Ember-changeset methods
 		save(changeset){
+			console.log("Saving changeset");
 			changeset.save();
 		},
 
