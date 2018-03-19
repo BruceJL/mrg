@@ -1,3 +1,5 @@
+#!/usr/bin/python3
+
 import tkinter
 from tkinter import messagebox
 
@@ -9,7 +11,8 @@ from EventEntry import EventEntry
 from Resource import Resource
 from pymysql import connect, cursors
 import os
-
+import sys
+import subprocess
 
 # Defines and returns the database connection
 def createDatabaseConnection():
@@ -146,7 +149,11 @@ class Frontend(object):
         filename = event.make_odf5160_labels()
         filename = os.path.realpath(filename) + ".odt"
         print(filename)
-        os.startfile(filename)
+        if sys.platform == "win32":
+            os.startfile(filename)
+        else:
+            opener ="open" if sys.platform == "darwin" else "xdg-open"
+            subprocess.call([opener, filename])
 
     # Make scoresheets for robots
     def gui_make_odf_score_sheet(self):
