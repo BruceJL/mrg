@@ -9,7 +9,7 @@ export default Ember.Object.extend({
   name: 'Pollster',
 
   interval: function() {
-    return 5000; // Time between polls (in ms)
+    return 2000; // Time between polls (in ms)
   }.property().readOnly(),
 
   // Schedules the function `f` to be executed every `interval` time.

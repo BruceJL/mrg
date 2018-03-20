@@ -4,6 +4,9 @@
 /dist
 /tmp
 
+#UI files
+/python/ScoreSheets
+
 # dependencies
 /node_modules
 /bower_components

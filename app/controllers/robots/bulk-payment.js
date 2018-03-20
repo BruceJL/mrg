@@ -56,7 +56,7 @@ export default Ember.Controller.extend({
 			if(!returnRobots.includes(i)){
 				selectedRobots.removeObject(i);
 			}
-		})
+		});
 		//Return the results of the two filters.
 		return returnRobots;
 	}),
@@ -115,9 +115,9 @@ export default Ember.Controller.extend({
 					i.set('paid', i.get('invoiced'));
 					console.log("Marking " + i.get('robot') + " as paid.");
 					i.save();
-			})
+			  });
 			list.clear();
-		};
+		  }
 		}
 	}
 });

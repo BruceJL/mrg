@@ -24,7 +24,7 @@ export default Ember.Controller.extend({
 		let robot = this.get('model');
 		let type = this.get('selectedMeasurementOption');
 		let date = new Date('1970-01-01T00:00:00Z');
-		console.log("Logging " + type + "  measurement of: " + value + " for robot " + robot.id);
+		console.log("Logging " + type + " measurement of: " + value + " for robot " + robot.id);
 		let measurement = this.store.createRecord('robot-measurement',
 		{
 		  robot: robot,
@@ -34,7 +34,6 @@ export default Ember.Controller.extend({
 		});
 
 		measurement.save().then(()=> {
-			console.log("Measurment saved!");
 			let model = Ember.get(this, 'model');
 			console.log("Robot measured has id: " + model.id);
 			measurement.reload();
@@ -62,17 +61,14 @@ export default Ember.Controller.extend({
 
 				if(type === "Mass"){
 			     if(lastMeasuredMassTime === false || datetime > lastMeasuredMassTime){
-             console.log("updating Mass:" + datetime + ":" + result);
 						 lastMeasuredMassTime = datetime;
 						 measuredMass = result;
-					 }else{
-						 console.log("skipped mass: " + datetime + ":" + result);
 					 }
 				}
 				else if (type === "Time") {
 					if(lastMeasuredTimeTime === false || datetime > lastMeasuredTimeTime){
 						lastMeasuredTimeTime = datetime;
-						measuredSize = result;
+						measuredTime = result;
 					}
 				}
 				else if (type === "Scratch"){
@@ -88,7 +84,7 @@ export default Ember.Controller.extend({
 					}
 				}
 			});
-			console.log("last mass time " + lastMeasuredMassTime + ":" + measuredMass);
+
 			let competition = model.get('competition');
 
 			let requiresMass = competition.get('measureMass');

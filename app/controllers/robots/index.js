@@ -30,7 +30,7 @@ export default Ember.Controller.extend({
 
     if(robotIDFilter && robotIDFilter.length>2){
 			returnRobots = returnRobots.filter(function(i) {
-				if(i.get('id') == robotIDFilter){
+				if(i.get('id') === robotIDFilter){
 					return true;
 				} else {
 					return false;
