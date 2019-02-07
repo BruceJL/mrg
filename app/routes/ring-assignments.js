@@ -4,7 +4,7 @@ import Pollster from './pollster';
 export default Ember.Route.extend({
 	model(params) {
 		this.get('store').findAll('robot');
-		this.get('store').findAll('ring-assignment');
+		this.get('store').findAll('ring-assignment', params.competition_id);
 	  return this.get('store').find('competition', params.competition_id);
 	},
 

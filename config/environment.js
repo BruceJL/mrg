@@ -26,7 +26,7 @@ module.exports = function(environment) {
   if (environment === 'development') {
     ENV.APP.usingCors = true;
     ENV.APP.corsWithCreds = true;
-    ENV.APP.apiURL = 'http://registration:5000'
+    // ENV.APP.apiURL = 'http://registration:5000'
     // ENV.APP.LOG_RESOLVER = true;
     // ENV.APP.LOG_ACTIVE_GENERATION = true;
     // ENV.APP.LOG_TRANSITIONS = true;
@@ -46,7 +46,7 @@ module.exports = function(environment) {
   }
 
   if (environment === 'production') {
-
+    //ENV.APP.apiURL = 'api/mrg/';
   }
 
   return ENV;

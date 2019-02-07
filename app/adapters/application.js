@@ -3,8 +3,9 @@ import DS from 'ember-data';
 import pluralize from 'ember-inflector';
 import ENV from 'mrg-sign-in/config/environment';
 
-var hostValue = '';
-var nameSpace = 'api/mrg';
+//var hostValue = '';
+var nameSpace = '/api/mrg';
+
 if (ENV.environment === 'development') {
 	hostValue = 'http://registration';
 	//hostValue = 'http://localhost:1337';
@@ -13,7 +14,7 @@ if (ENV.environment === 'development') {
 
 export default DS.RESTAdapter.extend({
 	namespace: nameSpace,
-	host: hostValue,
+	//host: hostValue,
 
 	shouldReloadAll(store, snapshotsArray) {
     	return true;
