@@ -1,4 +1,6 @@
-import Ember from 'ember';
+import { computed, get } from '@ember/object';
+import { A } from '@ember/array';
+import Controller from '@ember/controller';
 
 //Good checkbox model described here:
 //https://codeflip.przepiora.ca/blog/2014/05/22/ember-js-recipes-checkboxable-index-pages-using-itemcontroller/
@@ -24,16 +26,16 @@ function getTotalDollars(items, property){
 	return formatDollars(total);
 }
 
-export default Ember.Controller.extend({
+export default Controller.extend({
 
 	queryParams: ['schoolFilter', 'robotFilter'],
-	selectedRobots: Ember.A(),
+	selectedRobots: A(),
 
-	filteredRobots: Ember.computed('model', 'robotFilter', 'schoolFilter', function(){
-		let returnRobots = Ember.get(this, 'model');
-		let robotFilter = Ember.get(this, 'robotFilter');
-		let schoolFilter = Ember.get(this, 'schoolFilter');
-		let selectedRobots = Ember.get(this, 'selectedRobots');
+	filteredRobots: computed('model', 'robotFilter', 'schoolFilter', function(){
+		let returnRobots = get(this, 'model');
+		let robotFilter = get(this, 'robotFilter');
+		let schoolFilter = get(this, 'schoolFilter');
+		let selectedRobots = get(this, 'selectedRobots');
 		let regex;
 
 		if(schoolFilter && schoolFilter.length>1){
@@ -61,18 +63,18 @@ export default Ember.Controller.extend({
 		return returnRobots;
 	}),
 
-	invoicedTotal: Ember.computed('selectedRobots.[]', function(){
+	invoicedTotal: computed('selectedRobots.[]', function(){
     console.log("computing invoiced total");
-		let list = Ember.get(this, 'selectedRobots');
+		let list = get(this, 'selectedRobots');
 		return getTotalDollars(list, 'invoiced').toString();
 	}),
 
-	totalRobots: Ember.computed('selectedRobots.[]', function(){
+	totalRobots: computed('selectedRobots.[]', function(){
 		return this.selectedRobots.length;
 	}),
 
-	isPayDisabled: Ember.computed('totalRobots', function(){
-		let count = Ember.get(this, 'totalRobots');
+	isPayDisabled: computed('totalRobots', function(){
+		let count = get(this, 'totalRobots');
 		return (count === 0);
 	}),
 
@@ -93,7 +95,7 @@ export default Ember.Controller.extend({
 		},
 
 		checkboxClicked(item){
-			let list = Ember.get(this, 'selectedRobots');
+			let list = get(this, 'selectedRobots');
 			if(list.includes(item)){
 				list.removeObject(item);
 				console.log("Removing: " + item.get('robot').toString());
@@ -108,8 +110,8 @@ export default Ember.Controller.extend({
 		},
 
 		pay(){
-			let list = Ember.get(this, 'selectedRobots');
-			let total = Ember.get(this, 'invoicedTotal');
+			let list = get(this, 'selectedRobots');
+			let total = get(this, 'invoicedTotal');
 			if(window.confirm("Take payment of " + total + "?")){
 				list.forEach(function(i){
 					i.set('paid', i.get('invoiced'));

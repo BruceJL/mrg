@@ -1,7 +1,8 @@
-import Ember from 'ember';
+import { computed } from '@ember/object';
+import Controller from '@ember/controller';
 
-export default Ember.Controller.extend({
-  	sortedAssignments: Ember.computed('model.@each.robots', function(){
-		return this.get('model').get('robots').sortBy('robot');
+export default Controller.extend({
+  	sortedAssignments: computed('model.@each.robots', function(){
+		return this.model.get('robots').sortBy('robot');
 	})
 });

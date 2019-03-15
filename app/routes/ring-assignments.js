@@ -1,16 +1,17 @@
-import Ember from 'ember';
+import { isNone } from '@ember/utils';
+import Route from '@ember/routing/route';
 import Pollster from './pollster';
 
-export default Ember.Route.extend({
+export default Route.extend({
 	model(params) {
-		this.get('store').findAll('robot');
-		this.get('store').findAll('ring-assignment', params.competition_id);
-	  return this.get('store').find('competition', params.competition_id);
+		this.store.findAll('robot');
+		this.store.findAll('ring-assignment', params.competition_id);
+	  return this.store.find('competition', params.competition_id);
 	},
 
 	activate: function(controller, model) {
     this._super(controller, model);
-    if (Ember.isNone(this.get('pollster'))) {
+    if (isNone(this.pollster)) {
        		var inst = this;
         	this.set('pollster', Pollster.create({
           		onPoll: function() {
@@ -19,11 +20,11 @@ export default Ember.Route.extend({
           		}
        	}));
       	}
-   		this.get('pollster').start();
+   		this.pollster.start();
    	},
 
     // This is called upon exiting the Route
   deactivate: function() {
-	  this.get('pollster').stop();
+	  this.pollster.stop();
   }
 });

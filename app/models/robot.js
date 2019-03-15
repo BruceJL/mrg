@@ -1,5 +1,5 @@
+import { computed } from '@ember/object';
 import DS from 'ember-data';
-import Ember from 'ember';
 
 function formatDollars(amount){
 	if(amount > 0){
@@ -33,8 +33,8 @@ export default DS.Model.extend({
 	withdrawn: DS.attr('boolean'),
 	measurements: DS.hasMany('robot-measurement'),
 
-	isPaid: Ember.computed('paid', function(){
-		var paid = this.get('paid');
+	isPaid: computed('paid', function(){
+		var paid = this.paid;
 		if(paid > 0){
 			return true;
 		} else{
@@ -42,44 +42,44 @@ export default DS.Model.extend({
 		}
 	}),
 
-	isPayable: Ember.computed('withdrawn', 'paid', function(){
-		let paid = this.get('paid');
-		let withdrawn = this.get('withdrawn');
+	isPayable: computed('withdrawn', 'paid', function(){
+		let paid = this.paid;
+		let withdrawn = this.withdrawn;
 
 		return ((paid === null || paid === 0) && (!withdrawn));
 
 	}),
 
-	formattedPaidDollars: Ember.computed('paid', function(){
-		var paid = this.get('paid');
+	formattedPaidDollars: computed('paid', function(){
+		var paid = this.paid;
   		return formatDollars(paid);
 	}),
 
-	formattedInvoicedDollars: Ember.computed('invoiced', function(){
-		var invoiced = this.get('invoiced');
+	formattedInvoicedDollars: computed('invoiced', function(){
+		var invoiced = this.invoiced;
 		return formatDollars(invoiced);
 	}),
 
-	formattedSignedIn: Ember.computed('signedIn', 'withdrawn', function(){
-		if(this.get('signedIn') === true){
+	formattedSignedIn: computed('signedIn', 'withdrawn', function(){
+		if(this.signedIn === true){
 			return "IN";
-		} else if(this.get('withdrawn') === true){
+		} else if(this.withdrawn === true){
 			return "WITHDRAWN";
 		} else {
 			return "";
 		}
 	}),
 
-	formattedMeasured: Ember.computed('measured', function(){
-		if(this.get('measured') === true){
+	formattedMeasured: computed('measured', function(){
+		if(this.measured === true){
 			return "MEASURED";
 		} else {
 			return "";
 		}
 	}),
 
-	formattedLate: Ember.computed('late', function(){
-		if(this.get('late') === true){
+	formattedLate: computed('late', function(){
+		if(this.late === true){
 			return "LATE";
 		} else {
 			return "ON TIME";

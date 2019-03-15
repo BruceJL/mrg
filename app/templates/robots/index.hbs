@@ -1,42 +1,50 @@
 <div>
-<table>
-	<tr><td colspan='2'><b>Filters:</b></td></tr>
-	<tr>
-		<td>Robot Name:</td>
-		<td>{{input value=robotFilter}}</td>
-		<td>School:</td>
-		<td>{{input value=schoolFilter}}</td>
-		<td>ID:</td>
-		<td>{{input value=robotIDFilter}}</td>
-	</tr>
-</table>
+  <table>
+    <tbody>
+      <tr>
+        <td colspan="2"><b>Filters:</b></td>
+      </tr>
+      <tr>
+        <td>Robot Name:</td>
+        <td>{{input value=robotFilter}}</td>
+        <td>School:</td>
+        <td>{{input value=schoolFilter}}</td>
+        <td>ID:</td>
+        <td>{{input value=robotIDFilter}}</td>
+      </tr>
+    </tbody>
+  </table>
 </div>
 
-<table class='list'>
-<tr>
-	<th>#</th>
-	<th>Robot</th>
-	<th>Competition</th>
-	<th>School</th>
-	<th>Driver</th>
-	<th>Late</th>
-	<th>Invoiced</th>
-	<th>Paid</th>
-	<th>Signed In</th>
-	<th>Measured</th></tr>
-
-	{{#each filteredRobots as |item|}}
-		{{robot-listing edit-link="robots.edit" item=item}}
-	{{/each}}
-	<tr>
-		<td><b>TOTAL:</b></td>
-		<td></td>
-		<td></td>
-		<td></td>
-		<td><b>{{invoicedTotal}}</b></td>
-		<td><b>{{paidTotal}}</b></td>
-		<td></td>
-		<td></td>
-	</tr>
+<table class="list">
+  <thead>
+    <tr>
+      <th>#</th>
+      <th>Robot</th>
+      <th>Competition</th>
+      <th>School</th>
+      <th>Driver</th>
+      <th>Late</th>
+      <th>Invoiced</th>
+      <th>Paid</th>
+      <th>Signed In</th>
+      <th>Measured</th>
+    </tr>
+  </thead>
+  <tbody>
+    {{#each filteredRobots as |item|}}
+      {{robot-listing edit-link="robots.edit" item=item}}
+    {{/each}}
+    <tr>
+      <td><b>TOTAL:</b></td>
+      <td></td>
+      <td></td>
+      <td></td>
+      <td><b>{{invoicedTotal}}</b></td>
+      <td><b>{{paidTotal}}</b></td>
+      <td></td>
+      <td></td>
+    </tr>
+  </tbody>
 </table>
 {{outlet}}

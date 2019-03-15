@@ -1,13 +1,14 @@
-import Ember from 'ember';
+import { get } from '@ember/object';
+import Controller from '@ember/controller';
 
-export default Ember.Controller.extend({
+export default Controller.extend({
 
 	actions: {
 		setMeasurementTime(){
-			var model = this.get('model');
-			var robots = Ember.get(model, 'robots');
+			var model = this.model;
+			var robots = get(model, 'robots');
       robots.forEach(function(item){
-        console.log("setting meausured of " + Ember.get(item, 'robot') + " to false");
+        console.log("setting meausured of " + get(item, 'robot') + " to false");
         item.set('measured', false);
         item.save();
       });

@@ -1,35 +1,36 @@
-import Ember from 'ember';
+import { isNone } from '@ember/utils';
+import Route from '@ember/routing/route';
 import Pollster from './pollster';
 
-export default Ember.Route.extend({
-	model(params) {
+export default Route.extend({
+  model(params) {
      this.set('params', params);
-	   return this.get('store').findRecord('competition',
+     return this.store.findRecord('competition',
        params.competition_id, {include: 'robot'});
-	},
+  },
 
-	activate: function(controller, model) {
-    	//this._super(controller, model);
-    	if (Ember.isNone(this.get('pollster'))) {
-       		var inst = this;
+  activate: function() {
+      //this._super(controller, model);
+      if (isNone(this.pollster)) {
+           var inst = this;
           console.log("Creating Pollster for " +
             inst.get('params').competition_id + "!");
-        	this.set('pollster', Pollster.create({
-          		onPoll: function() {
+          this.set('pollster', Pollster.create({
+              onPoll: function() {
                 console.log("Model reload for " +
                   inst.get('params').competition_id + "!");
                 inst.get('store').findRecord('competition',
                   inst.get('params').competition_id, {include: 'robot'});
-          		}
-        	}));
-      	}
-   		this.get('pollster').start();
-   	},
+              }
+          }));
+        }
+       this.pollster.start();
+     },
 
-   	  // This is called upon exiting the Route
-  	deactivate: function() {
+       // This is called upon exiting the Route
+    deactivate: function() {
       console.log("Deactivating route for " +
-        this.get('params').competition_id + "!");
-	    this.get('pollster').stop();
-  	}
+        this.params.competition_id + "!");
+      this.pollster.stop();
+    }
 });

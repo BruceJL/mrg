@@ -1,6 +1,6 @@
-import Ember from 'ember';
+import Route from '@ember/routing/route';
 
-export default Ember.Route.extend({
+export default Route.extend({
   // putting this variable here makes it persistant across
 	// visits to this page.
 	selectedMeasurementOption: "Mass",
@@ -8,13 +8,13 @@ export default Ember.Route.extend({
 
 	model(params) {
 		console.log("Changing route to: robot " + params.robot_id);
-	  this.get('store').findAll('competition', {reload: true});
-		return this.get('store').findRecord('robot',
+	  this.store.findAll('competition', {reload: true});
+		return this.store.findRecord('robot',
 		  params.robot_id, {include: 'robotMeasurement'});
 	},
 
 	setupController: function(controller, model) {
 		  this._super(controller, model);
-    	controller.set('competitions', this.get('store').peekAll('competition'));
+    	controller.set('competitions', this.store.peekAll('competition'));
   }
 });

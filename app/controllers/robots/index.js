@@ -1,4 +1,5 @@
-import Ember from 'ember';
+import { computed, get } from '@ember/object';
+import Controller from '@ember/controller';
 
 function formatDollars(amount){
 	if(amount > 0){
@@ -17,15 +18,15 @@ function getTotalDollars(items, property){
 	return formatDollars(total);
 }
 
-export default Ember.Controller.extend({
+export default Controller.extend({
 
 	queryParams: ['schoolFilter', 'robotFilter', 'robotIDFilter'],
 
-	filteredRobots: Ember.computed('model', 'robotFilter', 'schoolFilter', 'robotIDFilter', function(){
-		let returnRobots = Ember.get(this, 'model');
-		let robotFilter = Ember.get(this, 'robotFilter');
-		let schoolFilter = Ember.get(this, 'schoolFilter');
-		let robotIDFilter = Ember.get(this, 'robotIDFilter');
+	filteredRobots: computed('model', 'robotFilter', 'schoolFilter', 'robotIDFilter', function(){
+		let returnRobots = get(this, 'model');
+		let robotFilter = get(this, 'robotFilter');
+		let schoolFilter = get(this, 'schoolFilter');
+		let robotIDFilter = get(this, 'robotIDFilter');
 		let regex;
 
     if(robotIDFilter && robotIDFilter.length>2){
@@ -59,13 +60,13 @@ export default Ember.Controller.extend({
 		return returnRobots;
 	}),
 
-	invoicedTotal: Ember.computed('filteredRobots', function(){
-		let items = Ember.get(this, 'filteredRobots');
+	invoicedTotal: computed('filteredRobots', function(){
+		let items = get(this, 'filteredRobots');
 		return getTotalDollars(items, 'invoiced');
 	}),
 
-	paidTotal: Ember.computed('filteredRobots', function(){
-		let items = Ember.get(this, 'filteredRobots');
+	paidTotal: computed('filteredRobots', function(){
+		let items = get(this, 'filteredRobots');
 		return getTotalDollars(items, 'paid');
 	}),
 

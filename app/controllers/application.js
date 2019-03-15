@@ -1,16 +1,17 @@
-import Ember from 'ember';
+import { inject as service } from '@ember/service';
+import Controller from '@ember/controller';
 
-export default Ember.Controller.extend({
-	session: Ember.inject.service('session'),
+export default Controller.extend({
+	session: service('session'),
 
  	actions:{
  		invalidateSession(){
- 			this.get('session').invalidate();
+ 			this.session.invalidate();
  		},
 
  		authenticate() {
-      		let { identification } = this.getProperties('identification');
-      		this.get('session').authenticate('authenticator:simple', identification).catch((reason) => {
+      		let { identification } = this;
+      		this.session.authenticate('authenticator:simple', identification).catch((reason) => {
         		this.set('errorMessage', reason.error || reason);
         	});
       	},

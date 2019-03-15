@@ -1,4 +1,3 @@
-import Ember from 'ember';
 import DS from 'ember-data';
 import pluralize from 'ember-inflector';
 import ENV from 'mrg-sign-in/config/environment';

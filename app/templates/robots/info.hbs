@@ -1,88 +1,94 @@
-<div style=" position: absolute; top: 50px; left: 230px; text-align:center">
-	<h1>2016 Manitoba Robot Games<br/>Router Sheet</h1>
+<div style="position: absolute; top: 50px; left: 230px; text-align:center">
+  <h1>2016 Manitoba Robot Games<br>Router Sheet</h1>
 </div>
 <div style="position: absolute; left: 5px; top: 5px; padding: 1em;">
-	<img height="200px" width="200px" src="/assets/images/robot.gif"/>
-</div> 
+  <img height="200px" width="200px" src="/assets/images/robot.gif"/>
+</div>
 
 <div style="position: absolute; left: 20px; top: 215px; padding: 5px;">
-	<p>Please read carefully.<br/>
-	<b>This information will be used for certificates and awards.</b></p>
-	<p>Please make changes clear and legible and present the completed sheet with your robot for registering.</p>
+  <p>
+    Please read carefully.<br>
+    <b>This information will be used for certificates and awards.</b>
+  </p>
+  <p>Please make changes clear and legible and present the completed sheet with your robot for registering.</p>
 </div>
 
 <div id="router-sheet-div"/>
-	<div style="position: absolute; left: 10px; top: 330px">
-		<table class="data">
-			<col width = "150">
-			<col width = "300">
-			<col width = "125">
-			<col width = "50">
-			<tr>
-				<td class=label>Competition:</td>
-				<td class=info>{{model.competition}}</td>
-				<td class=label>Amount Paid:</td>
-				<td class=info>${{model.amount_paid}}</td>
-			</tr>
-			<tr>
-				<td class=label>Robot Name:</td>
-				<td class=info>{{model.robot}}</td>
-			</tr>
-			<tr>
-				<td class=label>Team Member 1:</td>
-				<td class=info>{{model.driver1}}</td>
-				<td class=label>Grade:</td>
-				<td class=info>{{model.driver1Gr}}</td>
-			</tr>
-			<tr>
-				<td class=label>Team Member 2:</td>
-				<td class=info>{{model.driver2}}</td>
-				<td class=label>Grade:</td>
-				<td class=info>{{model.driver2Gr}}</td>
-			</tr>
-			<tr>
-				<td class=label>Team Member 3:</td>
-				<td class=info>{{model.driver3}}</td>
-				<td class=label>Grade:</td>
-				<td class=info>{{model.driver3Gr}}</td>
-			</tr>
-			<tr>
-				<td class=label>School Attending:</td>
-				<td class=info colspan="3">{{model.school}}</td>
-			</tr>
-			<tr>
-				<td class=label style="text-align: left;" colspan="2">Contact Information:</td>
-			</tr>
-			<tr>
-				<td class=label>Phone:</td>
-				<td class=info colspan="3">{{model.ph}}</td>
-			</tr>
-			<tr>
-				<td class=label >Email:</td>
-				<td class=info colspan="3">{{model.email}}</td>
-			</tr>
-			<tr>
-				<td class=label>Address:</td>
-				<td class=info colspan="3">{{model.address}}</td>
-			</tr>
-			<tr>
-				<td/>
-				<td/>
-				<td/>
-				<td class=label style="text-align: center; padding: 5px">#: {{id}}</td>
-			</tr>
-			<tr>
-				<td class=label colspan="3">Ring assignment code:</td>
-				<td colspan="2" style="text-align: center; padding: 0px">
-					<img height="75px" width="75px" src="/assets/images/octagon.jpg"/>
-				</td>
-			</tr>
-		</table> 
-	</div>
+  <div style="position: absolute; left: 10px; top: 330px">
+    <table class="data">
+      <tbody>
+        <col width = "150">
+        <col width = "300">
+        <col width = "125">
+        <col width = "50">
+        <tr>
+          <td class="label">Competition:</td>
+          <td class="info">{{model.competition}}</td>
+          <td class="label">Amount Paid:</td>
+          <td class="info">${{model.amount_paid}}</td>
+        </tr>
+        <tr>
+          <td class="label">Robot Name:</td>
+          <td class="info">{{model.robot}}</td>
+        </tr>
+        <tr>
+          <td class="label">Team Member 1:</td>
+          <td class="info">{{model.driver1}}</td>
+          <td class="label">Grade:</td>
+          <td class="info">{{model.driver1Gr}}</td>
+        </tr>
+        <tr>
+          <td class="label">Team Member 2:</td>
+          <td class="info">{{model.driver2}}</td>
+          <td class="label">Grade:</td>
+          <td class="info">{{model.driver2Gr}}</td>
+        </tr>
+        <tr>
+          <td class="label">Team Member 3:</td>
+          <td class="info">{{model.driver3}}</td>
+          <td class="label">Grade:</td>
+          <td class="info">{{model.driver3Gr}}</td>
+        </tr>
+        <tr>
+          <td class="label">School Attending:</td>
+          <td class="info" colspan="3">{{model.school}}</td>
+        </tr>
+        <tr>
+          <td class="label" style="text-align: left;" colspan="2">Contact Information:</td>
+        </tr>
+        <tr>
+          <td class="label">Phone:</td>
+          <td class="info" colspan="3">{{model.ph}}</td>
+        </tr>
+        <tr>
+          <td class="label" >Email:</td>
+          <td class="info" colspan="3">{{model.email}}</td>
+        </tr>
+        <tr>
+          <td class="label">Address:</td>
+          <td class="info" colspan="3">{{model.address}}</td>
+        </tr>
+        <tr>
+          <td/>
+          <td/>
+          <td/>
+          <td class="label" style="text-align: center; padding: 5px">#: {{id}}</td>
+        </tr>
+        <tr>
+          <td class="label" colspan="3">Ring assignment code:</td>
+          <td colspan="2" style="text-align: center; padding: 0px">
+            <img height="75px" width="75px" src="/assets/images/octagon.jpg"/>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
 
 <div style="position: absolute; top:  785px; left: 25px;">
-	<p>I hereby acknowledge that I have read, understood, and agree to abide <br/> 
-	by the "General Rules" of the Manitoba Robot Games.</p>
+  <p>
+    I hereby acknowledge that I have read, understood, and agree to abide <br>
+    by the "General Rules" of the Manitoba Robot Games.
+  </p>
 
-	<p><br/><br/>Robot Operator Signature: _____________________________________________</p>
-</div>	
+  <p><br><br>Robot Operator Signature: _____________________________________________</p>
+</div>

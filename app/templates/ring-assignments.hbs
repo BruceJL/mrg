@@ -1,13 +1,16 @@
-
 <p>{{model.longName}}</p>
-<table class='list'>
-<th>Name</th><th>Ring</th><th>ID</th><th>Driver</th>
-{{#each sortedAssignments as |item|}}
-	<tr>
-		<td>{{item.robot.robot}}</td>
-		<td>{{item.ring}}</td>
-		<td>{{item.letter}}</td>
-		<td>{{item.robot.driver1}}</td>
-	</tr>
-{{/each}}
+<table class="list">
+  <thead>
+    <th>Name</th><th>Ring</th><th>ID</th><th>Driver</th>
+  </thead>
+  <tbody>
+    {{#each sortedAssignments as |item|}}
+      <tr>
+        <td>{{item.robot.robot}}</td>
+        <td>{{item.ring}}</td>
+        <td>{{item.letter}}</td>
+        <td>{{item.robot.driver1}}</td>
+      </tr>
+    {{/each}}
+  </tbody>
 </table>

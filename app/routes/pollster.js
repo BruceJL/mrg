@@ -1,11 +1,12 @@
-import Ember from 'ember';
+import { later, cancel } from '@ember/runloop';
+import EmberObject from '@ember/object';
 
 //How to do imports illustrated best at:
 //https://stackoverflow.com/questions/24417725/defining-custom-ember-object-in-ember-cli
 
 //The following update routine is stolen and cleaned up a bit from:
 //http://yoranbrondsema.com/live-polling-system-ember-js/
-export default Ember.Object.extend({
+export default EmberObject.extend({
   name: 'Pollster',
 
   interval: function() {
@@ -14,20 +15,20 @@ export default Ember.Object.extend({
 
   // Schedules the function `f` to be executed every `interval` time.
   schedule: function(f) {
-    return Ember.run.later(this, function() {
+    return later(this, function() {
       f.apply(this);
       this.set('timer', this.schedule(f));
-    }, this.get('interval'));
+    }, this.interval);
   },
 
   // Stops the pollster
   stop: function() {
-    Ember.run.cancel(this.get('timer'));
+    cancel(this.timer);
   },
 
   // Starts the pollster, i.e. executes the `onPoll` function every interval.
   start: function() {
-    this.set('timer', this.schedule(this.get('onPoll')));
+    this.set('timer', this.schedule(this.onPoll));
   },
 
   onPoll: function(){

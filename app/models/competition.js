@@ -1,5 +1,5 @@
+import { computed, get } from '@ember/object';
 import DS from 'ember-data';
-import Ember from 'ember';
 
 export default DS.Model.extend({
 	name: DS.attr('string'),
@@ -15,23 +15,23 @@ export default DS.Model.extend({
 	measureScratch: DS.attr('boolean'),
 	robots: DS.hasMany('robot'),
 
-	robotCount: Ember.computed('robots.@each', function(){
-		return Ember.get(this, 'robots.length');
+	robotCount: computed('robots.@each', function(){
+		return get(this, 'robots.length');
 	}),
 
-	robotCountCheckedIn: Ember.computed('robots.@each.signedIn', function(){
-		var robots = Ember.get(this, 'robots');
+	robotCountCheckedIn: computed('robots.@each.signedIn', function(){
+		var robots = get(this, 'robots');
 		return robots.filter(function(item){
 			return item.get('signedIn');
 		}).length;
 	}),
 
-	unclaimedSpaces: Ember.computed('robotCount', function(){
-		return Ember.get(this, 'maxEntries') - Ember.get(this, 'robotCount');
+	unclaimedSpaces: computed('robotCount', function(){
+		return get(this, 'maxEntries') - get(this, 'robotCount');
 	}),
 
 	//Determine the total number of available spaces including all spaces not signed in.
-	uncheckedinSpaces: Ember.computed('robotCountCheckedIn',  function(){
-		return Ember.get(this, 'maxEntries') - Ember.get(this, 'robotCountCheckedIn');
+	uncheckedinSpaces: computed('robotCountCheckedIn',  function(){
+		return get(this, 'maxEntries') - get(this, 'robotCountCheckedIn');
 	}),
 });

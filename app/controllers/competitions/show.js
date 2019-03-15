@@ -1,13 +1,14 @@
-import Ember from 'ember';
+import { computed, get } from '@ember/object';
+import Controller from '@ember/controller';
 
-export default Ember.Controller.extend({
+export default Controller.extend({
 
 	queryParams: ['robotFilter'],
 
 	//Filter the currently displayed robots by robot name
-	filteredRobotsByName: Ember.computed('model', 'robotFilter', function(){
-		var returnRobots = Ember.get(this, 'model').get('robots');
-		var robotFilter = Ember.get(this, 'robotFilter');
+	filteredRobotsByName: computed('model', 'robotFilter', function(){
+		var returnRobots = get(this, 'model').get('robots');
+		var robotFilter = get(this, 'robotFilter');
 		console.log(returnRobots);
 		if(robotFilter && robotFilter.length > 1){
 			var regex = new RegExp(robotFilter, "i");
