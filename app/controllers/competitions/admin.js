@@ -17,6 +17,30 @@ export default Controller.extend({
       model.save().then(()=> {
         model.reload();
       });
-	  }
+	  },
+
+
+		toggleProperty(property){
+				let competition = this.model;
+				let b = competition.get(property, this.model);
+				competition.set(property, !b);
+				this.model.save();
+		},
+
+		toggleMeasureMass(){
+				let competition = this.model;
+				competition.set('measureMass', !competition.measureMass);
+				this.model.save();
+		},
+
+		toggleMeasureSize(){
+				var model = this.model;
+		},
+		toggleMeasureTime(){
+				var model = this.model;
+		},
+		toggleMeasureScratch(){
+				var model = this.model;
+		}
   }
 });
