@@ -7,7 +7,7 @@ export default Controller.extend({
   RobotValidation,
 
   measurementOptions: ['Mass', 'Size', 'Time', 'Scratch'],
-  selectedMeasurementOption: "Mass",
+  selectedMeasurementOption: 'Mass',
 
   updateCompetition(changeset, id){
     let competition = this.store.peekRecord('competition', id);

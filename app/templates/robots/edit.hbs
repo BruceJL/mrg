@@ -69,7 +69,7 @@
         <tr><td colspan="3">Measurements</td></tr>
         <tr>
           <td>
-            <select onchange={{action (mut selectedMeasurementOption) value="target.value"}}>
+              <select onchange={{action (mut selectedMeasurementOption) value="target.value"}}>
               {{#each measurementOptions as |o|}}
                 <option value={{o}} selected={{eq selectedMeasurementOption o}}>
                   {{option}}
