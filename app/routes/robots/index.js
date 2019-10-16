@@ -1,11 +1,17 @@
-import { isNone } from '@ember/utils';
+import {
+  isNone
+} from '@ember/utils';
 import Route from '@ember/routing/route';
 import Pollster from '../pollster';
 
 export default Route.extend({
-  model(){
-    this.store.findAll('competition', {reload: true});
-    return this.store.findAll('robot', {reload: true});
+  model() {
+    this.store.findAll('competition', {
+      reload: true
+    });
+    return this.store.findAll('robot', {
+      reload: true
+    });
   },
 
   activate: function() {

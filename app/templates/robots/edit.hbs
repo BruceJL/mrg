@@ -4,9 +4,9 @@
   <form>
     <table class="form">
       <tbody>
-        <col width = "125">
-        <col width = "100">
-        <col width = "300">
+        <col width="125">
+        <col width="100">
+        <col width="300">
         {{#robot-detail
           changeset=changeset
           competitions=competitions
@@ -19,7 +19,11 @@
               <button {{action "save" changeset}} disabled={{changeset.isInvalid}}>Save Changes</button>
             </td>
           </tr>
-          <tr><td colspan="3"><hr></td></tr>
+          <tr>
+            <td colspan="3">
+              <hr>
+            </td>
+          </tr>
           <tr>
             <td>Checked in:</td>
             <td>{{model.formattedSignedIn}}</td>
@@ -65,11 +69,17 @@
             </td>
           </tr>
         {{/robot-detail}}
-        <tr><td colspan="3"><hr></td></tr>
-        <tr><td colspan="3">Measurements</td></tr>
+        <tr>
+          <td colspan="3">
+            <hr>
+          </td>
+        </tr>
+        <tr>
+          <td colspan="3">Measurements</td>
+        </tr>
         <tr>
           <td>
-              <select onchange={{action (mut selectedMeasurementOption) value="target.value"}}>
+            <select onchange={{action (mut selectedMeasurementOption) value="target.value"}}>
               {{#each measurementOptions as |o|}}
                 <option value={{o}} selected={{eq selectedMeasurementOption o}}>
                   {{option}}

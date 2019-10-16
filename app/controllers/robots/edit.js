@@ -1,4 +1,6 @@
-import { set } from '@ember/object';
+import {
+  set
+} from '@ember/object';
 import Controller from '@ember/controller';
 
 import RobotValidation from '../../validations/robot';
@@ -9,32 +11,31 @@ export default Controller.extend({
   measurementOptions: ['Mass', 'Size', 'Time', 'Scratch'],
   selectedMeasurementOption: 'Mass',
 
-  updateCompetition(changeset, id){
+  updateCompetition(changeset, id) {
     let competition = this.store.peekRecord('competition', id);
     changeset.set('competition', competition);
   },
 
-  changeRobotStatus(property, value){
+  changeRobotStatus(property, value) {
     let model = this.model;
     console.log("changing " + property + " to " + value);
     set(model, property, value);
     model.save();
   },
 
-  createMeasurement(value){
+  createMeasurement(value) {
     let robot = this.model;
     let type = this.selectedMeasurementOption;
     let date = new Date('1970-01-01T00:00:00Z');
     console.log("Logging " + type + " measurement of: " + value + " for robot " + robot.id);
-    let measurement = this.store.createRecord('robot-measurement',
-    {
+    let measurement = this.store.createRecord('robot-measurement', {
       robot: robot,
       result: value,
       type: type.toString(),
       datetime: date
     });
 
-    measurement.save().then(()=> {
+    measurement.save().then(() => {
       let model = this.model;
       console.log("Robot measured has id: " + model.id);
       measurement.reload();
@@ -55,31 +56,28 @@ export default Controller.extend({
       let measurements = model.get('measurements');
 
       //Get all latest measurements for the robot
-      measurements.forEach(function(item){
+      measurements.forEach(function(item) {
         let type = item.get('type');
         let datetime = item.get('datetime');
         let result = item.get('result');
 
-        if(type === "Mass"){
-           if(lastMeasuredMassTime === false || datetime > lastMeasuredMassTime){
-             lastMeasuredMassTime = datetime;
-             measuredMass = result;
-           }
-        }
-        else if (type === "Time") {
-          if(lastMeasuredTimeTime === false || datetime > lastMeasuredTimeTime){
+        if (type === "Mass") {
+          if (lastMeasuredMassTime === false || datetime > lastMeasuredMassTime) {
+            lastMeasuredMassTime = datetime;
+            measuredMass = result;
+          }
+        } else if (type === "Time") {
+          if (lastMeasuredTimeTime === false || datetime > lastMeasuredTimeTime) {
             lastMeasuredTimeTime = datetime;
             measuredTime = result;
           }
-        }
-        else if (type === "Scratch"){
-          if(lastMeasuredScratchTime === false || datetime > lastMeasuredScratchTime){
+        } else if (type === "Scratch") {
+          if (lastMeasuredScratchTime === false || datetime > lastMeasuredScratchTime) {
             lastMeasuredScratchTime = datetime;
             measuredScratch = result;
           }
-        }
-        else if (type === "Size"){
-          if(lastMeasuredSizeTime === false || datetime > lastMeasuredSizeTime){
+        } else if (type === "Size") {
+          if (lastMeasuredSizeTime === false || datetime > lastMeasuredSizeTime) {
             lastMeasuredSizeTime = datetime;
             measuredSize = result;
           }
@@ -96,27 +94,23 @@ export default Controller.extend({
       let registrationTime = competition.get('registrationTime');
       let measured = true;
 
-      if(requiresMass &&
-        ( registrationTime > lastMeasuredMassTime || measuredMass === "Fail"))
-      {
+      if (requiresMass &&
+        (registrationTime > lastMeasuredMassTime || measuredMass === "Fail")) {
         console.log("Failed on mass");
         measured = false;
       }
-      if(requiresSize &&
-        ( registrationTime > lastMeasuredSizeTime || measuredSize === "Fail"))
-      {
+      if (requiresSize &&
+        (registrationTime > lastMeasuredSizeTime || measuredSize === "Fail")) {
         console.log("failed on size");
         measured = false;
       }
-      if(requiresTime &&
-      ( registrationTime > lastMeasuredTimeTime || measuredTime === "Fail"))
-      {
+      if (requiresTime &&
+        (registrationTime > lastMeasuredTimeTime || measuredTime === "Fail")) {
         console.log("failed on time delay");
         measured = false;
       }
-      if(requiresScratch &&
-      ( registrationTime > lastMeasuredScratchTime || measuredScratch === "Fail"))
-      {
+      if (requiresScratch &&
+        (registrationTime > lastMeasuredScratchTime || measuredScratch === "Fail")) {
         console.log("failed on scratch");
         measured = false;
       }
@@ -127,76 +121,76 @@ export default Controller.extend({
   },
 
   actions: {
-    done(){
+    done() {
       history.back();
     },
 
-    updateMeasurement(value){
+    updateMeasurement(value) {
       this.set('measurementType', value);
     },
 
-    paid5Dollars(changeset){
+    paid5Dollars(changeset) {
       changeset.set('paid', 5.00);
       changeset.save();
     },
 
-    paid10Dollars(changeset){
+    paid10Dollars(changeset) {
       changeset.set('paid', 10.00);
       changeset.save();
     },
 
-    refund(changeset){
+    refund(changeset) {
       changeset.set('paid', 0.00);
       changeset.save();
     },
 
-    signIn(changeset){
+    signIn(changeset) {
       changeset.set('signedIn', true);
-        changeset.save();
+      changeset.save();
     },
 
-    signOut(changeset){
+    signOut(changeset) {
       changeset.set('signedIn', false);
       changeset.save();
     },
 
-    toggleMeasured(changeset){
+    toggleMeasured(changeset) {
       changeset.toggleProperty('measured');
       changeset.save();
     },
 
-    withdraw(changeset){
+    withdraw(changeset) {
       console.log("withdrawing!");
       changeset.set('withdrawn', true);
       changeset.save();
     },
 
-    reinstate(changeset){
+    reinstate(changeset) {
       console.log("reinstating!");
       changeset.set('withdrawn', false);
       changeset.save();
     },
 
-    updateCompetition(changeset, id){
-        this.sendAction('updateCompetition', changeset, id);
+    updateCompetition(changeset, id) {
+      this.sendAction('updateCompetition', changeset, id);
     },
 
     //Ember-changeset methods
-    save(changeset){
+    save(changeset) {
       console.log("Saving changeset");
       changeset.save();
     },
 
-    rollback(changeset){
+    rollback(changeset) {
       console.log("edit.js rollback");
       changeset.rollback();
     },
 
-    measurementPass(model){
+    measurementPass(model) {
       this.createMeasurement("Pass", model);
     },
 
-    measurementFail(model){
+    measurementFail(model) {
       this.createMeasurement("Fail", model);
     }
   }

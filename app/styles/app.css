@@ -1,136 +1,142 @@
 #container {
-	width: 1000px; 
-	margin: auto;
+  width: 1000px;
+  margin: auto;
 }
 
 h1 {
-    text-align: center;
-	font-family: "Arial";
-	font-size: 24px;
+  text-align: center;
+  font-family: "Arial";
+  font-size: 24px;
 }
 
 p {
-    font-family: "Arial";
-    font-size: 16px;
+  font-family: "Arial";
+  font-size: 16px;
 }
+
 table.data {
-	margin: auto;
-	border-width: 1px;
+  margin: auto;
+  border-width: 1px;
 }
 
-table.data td{
-	padding: 7px;
+table.data td {
+  padding: 7px;
 }
 
-table.data td.info{
-	border-bottom:1pt solid black;
+table.data td.info {
+  border-bottom: 1pt solid black;
 }
 
 table.data td.label {
-	font-family: Arial;
-	font-weight: bold;
-	font-size: 16px;
-	text-align: right;	
+  font-family: Arial;
+  font-weight: bold;
+  font-size: 16px;
+  text-align: right;
 }
 
-table.form td{
-	padding-left: 7px;
-	padding-right: 7px;
+table.form td {
+  padding-left: 7px;
+  padding-right: 7px;
 }
 
-table.list{
-	border-collapse: collapse;
-}
-table.list th{
-	font-weight: bold;
-	text-align: center;
-	padding-right: 15px;
-}
-table.list td{
-	border-bottom: 1px solid black;
-	padding-right: 30px;
+table.list {
+  border-collapse: collapse;
 }
 
-table.list td.centered{
-	text-align: center;
+table.list th {
+  font-weight: bold;
+  text-align: center;
+  padding-right: 15px;
 }
 
-table.list tr.normal{}
+table.list td {
+  border-bottom: 1px solid black;
+  padding-right: 30px;
+}
+
+table.list td.centered {
+  text-align: center;
+}
+
+table.list tr.normal {}
 
 table.list tr.strikeout {
-	text-decoration:line-through;
+  text-decoration: line-through;
 }
 
-input.full-width{
-	width: 100%;
-	border: 1px solid black;
+input.full-width {
+  width: 100%;
+  border: 1px solid black;
 }
 
-input.full-width-error{
-	width: 100%;
-	border: 2px solid red;
+input.full-width-error {
+  width: 100%;
+  border: 2px solid red;
 }
 
 nav ul {
-	list-style-type: none;
-	margin: 0;
-	padding: 0;
-	overflow: hidden;
-	background-color: #333;
+  list-style-type: none;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+  background-color: #333;
 }
 
 nav li {
-	float: left;
+  float: left;
 }
 
 nav li a {
-    display: block;
-    color: white;
-    font-family: "Arial";
-    text-align: center;
-    padding: 14px 16px;
-    text-decoration: none;
+  display: block;
+  color: white;
+  font-family: "Arial";
+  text-align: center;
+  padding: 14px 16px;
+  text-decoration: none;
 }
-	/* Change the link color to #111 (black) on hover */
+
+/* Change the link color to #111 (black) on hover */
 nav li a:hover {
-	background-color: #111;
+  background-color: #111;
 }
 
 nav li a, .dropbtn {
-    display: inline-block;
-    color: white;
-    text-align: center;
-    padding: 14px 16px;
-    text-decoration: none;
+  display: inline-block;
+  color: white;
+  text-align: center;
+  padding: 14px 16px;
+  text-decoration: none;
 }
 
 nav li a:hover, .dropdown:hover .dropbtn {
-    background-color: red;
+  background-color: red;
 }
 
 nav li.dropdown {
-    display: inline-block;
+  display: inline-block;
 }
 
 .dropdown-content {
-    display: none;
-    position: absolute;
-    background-color: #f9f9f9;
-    min-width: 160px;
-    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
-    z-index: 1;
+  display: none;
+  position: absolute;
+  background-color: #f9f9f9;
+  min-width: 160px;
+  box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
+  z-index: 1;
 }
 
 .dropdown-content a {
-    color: black;
-    padding: 12px 16px;
-    text-decoration: none;
-    display: block;
-    text-align: left;
+  color: black;
+  padding: 12px 16px;
+  text-decoration: none;
+  display: block;
+  text-align: left;
 }
 
-.dropdown-content a:hover {background-color: #f1f1f1}
+.dropdown-content a:hover {
+  background-color: #f1f1f1
+}
 
 .dropdown:hover .dropdown-content {
-    display: block;
+  display: block;
 }

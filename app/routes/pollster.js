@@ -1,4 +1,7 @@
-import { later, cancel } from '@ember/runloop';
+import {
+  later,
+  cancel
+} from '@ember/runloop';
 import EmberObject from '@ember/object';
 
 //How to do imports illustrated best at:
@@ -31,7 +34,7 @@ export default EmberObject.extend({
     this.set('timer', this.schedule(this.onPoll));
   },
 
-  onPoll: function(){
+  onPoll: function() {
     // Issue JSON request and add data to the store
   }
 });

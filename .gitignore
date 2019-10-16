@@ -9,6 +9,8 @@
 /node_modules/
 
 # misc
+/.env*
+/.pnp*
 /.sass-cache
 /connect.lock
 /coverage/
@@ -22,7 +24,7 @@
 /bower.json.ember-try
 /package.json.ember-try
 
-#python
+# python
 **/__pycache__/
 **.pyc
 python/ScoreSheets/*
