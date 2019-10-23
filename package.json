@@ -49,6 +49,7 @@
     "node": "8.* || >= 10.*"
   },
   "dependencies": {
-    "ember-changeset": "^2.1.2"
+    "ember-changeset": "^2.1.2",
+    "ember-simple-auth": "^1.9.2"
   }
 }
