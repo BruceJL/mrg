@@ -1,5 +1,6 @@
 import {
-  set
+  set,
+  computed,
 } from '@ember/object';
 import Controller from '@ember/controller';
 
@@ -8,7 +9,10 @@ import RobotValidation from '../../validations/robot';
 export default Controller.extend({
   RobotValidation,
 
-  measurementOptions: ['Mass', 'Size', 'Time', 'Scratch'],
+  measurementOptions: computed(function(){
+    return ['Mass', 'Size', 'Time', 'Scratch']; // Time between polls (in ms)
+  }),
+
   selectedMeasurementOption: 'Mass',
 
   updateCompetition(changeset, id) {
@@ -18,7 +22,7 @@ export default Controller.extend({
 
   changeRobotStatus(property, value) {
     let model = this.model;
-    console.log("changing " + property + " to " + value);
+    // console.log("changing " + property + " to " + value);
     set(model, property, value);
     model.save();
   },
@@ -27,7 +31,7 @@ export default Controller.extend({
     let robot = this.model;
     let type = this.selectedMeasurementOption;
     let date = new Date('1970-01-01T00:00:00Z');
-    console.log("Logging " + type + " measurement of: " + value + " for robot " + robot.id);
+    // console.log("Logging " + type + " measurement of: " + value + " for robot " + robot.id);
     let measurement = this.store.createRecord('robot-measurement', {
       robot: robot,
       result: value,
@@ -37,7 +41,7 @@ export default Controller.extend({
 
     measurement.save().then(() => {
       let model = this.model;
-      console.log("Robot measured has id: " + model.id);
+      // console.log("Robot measured has id: " + model.id);
       measurement.reload();
 
       //Determine if a robot is fully measured
@@ -96,26 +100,26 @@ export default Controller.extend({
 
       if (requiresMass &&
         (registrationTime > lastMeasuredMassTime || measuredMass === "Fail")) {
-        console.log("Failed on mass");
+        // console.log("Failed on mass");
         measured = false;
       }
       if (requiresSize &&
         (registrationTime > lastMeasuredSizeTime || measuredSize === "Fail")) {
-        console.log("failed on size");
+        // console.log("failed on size");
         measured = false;
       }
       if (requiresTime &&
         (registrationTime > lastMeasuredTimeTime || measuredTime === "Fail")) {
-        console.log("failed on time delay");
+        // console.log("failed on time delay");
         measured = false;
       }
       if (requiresScratch &&
         (registrationTime > lastMeasuredScratchTime || measuredScratch === "Fail")) {
-        console.log("failed on scratch");
+        // console.log("failed on scratch");
         measured = false;
       }
       model.set('measured', measured);
-      console.log("Setting measured to " + measured);
+      // console.log("Setting measured to " + measured);
       model.save();
     });
   },
@@ -160,29 +164,29 @@ export default Controller.extend({
     },
 
     withdraw(changeset) {
-      console.log("withdrawing!");
+      // console.log("withdrawing!");
       changeset.set('withdrawn', true);
       changeset.save();
     },
 
     reinstate(changeset) {
-      console.log("reinstating!");
+      // console.log("reinstating!");
       changeset.set('withdrawn', false);
       changeset.save();
     },
 
-    updateCompetition(changeset, id) {
-      this.sendAction('updateCompetition', changeset, id);
-    },
+    // updateCompetition(changeset, id) {
+    //   this.sendAction('updateCompetition', changeset, id);
+    // },
 
     //Ember-changeset methods
     save(changeset) {
-      console.log("Saving changeset");
+      // console.log("Saving changeset");
       changeset.save();
     },
 
     rollback(changeset) {
-      console.log("edit.js rollback");
+      // console.log("edit.js rollback");
       changeset.rollback();
     },
 

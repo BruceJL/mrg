@@ -3,6 +3,8 @@ import {
   cancel
 } from '@ember/runloop';
 import EmberObject from '@ember/object';
+import { computed } from '@ember/object';
+
 
 //How to do imports illustrated best at:
 //https://stackoverflow.com/questions/24417725/defining-custom-ember-object-in-ember-cli
@@ -12,9 +14,9 @@ import EmberObject from '@ember/object';
 export default EmberObject.extend({
   name: 'Pollster',
 
-  interval: function() {
+  interval: computed(function(){
     return 4000; // Time between polls (in ms)
-  }.property().readOnly(),
+  }),
 
   // Schedules the function `f` to be executed every `interval` time.
   schedule: function(f) {

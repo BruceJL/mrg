@@ -10,7 +10,7 @@ export default Controller.extend({
       var model = this.model;
       var robots = get(model, 'robots');
       robots.forEach(function(item) {
-        console.log("setting meausured of " + get(item, 'robot') + " to false");
+        // console.log("setting meausured of " + get(item, 'robot') + " to false");
         item.set('measured', false);
         item.save();
       });
@@ -36,13 +36,19 @@ export default Controller.extend({
     },
 
     toggleMeasureSize() {
-      var model = this.model;
+      let competition = this.model;
+      competition.set('measureSize', !competition.measureMass);
+      this.model.save();
     },
     toggleMeasureTime() {
-      var model = this.model;
+      let competition = this.model;
+      competition.set('measureTime', !competition.measureMass);
+      this.model.save();
     },
     toggleMeasureScratch() {
-      var model = this.model;
+      let competition = this.model;
+      competition.set('measureScratch', !competition.measureMass);
+      this.model.save();
     }
   }
 });

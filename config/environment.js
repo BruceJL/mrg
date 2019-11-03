@@ -1,15 +1,15 @@
-/* jshint node: true */
+'use strict';
 
 module.exports = function(environment) {
-  var ENV = {
+  let ENV = {
     modulePrefix: 'mrg-sign-in',
-    environment: environment,
+    environment,
     rootURL: '/',
     locationType: 'auto',
     EmberENV: {
       FEATURES: {
         // Here you can enable experimental features on an ember canary build
-        // e.g. 'with-controller': true
+        // e.g. EMBER_MODULE_UNIFICATION: true
       },
       EXTEND_PROTOTYPES: {
         // Prevent Ember Data from overriding Date.parse.
@@ -24,9 +24,6 @@ module.exports = function(environment) {
   };
 
   if (environment === 'development') {
-    ENV.APP.usingCors = true;
-    ENV.APP.corsWithCreds = true;
-    ENV.APP.apiURL = 'http://registration/api/mrg/';
     // ENV.APP.LOG_RESOLVER = true;
     // ENV.APP.LOG_ACTIVE_GENERATION = true;
     // ENV.APP.LOG_TRANSITIONS = true;
@@ -38,20 +35,16 @@ module.exports = function(environment) {
     // Testem prefers this...
     ENV.locationType = 'none';
 
-    //Turn on CORS
-    ENV.APP.usingCors = true;
-    ENV.APP.corsWithCreds = true;
-    ENV.APP.apiURL = 'http://registration/api/mrg/';
-
     // keep test console output quieter
     ENV.APP.LOG_ACTIVE_GENERATION = false;
     ENV.APP.LOG_VIEW_LOOKUPS = false;
 
     ENV.APP.rootElement = '#ember-testing';
+    ENV.APP.autoboot = false;
   }
 
   if (environment === 'production') {
-    //ENV.APP.apiURL = 'api/mrg/';
+    // here you can enable a production-specific feature
   }
 
   return ENV;

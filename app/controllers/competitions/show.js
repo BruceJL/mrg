@@ -12,7 +12,7 @@ export default Controller.extend({
   filteredRobotsByName: computed('model', 'robotFilter', function() {
     var returnRobots = get(this, 'model').get('robots');
     var robotFilter = get(this, 'robotFilter');
-    console.log(returnRobots);
+    // console.log(returnRobots);
     if (robotFilter && robotFilter.length > 1) {
       var regex = new RegExp(robotFilter, "i");
       return returnRobots.filter(function(item) {

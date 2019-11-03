@@ -7,7 +7,7 @@ export default Route.extend({
   Measurer: "Insert name here!",
 
   model(params) {
-    console.log("Changing route to: robot " + params.robot_id);
+    // console.log("Changing route to: robot " + params.robot_id);
     this.store.findAll('competition', {
       reload: true
     });

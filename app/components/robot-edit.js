@@ -4,7 +4,7 @@ import Component from '@ember/component';
 export default Component.extend({
 
   createMeasurement(value) {
-    console.log("Logging measurement of: " + value);
+    // console.log("Logging measurement of: " + value);
     var model = this.model;
     var store = this.store;
     store.createRecord('robot-measurment', {
@@ -56,13 +56,13 @@ export default Component.extend({
       changeset.save();
     },
 
-    done() {
-      this.sendAction('done');
-    },
+    // done() {
+    //   this.sendAction('done');
+    // },
 
-    updateCompetition(changeset, id) {
-      this.sendAction('updateCompetition', changeset, id);
-    },
+    // updateCompetition(changeset, id) {
+    //   this.sendAction('updateCompetition', changeset, id);
+    // },
 
     //Ember-changeset methods
     save(changeset) {
@@ -70,7 +70,7 @@ export default Component.extend({
     },
 
     rollback(changeset) {
-      console.log("edit.js rollback");
+      // console.log("edit.js rollback");
       changeset.rollback();
     }
   }

@@ -22,7 +22,7 @@ export default Controller.extend({
     save(changeset){
         changeset.save().then(() => {
           var id = changeset.get('id');
-          console.log("Robot id: " + id);
+          // console.log("Robot id: " + id);
           this.transitionToRoute('competitions.robot', id);
        });
       },

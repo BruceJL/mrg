@@ -17,7 +17,7 @@ export default Route.extend({
       var inst = this;
       this.set('pollster', Pollster.create({
         onPoll: function() {
-          console.log("Model reload!");
+          // console.log("Model reload!");
           inst.get('store').findAll('robot');
         }
       }));

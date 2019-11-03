@@ -69,7 +69,7 @@ export default Controller.extend({
   }),
 
   invoicedTotal: computed('selectedRobots.[]', function() {
-    console.log("computing invoiced total");
+    // console.log("computing invoiced total");
     let list = get(this, 'selectedRobots');
     return getTotalDollars(list, 'invoiced').toString();
   }),
@@ -99,7 +99,7 @@ export default Controller.extend({
     },
 
     robotSelected(item) {
-      console.log("Checking: " + item.get('robot').toString());
+      // console.log("Checking: " + item.get('robot').toString());
       return this.selectedRobots.includes(item);
     },
 
@@ -107,15 +107,15 @@ export default Controller.extend({
       let list = get(this, 'selectedRobots');
       if (list.includes(item)) {
         list.removeObject(item);
-        console.log("Removing: " + item.get('robot').toString());
+        // console.log("Removing: " + item.get('robot').toString());
       } else {
         list.addObject(item);
-        console.log("Adding: " + item.get('robot').toString());
+        // console.log("Adding: " + item.get('robot').toString());
       }
-      list.forEach(function(i) {
-        console.log("list contains " + i.get('robot') + " $" + i.get('invoiced'));
-      });
-      console.log("total:" + getTotalDollars(list, 'invoiced'));
+      // list.forEach(function(i) {
+      //   console.log("list contains " + i.get('robot') + " $" + i.get('invoiced'));
+      // });
+      // console.log("total:" + getTotalDollars(list, 'invoiced'));
     },
 
     pay() {
@@ -124,7 +124,7 @@ export default Controller.extend({
       if (window.confirm("Take payment of " + total + "?")) {
         list.forEach(function(i) {
           i.set('paid', i.get('invoiced'));
-          console.log("Marking " + i.get('robot') + " as paid.");
+          // console.log("Marking " + i.get('robot') + " as paid.");
           i.save();
         });
         list.clear();
