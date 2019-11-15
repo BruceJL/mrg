@@ -1,22 +1,22 @@
-&nbsp;
-{{#with (changeset model RobotValidation) as |changeset|}}
-  &nbsp;
+{{#with (changeset this.model.robot this.RobotValidation) as |changeset|}}
   <form>
     <table class="form">
       <tbody>
         <col width="125">
         <col width="100">
         <col width="300">
-        {{#robot-detail
-          changeset=changeset
-          competitions=competitions
-          updateCompetition="updateCompetition"
-          changeRobotStatus="changeRobotStatus"}}
+        <RobotDetail
+          @changeset={{changeset}}
+          @competitions={{this.model.competitions}}>
           <tr>
             <td></td>
             <td colspan="2">
               <button {{action "rollback" changeset}}>Undo</button>
-              <button {{action "save" changeset}} disabled={{changeset.isInvalid}}>Save Changes</button>
+              <button
+                {{action "save" changeset}}
+                disabled={{changeset.isInvalid}}>
+                Save Changes
+              </button>
             </td>
           </tr>
           <tr>
@@ -26,7 +26,7 @@
           </tr>
           <tr>
             <td>Checked in:</td>
-            <td>{{model.formattedSignedIn}}</td>
+            <td>{{changeset.formattedSignedIn}}</td>
             <td>
               {{#if changeset.signedIn}}
                 <button {{action "signOut" changeset}}>Cancel Check in</button>
@@ -40,13 +40,13 @@
           </tr>
           <tr>
             <td>Invoiced:</td>
-            <td>{{model.formattedInvoicedDollars}}</td>
+            <td>{{this.model.robot.formattedInvoicedDollars}}</td>
           </tr>
           <tr>
             <td>Paid:</td>
-            <td>{{model.formattedPaidDollars}}</td>
+            <td>{{this.model.robot.formattedPaidDollars}}</td>
             <td>
-              {{#if model.isPaid}}
+              {{#if this.model.robot.isPaid}}
                 <button {{action "refund" changeset}}>Refund</button>
               {{else}}
                 <button {{action "paid5Dollars" changeset}}>Paid $5.00</button>
@@ -56,19 +56,19 @@
           </tr>
           <tr>
             <td>Measured:</td>
-            <td>{{model.formattedMeasured}}</td>
+            <td>{{this.model.robot.formattedMeasured}}</td>
           </tr>
           <tr>
             <td>Registered:</td>
             <td colspan="2">
-              {{#if model.late}}
+              {{#if this.model.robot.late}}
                 LATE
               {{else}}
                 ON-TIME
               {{/if}}
             </td>
           </tr>
-        {{/robot-detail}}
+        </RobotDetail>
         <tr>
           <td colspan="3">
             <hr>
@@ -79,18 +79,21 @@
         </tr>
         <tr>
           <td>
-            <select onchange={{action (mut selectedMeasurementOption) value="target.value"}}>
-              {{#each measurementOptions as |o|}}
-                <option value={{o}} selected={{eq selectedMeasurementOption o}}>
+            <select
+              onchange={{
+                action (mut this.selectedMeasurementOption)
+                value="target.value"}}>
+              {{#each this.measurementOptions as |o|}}
+                <option value={{o}} selected={{eq this.selectedMeasurementOption o}}>
                   {{o}}
                 </option>
               {{/each}}
             </select>
           </td>
-          <td><button {{action "measurementPass" model}}>Pass</button></td>
-          <td><button {{action "measurementFail" model}}>Fail</button></td>
+          <td><button {{action "measurementPass" this.model}}>Pass</button></td>
+          <td><button {{action "measurementFail" this.model}}>Fail</button></td>
         </tr>
-        {{#each model.measurements as |m|}}
+        {{#each this.model.robot.measurements as |m|}}
           <tr>
             <td>{{m.type}}</td>
             <td>{{m.result}}</td>

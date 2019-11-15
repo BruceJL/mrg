@@ -1,6 +1,7 @@
 import Route from '@ember/routing/route';
 
-export default Route.extend({
+export default class CompetitionIndexRoute extends Route {
+
   model() {
     this.store.findAll('robot', {
       reload: true
@@ -9,4 +10,4 @@ export default Route.extend({
       reload: true
     });
   }
-});
+}

@@ -1,11 +1,14 @@
 import {
   computed,
-  get
+  get,
+  set,
+  action,
 } from '@ember/object';
 import {
   A
 } from '@ember/array';
 import Controller from '@ember/controller';
+import { debug } from '@ember/debug';
 
 //Good checkbox model described here:
 //https://codeflip.przepiora.ca/blog/2014/05/22/ember-js-recipes-checkboxable-index-pages-using-itemcontroller/
@@ -16,7 +19,7 @@ import Controller from '@ember/controller';
 
 function formatDollars(amount) {
   if (amount > 0) {
-    var formatted = parseFloat(amount, 10).toFixed(2);
+    let formatted = parseFloat(amount, 10).toFixed(2);
     return '$' + formatted;
   } else {
     return "";
@@ -24,19 +27,20 @@ function formatDollars(amount) {
 }
 
 function getTotalDollars(items, property) {
-  var total = 0.0;
+  let total = 0.0;
   items.forEach(function(item) {
     total += Number(item.get(property));
   });
   return formatDollars(total);
 }
 
-export default Controller.extend({
+export default class RobotBulkPaymentController extends Controller {
 
-  queryParams: ['schoolFilter', 'robotFilter'],
-  selectedRobots: A(),
+  queryParams = ['schoolFilter', 'robotFilter'];
+  selectedRobots = A();
 
-  filteredRobots: computed('model', 'robotFilter', 'schoolFilter', function() {
+  @computed('model', 'robotFilter', 'schoolFilter')
+  get filteredRobots() {
     let returnRobots = get(this, 'model');
     let robotFilter = get(this, 'robotFilter');
     let schoolFilter = get(this, 'schoolFilter');
@@ -66,69 +70,74 @@ export default Controller.extend({
     });
     //Return the results of the two filters.
     return returnRobots;
-  }),
+  }
 
-  invoicedTotal: computed('selectedRobots.[]', function() {
-    // console.log("computing invoiced total");
+  @computed('selectedRobots.[]')
+  get invoicedTotal() {
+    debug("computing invoiced total");
     let list = get(this, 'selectedRobots');
     return getTotalDollars(list, 'invoiced').toString();
-  }),
+  }
 
-  totalRobots: computed('selectedRobots.[]', function() {
+  @computed('selectedRobots.[]')
+  get totalRobots() {
     return this.selectedRobots.length;
-  }),
+  }
 
-  isPayDisabled: computed('totalRobots', function() {
+  @computed('totalRobots')
+  get isPayDisabled() {
     let count = get(this, 'totalRobots');
     return (count === 0);
-  }),
+  }
 
-  actions: {
-    selectCompetition(value) {
-      if (value === 'All') {
-        value = "";
-      }
-      this.set('competition', value);
-      if (value) {
-        this.transitionToRoute('robots', {
-          queryParams: {
-            'competition': value
-          }
-        });
-      }
-    },
-
-    robotSelected(item) {
-      // console.log("Checking: " + item.get('robot').toString());
-      return this.selectedRobots.includes(item);
-    },
-
-    checkboxClicked(item) {
-      let list = get(this, 'selectedRobots');
-      if (list.includes(item)) {
-        list.removeObject(item);
-        // console.log("Removing: " + item.get('robot').toString());
-      } else {
-        list.addObject(item);
-        // console.log("Adding: " + item.get('robot').toString());
-      }
-      // list.forEach(function(i) {
-      //   console.log("list contains " + i.get('robot') + " $" + i.get('invoiced'));
-      // });
-      // console.log("total:" + getTotalDollars(list, 'invoiced'));
-    },
-
-    pay() {
-      let list = get(this, 'selectedRobots');
-      let total = get(this, 'invoicedTotal');
-      if (window.confirm("Take payment of " + total + "?")) {
-        list.forEach(function(i) {
-          i.set('paid', i.get('invoiced'));
-          // console.log("Marking " + i.get('robot') + " as paid.");
-          i.save();
-        });
-        list.clear();
-      }
+  @action
+  selectCompetition(value) {
+    if (value === 'All') {
+      value = "";
+    }
+    this.set('competition', value);
+    if (value) {
+      this.transitionToRoute('robots', {
+        queryParams: {
+          'competition': value
+        }
+      });
     }
   }
-});
+
+  @action
+  robotSelected(item) {
+    debug("Checking: " + item.get('robot').toString());
+    return this.selectedRobots.includes(item);
+  }
+
+  @action
+  checkboxClicked(item) {
+    let list = get(this, 'selectedRobots');
+    if (list.includes(item)) {
+      list.removeObject(item);
+      debug("Removing: " + item.get('robot').toString());
+    } else {
+      list.addObject(item);
+      debug("Adding: " + item.get('robot').toString());
+    }
+    // list.forEach(function(i) {
+    //   console.log("list contains " + i.get('robot') + " $" + i.get('invoiced'));
+    // });
+    debug("total:" + getTotalDollars(list, 'invoiced'));
+  }
+
+  @action
+  pay() {
+    let list = get(this, 'selectedRobots');
+    let total = get(this, 'invoicedTotal');
+    if (window.confirm("Take payment of " + total + "?")) {
+      list.forEach(function(i) {
+        i.set('paid', i.get('invoiced'));
+        debug("Marking " + i.get('robot') + " as paid.");
+        i.save();
+      });
+      list.clear();
+    }
+  }
+}

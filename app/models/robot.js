@@ -1,7 +1,17 @@
-import {
-  computed
-} from '@ember/object';
 import DS from 'ember-data';
+
+const {
+  hasMany,
+  belongsTo,
+  Model,
+  attr,
+  get
+} = DS;
+
+import {
+  computed,
+  setProperties
+} from '@ember/object';
 
 function formatDollars(amount) {
   if (amount > 0) {
@@ -12,57 +22,61 @@ function formatDollars(amount) {
   }
 }
 
-export default DS.Model.extend({
+export default class RobotModel extends Model {
 
-  robot: DS.attr('string'),
-  competition: DS.belongsTo('competition'),
-  driver1: DS.attr('string'),
-  driver1Gr: DS.attr('string'),
-  driver2: DS.attr('string'),
-  driver2Gr: DS.attr('string'),
-  driver3: DS.attr('string'),
-  driver3Gr: DS.attr('string'),
-  school: DS.attr('string'),
-  coach: DS.attr('string'),
-  email: DS.attr('string'),
-  ph: DS.attr('string'),
-  invoiced: DS.attr('number'),
-  tookPayment: DS.attr('string'),
-  paid: DS.attr('number'),
-  signedIn: DS.attr('boolean'),
-  late: DS.attr('boolean'),
-  measured: DS.attr('boolean'),
-  withdrawn: DS.attr('boolean'),
-  measurements: DS.hasMany('robot-measurement'),
+  @attr('string') robot;
+  @belongsTo('competition') competition;
+  @attr('string') driver1;
+  @attr('string') driver1Gr;
+  @attr('string') driver2;
+  @attr('string') driver2Gr;
+  @attr('string') driver3;
+  @attr('string') driver3Gr;
+  @attr('string') school;
+  @attr('string') coach;
+  @attr('string') email;
+  @attr('string') ph;
+  @attr('number') invoiced;
+  @attr('string') tookPayment;
+  @attr('number') paid;
+  @attr('boolean') signedIn;
+  @attr('boolean') late;
+  @attr('boolean') measured;
+  @attr('boolean') withdrawn;
+  @hasMany('robot-measurement') measurements; // used to be a hasMany, now readonly?
 
-  isPaid: computed('paid', function() {
+  @computed('paid')
+  get isPaid() {
     var paid = this.paid;
     if (paid > 0) {
       return true;
     } else {
       return false;
     }
-  }),
+  }
 
-  isPayable: computed('withdrawn', 'paid', function() {
+  @computed('withdrawn', 'paid')
+  get isPayable() {
     let paid = this.paid;
     let withdrawn = this.withdrawn;
 
     return ((paid === null || paid === 0) && (!withdrawn));
+  }
 
-  }),
-
-  formattedPaidDollars: computed('paid', function() {
+  @computed('paid')
+  get formattedPaidDollars(){
     var paid = this.paid;
     return formatDollars(paid);
-  }),
+  }
 
-  formattedInvoicedDollars: computed('invoiced', function() {
+  @computed('invoiced')
+  get formattedInvoicedDollars() {
     var invoiced = this.invoiced;
     return formatDollars(invoiced);
-  }),
+  }
 
-  formattedSignedIn: computed('signedIn', 'withdrawn', function() {
+  @computed('signedIn', 'withdrawn')
+  get formattedSignedIn() {
     if (this.signedIn === true) {
       return "IN";
     } else if (this.withdrawn === true) {
@@ -70,21 +84,23 @@ export default DS.Model.extend({
     } else {
       return "";
     }
-  }),
+  }
 
-  formattedMeasured: computed('measured', function() {
+  @computed('measured')
+  get formattedMeasured() {
     if (this.measured === true) {
       return "MEASURED";
     } else {
       return "";
     }
-  }),
+  }
 
-  formattedLate: computed('late', function() {
+  @computed('late')
+  get formattedLate() {
     if (this.late === true) {
       return "LATE";
     } else {
       return "ON TIME";
     }
-  }),
-});
+  }
+}

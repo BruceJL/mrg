@@ -1,55 +1,104 @@
 <tr>
   <td>Robot Name:</td>
-  <td colspan="2">{{validated-input changeset=changeset propertyName="robot"}}</td>
+  <td colspan="2">
+    <ValidatedInput
+      @changeset={{@changeset}}
+      @propertyName="robot"/>
+  </td>
 </tr>
 <tr>
   <td>Competition:</td>
   <td>
-    <select onchange={{action (action "updateCompetition" changeset) value="target.value"}}>
-      {{#each competitions as |competitionOption|}}
-        <option value={{competitionOption.id}} selected={{eq changeset.competition.id competitionOption.id}}>{{competitionOption.name}}</option>
+    <select
+      onchange={{action (changeset-set @changeset "competition")}}>
+      {{#each @competitions as |competitionOption|}}
+        <option
+          value={{competitionOption}}
+          selected={{eq @changeset.competition competitionOption}}>
+          {{competitionOption.name}}
+        </option>
       {{/each}}
     </select>
   </td>
 </tr>
 <tr>
   <td>Driver 1:</td>
-  <td colspan="2">{{validated-input changeset=changeset propertyName="driver1"}}</td>
+  <td colspan="2">
+    <ValidatedInput
+      @changeset={{@changeset}}
+      @propertyName="driver1"}}/>
+  </td>
 </tr>
 <tr>
   <td>Driver 1 Grade:</td>
-  <td colspan="2">{{input class="full-width" value=changeset.driver1Gr}}</td>
+  <td colspan="2">
+    <Input
+      @class="full-width"
+      @value={{@changeset.driver1Gr}}/>
+  </td>
 </tr>
 <tr>
   <td>Driver 2:</td>
-  <td colspan="2"> {{input class="full-width" value=changeset.driver2}}</td>
+  <td colspan="2">
+    <Input
+     @class="full-width"
+     @value={{@changeset.driver2}}/>
+  </td>
 </tr>
 <tr>
   <td>Driver 2 Grade:</td>
-  <td colspan="2"> {{input class="full-width" value=changeset.driver2Gr}}</td>
+  <td colspan="2">
+    <Input
+      @class="full-width"
+      @value={{@changeset.driver2Gr}}/>
+  </td>
 </tr>
 <tr>
   <td>Driver 3:</td>
-  <td colspan="2"> {{input class="full-width" value=changeset.driver3}}</td>
+  <td colspan="2">
+    <Input
+      @class="full-width"
+      @value={{@changeset.driver3}}/>
+  </td>
 </tr>
 <tr>
   <td>Driver 3 Grade:</td>
-  <td colspan="2"> {{input class="full-width" value=changeset.driver3Gr}}</td>
+  <td colspan="2">
+    <Input
+      @class="full-width"
+      @value={{@changeset.driver3Gr}}/>
+  </td>
 </tr>
 <tr>
   <td>School:</td>
-  <td colspan="2"> {{input class="full-width" value=changeset.school}}</td>
+  <td colspan="2">
+    <Input
+      @class="full-width"
+      @value={{@changeset.school}}/>
+  </td>
 </tr>
 <tr>
   <td>Coach:</td>
-  <td colspan="2">{{validated-input changeset=changeset propertyName="coach"}}</td>
+  <td colspan="2">
+    <ValidatedInput
+      @changeset={{@changeset}}
+      propertyName="coach"}}/>
+  </td>
 </tr>
 <tr>
   <td>Email:</td>
-  <td colspan="2">{{validated-input changeset=changeset propertyName="email"}}</td>
+  <td colspan="2">
+    <ValidatedInput
+      @changeset={{@changeset}}
+      @propertyName="email"}}/>
+  </td>
 </tr>
 <tr>
   <td>Ph:</td>
-  <td colspan="2">{{validated-input changeset=changeset propertyName="ph"}}</td>
+  <td colspan="2">
+    <ValidatedInput
+      @changeset={{@changeset}}
+      @propertyName="ph"}}/>
+  </td>
 </tr>
 {{yield}}

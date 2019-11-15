@@ -1,8 +1,9 @@
 import DS from 'ember-data';
+const { Model, attr, belongsTo } = DS;
 
-export default DS.Model.extend({
-  robot: DS.belongsTo('robot'),
-  result: DS.attr('string'),
-  datetime: DS.attr('date'),
-  type: DS.attr('string')
-});
+export default class RobotMeasurementModel extends Model {
+  @belongsTo('robot') robot;
+  @attr('string') result;
+  @attr('date') datetime;
+  @attr('string') type;
+};

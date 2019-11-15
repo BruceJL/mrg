@@ -3,30 +3,33 @@ import {
   set
 } from '@ember/object';
 import Controller from '@ember/controller';
+import { debug } from '@ember/debug';
 
 import RobotValidation from '../../validations/robot';
 
-export default Controller.extend({
-  RobotValidation,
-  competition: null,
-  queryParams: ['competition'],
+export default class CompetitionRootController extends Controller {
 
-  actions: {
-    done() {
-      var model = this.model;
-      var competition = get(model, 'competition');
-      this.transitionToRoute('competitions.show', competition);
-      //history.back();
-    },
+  //RobotValidation;
+  competition = null;
+  queryParams = ['competition'];
 
-    updateCompetition(changeset, id) {
-      var competition = this.store.peekRecord('competition', id);
-      changeset.set('competition', competition);
-    },
-
-    changeRobotStatus(property, value) {
-      set(this.model, property, value);
-      this.model.save();
-    }
+  @action
+  done() {
+    let model = this.model;
+    let competition = get(model, 'competition');
+    this.transitionToRoute('competitions.show', competition);
+    //history.back();
   }
-});
+
+  @action
+  updateCompetition(changeset, id) {
+    let competition = this.store.peekRecord('competition', id);
+    changeset.set('competition', competition);
+  }
+
+  @action
+  changeRobotStatus(property, value) {
+    set(this.model, property, value);
+    this.model.save();
+  }
+}

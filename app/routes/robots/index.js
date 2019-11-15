@@ -3,8 +3,9 @@ import {
 } from '@ember/utils';
 import Route from '@ember/routing/route';
 import Pollster from '../pollster';
+import { debug } from '@ember/debug';
 
-export default Route.extend({
+export default class RobotsIndexRoute extends Route {
   model() {
     this.store.findAll('competition', {
       reload: true
@@ -12,15 +13,15 @@ export default Route.extend({
     return this.store.findAll('robot', {
       reload: true
     });
-  },
+  }
 
-  activate: function() {
+  activate() {
     //this._super(controller, model);
     if (isNone(this.pollster)) {
       var inst = this;
       this.set('pollster', Pollster.create({
         onPoll: function() {
-          // console.log("Model reload!");
+          debug("Model reload!");
           inst.get('store').findAll('robot');
         }
       }));
@@ -28,10 +29,10 @@ export default Route.extend({
     this.pollster.start();
 
     this.set('competitions', this.store.findAll('competition'));
-  },
+  }
 
   // This is called upon exiting the Route
-  deactivate: function() {
+  deactivate() {
     this.pollster.stop();
-  },
-});
+  }
+};

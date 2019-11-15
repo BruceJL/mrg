@@ -3,7 +3,7 @@ import {
 } from '@ember/object';
 import Route from '@ember/routing/route';
 
-export default Route.extend({
+export default class RobotsNewRoute extends Route {
   model(params, transition) {
     var store = this.store;
     store.findAll('competition');
@@ -20,10 +20,10 @@ export default Route.extend({
       set(robot, 'invoiced', "10.00");
     }
     return robot;
-  },
+  }
 
-  setupController: function(controller, model) {
+  setupController(controller, model) {
     this._super(controller, model);
     controller.set('competitions', this.store.peekAll('competition'));
   }
-});
+}

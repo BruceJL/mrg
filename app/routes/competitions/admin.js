@@ -1,6 +1,7 @@
 import Route from '@ember/routing/route';
 
-export default Route.extend({
+export default class CompetitionAdminRoute extends Route {
+
   model(params) {
     var store = this.store;
     this.set('params', params);
@@ -9,4 +10,4 @@ export default Route.extend({
         include: 'robot'
       });
   }
-});
+}

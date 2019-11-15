@@ -1,14 +1,14 @@
-<h2>{{model.longName}}</h2>
+<h2>{{this.model.longName}}</h2>
 <p>
-  Total spaces: {{model.maxEntries}}<br>
-  Competitors Registered: {{model.robotCount}}<br>
-  Competitors Checked-in: {{model.robotCountCheckedIn}}<br>
-  Spaces Unclaimed: {{model.unclaimedSpaces}}<br>
-  Spaces Not Checked-in: {{model.uncheckedinSpaces}}<br>
+  Total spaces: {{this.model.maxEntries}}<br>
+  Competitors Registered: {{this.model.robotCount}}<br>
+  Competitors Checked-in: {{this.model.robotCountCheckedIn}}<br>
+  Spaces Unclaimed: {{this.model.unclaimedSpaces}}<br>
+  Spaces Not Checked-in: {{this.model.uncheckedinSpaces}}<br>
 
-  Measurment Start Time: {{moment-format model.registrationTime "LTS"}}<br>
-  {{#link-to "robots.new" (query-params competition=model.name)}}New Entry{{/link-to}}<br><br>
-  Filter by robot name:{{input value=robotFilter}}<br>
+  Measurment Start Time: {{moment-format this.model.registrationTime "LTS"}}<br>
+  {{#link-to "robots.new" (query-params competition=this.model.name)}}New Entry{{/link-to}}<br><br>
+  Filter by robot name:{{input value=this.robotFilter}}<br>
 </p>
 <table class="list">
   <tbody>
@@ -25,8 +25,11 @@
       <th>Measured</th>
     </tr>
 
-    {{#each filteredRobotsByName as |robot|}}
-      {{robot-listing edit-link="robots.edit" item=robot}}
+    {{#each this.filteredRobotsByName as |robot|}}
+      <RobotListing
+        @edit-link="robots.edit"
+        @item={{robot}}
+      />
     {{/each}}
   </tbody>
 </table>

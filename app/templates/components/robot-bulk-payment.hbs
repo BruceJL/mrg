@@ -13,10 +13,10 @@
     </tr>
   </thead>
   <tbody>
-    {{#each items as |item|}}
+    {{#each @items as |item|}}
       <tr>
         <td>{{item.id}}</td>
-        <td>{{#link-to robots.edit item.id}}{{item.robot}}{{/link-to}}</td>
+        <td>{{#link-to @robots.edit item.id}}{{item.robot}}{{/link-to}}</td>
         <td>{{item.competition.name}}</td>
         <td>{{item.school}}</td>
         <td>{{item.driver1}}</td>
@@ -28,7 +28,7 @@
           {{else}}
             {{yield (hash
                item=item
-               checkbox=checkbox)}}
+               checkbox=@checkbox)}}
           {{/if}}
         </td>
         <td class="centered">{{item.formattedSignedIn}}</td>
@@ -39,8 +39,8 @@
       <td></td>
       <td></td>
       <td></td>
-      <td><b>{{invoicedTotal}}</b></td>
-      <td><b>{{paidTotal}}</b></td>
+      <td><b>{{@invoicedTotal}}</b></td>
+      <td><b>{{@paidTotal}}</b></td>
       <td></td>
       <td></td>
       <td></td>

@@ -1,11 +1,12 @@
 import DS from 'ember-data';
+const { Model, attr, belongsTo } = DS;
 
-export default DS.Model.extend({
-  competition: DS.belongsTo('competition'),
-  round: DS.attr('number'),
-  ring: DS.attr('number'),
-  competitor1: DS.belongsTo('robot'),
-  competitor2: DS.belongsTo('robot'),
-  competitor1Wins: DS.attr('number'),
-  competitor2Wins: DS.attr('number')
-});
+export default class MatchModel extends Model {
+  @attr('competition') competition;
+  @attr('number') round;
+  @attr('number') ring;
+  @belongsTo('robot') competitor1;
+  @belongsTo('robot') competitor2;
+  @attr('number') competitor1Wins;
+  @attr('number') competitor2Wins;
+};

@@ -1,4 +1,10 @@
 &nbsp;
-{{#with (changeset model RobotValidation) as |changeset|}}
-  {{robot-edit competitions=competitions changeset=changeset done="done" updateCompetition="updateCompetition" model=model}}
+{{#with (changeset this.model this.RobotValidation) as |changeset|}}
+  <RobotDetail
+    @competitions={{this.competitions}}
+    @changeset={{changeset}}
+    @done="done"
+    @updateCompetition="updateCompetition"
+    @model={{this.model}}
+  />
 {{/with}}

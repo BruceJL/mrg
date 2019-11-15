@@ -7,18 +7,20 @@
       </tr>
       <tr>
         <td>School:</td>
-        <td>{{input value=schoolFilter}}</td>
+        <td>{{input value=this.schoolFilter}}</td>
       </tr>
       <tr>
         <td><b>TOTAL:</b></td>
-        <td>{{invoicedTotal}}</td>
+        <td>{{this.invoicedTotal}}</td>
       </tr>
       <tr>
         <td>Count: </td>
-        <td>{{totalRobots}}</td>
+        <td>{{this.totalRobots}}</td>
       </tr>
       <tr>
-        <td colspan="2"><button {{action "pay"}} disabled={{isPayDisabled}}>Pay</button></td>
+        <td colspan="2">
+          <button {{action "pay"}} disabled={{this.isPayDisabled}}>Pay</button>
+        </td>
       </tr>
     </tbody>
   </table>
@@ -40,7 +42,7 @@
     </tr>
   </thead>
   <tbody>
-    {{#each filteredRobots as |item|}}
+    {{#each this.filteredRobots as |item|}}
       <tr>
         <td>{{item.id}}</td>
         <td>{{#link-to "robots.edit" item.id}}{{item.robot}}{{/link-to}}</td>
@@ -53,9 +55,11 @@
         <td class="centered">{{item.formattedSignedIn}}</td>
         <td>
           {{#if item.isPayable}}
-            {{input type="checkbox"
-                    checked=false
-                    click=(action "checkboxClicked" item)}}
+            {{input
+              type="checkbox"
+              checked=false
+              click=(action "checkboxClicked" item)
+            }}
           {{/if}}
         </td>
       </tr>

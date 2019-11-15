@@ -7,11 +7,11 @@
       </tr>
       <tr>
         <td>Robot Name:</td>
-        <td>{{input value=robotFilter}}</td>
+        <td>{{input value=this.robotFilter}}</td>
         <td>School:</td>
-        <td>{{input value=schoolFilter}}</td>
+        <td>{{input value=this.schoolFilter}}</td>
         <td>ID:</td>
-        <td>{{input value=robotIDFilter}}</td>
+        <td>{{input value=this.robotIDFilter}}</td>
       </tr>
     </tbody>
   </table>
@@ -33,16 +33,18 @@
     </tr>
   </thead>
   <tbody>
-    {{#each filteredRobots as |item|}}
-      {{robot-listing edit-link="robots.edit" item=item}}
+    {{#each this.filteredRobots as |item|}}
+      <RobotListing @edit-link="robots.edit" @item={{item}}/>
     {{/each}}
     <tr>
       <td><b>TOTAL:</b></td>
       <td></td>
       <td></td>
       <td></td>
-      <td><b>{{invoicedTotal}}</b></td>
-      <td><b>{{paidTotal}}</b></td>
+      <td></td>
+      <td></td>
+      <td><b>{{this.invoicedTotal}}</b></td>
+      <td><b>{{this.paidTotal}}</b></td>
       <td></td>
       <td></td>
     </tr>

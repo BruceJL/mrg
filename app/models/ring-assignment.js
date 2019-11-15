@@ -1,11 +1,10 @@
 import DS from 'ember-data';
+const { Model, attr, belongsTo } = DS;
 
-export default DS.Model.extend({
-  competition: DS.belongsTo('competition'),
-  robot: DS.belongsTo('robot', {
-    async: false
-  }),
-  ring: DS.attr('number'),
-  letter: DS.attr('string'),
-  round: DS.attr('number')
-});
+export default class RingAssignmentModel extends Model {
+  @belongsTo('competition') competition;
+  @belongsTo('robot') robot;
+  @attr('number') ring;
+  @attr('string') letter;
+  @attr('number') round;
+};

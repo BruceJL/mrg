@@ -1,47 +1,47 @@
+import Controller from '@ember/controller';
+import Changeset from 'ember-changeset';
 import {
+  action,
   set,
+  get,
   computed,
 } from '@ember/object';
-import Controller from '@ember/controller';
 
 import RobotValidation from '../../validations/robot';
 
-export default Controller.extend({
-  RobotValidation,
+export default class RobotEditController extends Controller {
 
-  measurementOptions: computed(function(){
+  RobotValidation = RobotValidation;
+
+  @computed()
+  get measurementOptions() {
     return ['Mass', 'Size', 'Time', 'Scratch']; // Time between polls (in ms)
-  }),
+  }
 
-  selectedMeasurementOption: 'Mass',
-
-  updateCompetition(changeset, id) {
-    let competition = this.store.peekRecord('competition', id);
-    changeset.set('competition', competition);
-  },
+  selectedMeasurementOption = 'Mass';
 
   changeRobotStatus(property, value) {
-    let model = this.model;
-    // console.log("changing " + property + " to " + value);
+    let model = this.model.robot;
+    console.log("changing " + property + " to " + value);
     set(model, property, value);
     model.save();
-  },
+  }
 
   createMeasurement(value) {
-    let robot = this.model;
+    let robot = this.model.robot;
     let type = this.selectedMeasurementOption;
     let date = new Date('1970-01-01T00:00:00Z');
-    // console.log("Logging " + type + " measurement of: " + value + " for robot " + robot.id);
+    console.log("Logging " + type + " measurement of: " + value + " for robot " + robot.id);
     let measurement = this.store.createRecord('robot-measurement', {
       robot: robot,
       result: value,
       type: type.toString(),
-      datetime: date
+      datetime: date,
     });
 
     measurement.save().then(() => {
-      let model = this.model;
-      // console.log("Robot measured has id: " + model.id);
+      let model = this.model.robot;
+      console.log("Robot measured has id: " + model.id);
       measurement.reload();
 
       //Determine if a robot is fully measured
@@ -100,102 +100,117 @@ export default Controller.extend({
 
       if (requiresMass &&
         (registrationTime > lastMeasuredMassTime || measuredMass === "Fail")) {
-        // console.log("Failed on mass");
+        console.log("Failed on mass");
         measured = false;
       }
       if (requiresSize &&
         (registrationTime > lastMeasuredSizeTime || measuredSize === "Fail")) {
-        // console.log("failed on size");
+        console.log("failed on size");
         measured = false;
       }
       if (requiresTime &&
         (registrationTime > lastMeasuredTimeTime || measuredTime === "Fail")) {
-        // console.log("failed on time delay");
+        console.log("failed on time delay");
         measured = false;
       }
       if (requiresScratch &&
         (registrationTime > lastMeasuredScratchTime || measuredScratch === "Fail")) {
-        // console.log("failed on scratch");
+        console.log("failed on scratch");
         measured = false;
       }
       model.set('measured', measured);
-      // console.log("Setting measured to " + measured);
+      console.log("Setting measured to " + measured);
       model.save();
     });
-  },
-
-  actions: {
-    done() {
-      history.back();
-    },
-
-    updateMeasurement(value) {
-      this.set('measurementType', value);
-    },
-
-    paid5Dollars(changeset) {
-      changeset.set('paid', 5.00);
-      changeset.save();
-    },
-
-    paid10Dollars(changeset) {
-      changeset.set('paid', 10.00);
-      changeset.save();
-    },
-
-    refund(changeset) {
-      changeset.set('paid', 0.00);
-      changeset.save();
-    },
-
-    signIn(changeset) {
-      changeset.set('signedIn', true);
-      changeset.save();
-    },
-
-    signOut(changeset) {
-      changeset.set('signedIn', false);
-      changeset.save();
-    },
-
-    toggleMeasured(changeset) {
-      changeset.toggleProperty('measured');
-      changeset.save();
-    },
-
-    withdraw(changeset) {
-      // console.log("withdrawing!");
-      changeset.set('withdrawn', true);
-      changeset.save();
-    },
-
-    reinstate(changeset) {
-      // console.log("reinstating!");
-      changeset.set('withdrawn', false);
-      changeset.save();
-    },
-
-    // updateCompetition(changeset, id) {
-    //   this.sendAction('updateCompetition', changeset, id);
-    // },
-
-    //Ember-changeset methods
-    save(changeset) {
-      // console.log("Saving changeset");
-      changeset.save();
-    },
-
-    rollback(changeset) {
-      // console.log("edit.js rollback");
-      changeset.rollback();
-    },
-
-    measurementPass(model) {
-      this.createMeasurement("Pass", model);
-    },
-
-    measurementFail(model) {
-      this.createMeasurement("Fail", model);
-    }
   }
-});
+
+  @action
+  updateCompetition(changeset, e) {
+    let value = e.target.value;
+    let competition = this.store.peekRecord('competition', value);
+    changeset.set('competition', competition);
+  }
+
+  @action
+  done() {
+    history.back();
+  }
+
+  @action
+  updateMeasurement(value) {
+    this.set('measurementType', value);
+  }
+
+  @action
+  paid5Dollars(changeset) {
+    changeset.set('paid', 5.00);
+    changeset.save();
+  }
+
+  @action
+  paid10Dollars(changeset) {
+    changeset.set('paid', 10.00);
+    changeset.save();
+  }
+
+  @action
+  refund(changeset) {
+    changeset.set('paid', 0.00);
+    changeset.save();
+  }
+
+  @action
+  signIn(changeset) {
+    changeset.set('signedIn', true);
+    changeset.save();
+  }
+
+  @action
+  signOut(changeset) {
+    changeset.set('signedIn', false);
+    changeset.save();
+  }
+
+  @action
+  toggleMeasured(changeset) {
+    changeset.toggleProperty('measured');
+    changeset.save();
+  }
+
+  @action
+  withdraw(changeset) {
+    console.log("withdrawing!");
+    changeset.set('withdrawn', true);
+    changeset.save();
+  }
+
+  @action
+  reinstate(changeset) {
+    console.log("reinstating!");
+    changeset.set('withdrawn', false);
+    changeset.save();
+  }
+
+  //Ember-changeset methods
+  @action
+  save(changeset) {
+    console.log("Saving changeset");
+    changeset.save();
+  }
+
+  @action
+  rollback(changeset) {
+    console.log("edit.js rollback");
+    changeset.rollback();
+  }
+
+  @action
+  measurementPass(model) {
+    this.createMeasurement("Pass", model);
+  }
+
+  @action
+  measurementFail(model) {
+    this.createMeasurement("Fail", model);
+  }
+};
