@@ -28,35 +28,8 @@ export default class CompetitionAdminController extends Controller {
     debug('Entering toggleProperty!');
     let competition = this.model;
     let b = competition.get(property, this.model);
+    debug('Setting ' + property + ' to ' + !b)
     competition.set(property, !b);
-    this.model.save();
-  }
-
-  @action
-  toggleMeasureMass() {
-    let competition = this.model;
-    competition.set('measureMass', !competition.measureMass);
-    this.model.save();
-  }
-
-  @action
-  toggleMeasureSize() {
-    let competition = this.model;
-    competition.set('measureSize', !competition.measureMass);
-    this.model.save();
-  }
-
-  @action
-  toggleMeasureTime() {
-    let competition = this.model;
-    competition.set('measureTime', !competition.measureMass);
-    this.model.save();
-  }
-
-  @action
-  toggleMeasureScratch() {
-    let competition = this.model;
-    competition.set('measureScratch', !competition.measureMass);
     this.model.save();
   }
 }

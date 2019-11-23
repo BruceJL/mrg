@@ -1,4 +1,4 @@
-<p>{{model.longName}}</p>
+<p>{{this.model.longName}}</p>
 <table class="list">
   <thead>
     <th>Name</th>
@@ -7,7 +7,7 @@
     <th>Driver</th>
   </thead>
   <tbody>
-    {{#each sortedAssignments as |item|}}
+    {{#each this.sortedAssignments as |item|}}
       <tr>
         <td>{{item.robot.robot}}</td>
         <td>{{item.ring}}</td>
