@@ -19,9 +19,6 @@ Router.map(function() {
     this.route('show', {
       path: '/:competition_id'
     });
-    this.route('robot', {
-      path: '/robot/:robot_id'
-    });
     this.route('admin', {
       path: '/:competition_id/admin'
     });
