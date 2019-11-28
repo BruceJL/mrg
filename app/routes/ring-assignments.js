@@ -3,6 +3,7 @@ import {
 } from '@ember/utils';
 import Route from '@ember/routing/route';
 import Pollster from './pollster';
+import { debug } from '@ember/debug';
 
 export default class RingAssignmentRoute extends Route {
   model(params) {

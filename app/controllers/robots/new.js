@@ -1,41 +1,53 @@
 import {
-	action,
+  action,
+  set,
+  get,
 } from '@ember/object';
+
+import {
+  debug,
+} from '@ember/debug';
+
+import {
+  inject as service,
+} from '@ember/service';
 
 import Controller from '@ember/controller';
 import RobotValidation from '../../validations/robot';
-import { debug } from '@ember/debug';
 
 export default class RobotNewController extends Controller {
   queryParams = ['competition'];
-
   RobotValidation = RobotValidation;
 
-  //TODO figure out how to make a changeset visible here, which it
-  //normally isn't, because the changeset isn't setup until after
-  //the page is rendered. Once that's done, call changeset.validate
-  //to make all of the required fields red immediatly.
+  setupNewRobot() {
+    let competitionId = this.get('competition');
+    let competitions = this.get('model.competitions');
+    let competition = competitions.findBy('id', competitionId);
 
-  //init: function () {
-  //  this._super();
-  //  Ember.run.schedule("afterRender", this, function() {
-  //      this.send("validate");
-  //  });
-  //},
+    debug("competitions are: " + competitions);
+    debug("competition is " + competition + " from id: " + competitionId);
+
+    let robot = this.get('model.robot');
+    debug("robot is :" + robot);
+
+    set(robot, 'tookPayment', " ");
+    set(robot, 'paid', " ");
+    set(robot, 'competition', competition);
+    if (get(robot, 'competition') === "RC1") {
+      set(robot, 'invoiced', "5.00");
+    } else {
+      set(robot, 'invoiced', "10.00");
+    }
+    // this.competitions = this.store.findAll('competition');
+  }
 
   @action
   save(changeset) {
     changeset.save().then(() => {
       let id = changeset.get('id');
       debug("Robot id: " + id);
-      this.transitionToRoute('competitions.robot', id);
+      this.transitionToRoute('robots.edit', id);
     });
-  }
-
-  @action
-  updateCompetition(changeset, id) {
-    let competition = this.store.peekRecord('competition', id);
-    changeset.set('competition', competition);
   }
 
   @action

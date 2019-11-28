@@ -125,13 +125,6 @@ export default class RobotEditController extends Controller {
   }
 
   @action
-  updateCompetition(changeset, e) {
-    let value = e.target.value;
-    let competition = this.store.peekRecord('competition', value);
-    changeset.set('competition', competition);
-  }
-
-  @action
   done() {
     history.back();
   }

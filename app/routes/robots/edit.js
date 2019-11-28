@@ -1,3 +1,7 @@
+import {
+  hash
+} from 'rsvp';
+
 import Route from '@ember/routing/route';
 
 export default class RobotsEditRoute extends Route {
@@ -7,7 +11,7 @@ export default class RobotsEditRoute extends Route {
   Measurer = "Insert name here!";
 
   model(params) {
-   return Ember.RSVP.hash({
+   return hash({
      robot: this.store.findRecord('robot',
        params.robot_id, {
          include: 'robotMeasurement'

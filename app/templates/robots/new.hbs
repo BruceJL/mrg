@@ -1,5 +1,5 @@
 &nbsp;
-{{#with (changeset this.model this.RobotValidation) as |changeset|}}
+{{#with (changeset this.model.robot this.RobotValidation) as |c|}}
   <p>Adding a new Entry!</p>
   <form>
     <table class="form">
@@ -8,14 +8,14 @@
         <col width="100">
         <col width="200">
         <RobotDetail
-          @changeset={{changeset}}
-          @competitions={{this.competitions}}
-          @updateCompetition="updateCompetition"/>
+          @changeset={{c}}
+          @competitions={{this.model.competitions}}
+        />
       </tbody>
     </table>
     <button
-      {{action "save" changeset}}
-      disabled={{changeset.isInvalid}}>
+      {{action "save" c}}
+      disabled={{c.isInvalid}}>
       Save Changes
     </button>
   </form>
