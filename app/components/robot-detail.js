@@ -9,9 +9,7 @@ export default class RobotDetailController extends Component {
     @action
     updateCompetition(event) {
         const id = event.target.value;
-        debug('running updateCompetition for id: ' + id);
         const c = this.competitions.findBy('id', id);
-        debug('found competition: ' + c);
         this.changeset.set('competition', c);
     }
 }

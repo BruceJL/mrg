@@ -1,0 +1,57 @@
+<h3>Check-in Information</h3>
+<table class="form">
+  <tbody>
+    <tr>
+      <td>Registered:</td>
+      <td colspan="2">{{moment-format @changeset.registered "YYYY MMM DD, h:mm:ss"}}</td>
+    </tr>
+    <tr>
+      <td>Checked in:</td>
+      <td>{{@data.formattedSignedIn}}</td>
+      <td>
+        {{#if @data.signedIn}}
+          <button {{action "cancelCheckin" @data}}>
+            Cancel Check in
+          </button>
+        {{else if @data.withdrawn}}
+          <button {{action "reinstate" @data}}>
+            Reinstate
+          </button>
+        {{else}}
+          <button {{action "checkIn" @data}}>Check in</button>
+          <button {{action "withdraw" @data}}>Withdraw</button>
+        {{/if}}
+      </td>
+    </tr>
+    <tr>
+      <td>Invoiced:</td>
+      <td colspan="2">{{@data.formattedInvoicedDollars}}</td>
+    </tr>
+    <tr>
+      <td>Paid:</td>
+      <td>{{@data.formattedPaidDollars}}</td>
+      <td colspan="2">
+        {{#if @data.isPaid}}
+          <button {{action "refund" @data}}>Refund</button>
+        {{else}}
+          <button {{action "paid5Dollars" @data}}>Paid $5.00</button>
+          <button {{action "paid10Dollars" @data}}>Paid $10.00</button>
+        {{/if}}
+      </td>
+    </tr>
+    <tr>
+      <td>Measured:</td>
+      <td colspan="2">{{@data.formattedMeasured}}</td>
+    </tr>
+    <tr>
+      <td>Registered:</td>
+      <td colspan="2">
+        {{#if @data.late}}
+          LATE
+        {{else}}
+          ON-TIME
+        {{/if}}
+      </td>
+    </tr>
+  </tbody>
+</table>

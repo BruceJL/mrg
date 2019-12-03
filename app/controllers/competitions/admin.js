@@ -2,13 +2,25 @@ import {
   get,
   action,
 } from '@ember/object';
+
+import {
+  debug,
+} from '@ember/debug';
+
+import {
+  validateNumber,
+} from 'ember-changeset-validations/validators';
+
 import Controller from '@ember/controller';
-import { debug } from '@ember/debug';
 
 export default class CompetitionAdminController extends Controller {
 
-  @action
-  setMeasurementTime() {
+  @action saveMaxEntries(changeset) {
+    debug("Saving MaxEntries as: " + changeset.get('maxEntries'));
+    changeset.save();
+  }
+
+  @action setMeasurementTime() {
     let model = this.model;
     let robots = get(model, 'robots');
     robots.forEach(function(item) {
@@ -23,8 +35,7 @@ export default class CompetitionAdminController extends Controller {
     });
   }
 
-  @action
-  toggleProperty(property) {
+  @action toggleProperty(property) {
     debug('Entering toggleProperty!');
     let competition = this.model;
     let b = competition.get(property, this.model);

@@ -1,101 +1,15 @@
+<h2>Robot: "{{this.model.robot.robot}}"</h2>
+<hr>
 {{#with (changeset this.model.robot this.RobotValidation) as |changeset|}}
-  <form>
-    <table class="form">
-      <tbody>
-        <col width="125">
-        <col width="100">
-        <col width="300">
-        <RobotDetail @changeset={{changeset}} @competitions={{this.model.competitions}}/>
-        <tr>
-          <td></td>
-          <td colspan="2">
-            <button {{action "rollback" changeset}}>Undo</button>
-            <button {{action "save" changeset}} disabled={{changeset.isInvalid}}>
-              Save Changes
-            </button>
-          </td>
-        </tr>
-        <tr>
-          <td colspan="3">
-            <hr>
-          </td>
-        </tr>
-        <tr>
-          <td>Checked in:</td>
-          <td>{{changeset.formattedSignedIn}}</td>
-          <td>
-            {{#if changeset.signedIn}}
-              <button {{action "signOut" changeset}}>Cancel Check in</button>
-            {{else if changeset.withdrawn}}
-              <button {{action "reinstate" changeset}}>Reinstate</button>
-            {{else}}
-              <button {{action "signIn" changeset}}>Check in</button>
-              <button {{action "withdraw" changeset}}>Withdraw</button>
-            {{/if}}
-          </td>
-        </tr>
-        <tr>
-          <td>Invoiced:</td>
-          <td>{{this.model.robot.formattedInvoicedDollars}}</td>
-        </tr>
-        <tr>
-          <td>Paid:</td>
-          <td>{{this.model.robot.formattedPaidDollars}}</td>
-          <td>
-            {{#if this.model.robot.isPaid}}
-              <button {{action "refund" changeset}}>Refund</button>
-            {{else}}
-              <button {{action "paid5Dollars" changeset}}>Paid $5.00</button>
-              <button {{action "paid10Dollars" changeset}}>Paid $10.00</button>
-            {{/if}}
-          </td>
-        </tr>
-        <tr>
-          <td>Measured:</td>
-          <td>{{this.model.robot.formattedMeasured}}</td>
-        </tr>
-        <tr>
-          <td>Registered:</td>
-          <td colspan="2">
-            {{#if this.model.robot.late}}
-              LATE
-            {{else}}
-              ON-TIME
-            {{/if}}
-          </td>
-        </tr>
-        <tr>
-          <td colspan="3">
-            <hr>
-          </td>
-        </tr>
-        <tr>
-          <td colspan="3">Measurements</td>
-        </tr>
-        <tr>
-          <td>
-            <select onchange={{
-                action (mut this.selectedMeasurementOption)
-                value="target.value"}}>
-              {{#each this.measurementOptions as |o|}}
-                <option value={{o}} selected={{eq this.selectedMeasurementOption o}}>
-                  {{o}}
-                </option>
-              {{/each}}
-            </select>
-          </td>
-          <td><button {{action "measurementPass" this.model}}>Pass</button></td>
-          <td><button {{action "measurementFail" this.model}}>Fail</button></td>
-        </tr>
-        {{#each this.model.robot.measurements as |m|}}
-          <tr>
-            <td>{{m.type}}</td>
-            <td>{{m.result}}</td>
-            <td>{{moment-format m.datetime "LTS"}}</td>
-          </tr>
-        {{/each}}
-      </tbody>
-    </table>
-    <button {{action "done"}}>Done</button>
-  </form>
+  <RobotDetail @changeset={{changeset}} @competitions={{this.model.competitions}} />
+  <button {{action "rollback" changeset}}>Undo</button>
+  <button {{action "save" changeset}} disabled={{changeset.isInvalid}}>
+    Save Changes
+  </button>
 {{/with}}
+<hr>
+<RobotCheckin @data={{this.model.robot}} />
+<hr>
+<RobotMeasurement @data={{this.model.robot}} />
+<hr>
+<button {{action "done"}}>Done</button>

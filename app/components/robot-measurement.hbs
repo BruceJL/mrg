@@ -1,0 +1,31 @@
+<h3>Measurement Information</h3>
+<select onchange={{
+action (mut this.selectedMeasurementOption)
+value="target.value"}}>
+  {{#each this.measurementOptions as |o|}}
+    <option value={{o}} selected={{eq this.selectedMeasurementOption o}}>
+      {{o}}
+    </option>
+  {{/each}}
+</select>
+<button {{action "measurementPass" @data}}>Pass</button>
+<button {{action "measurementFail" @data}}>Fail</button>
+<table class="form">
+  <thead>
+    <th>Type</th>
+    <th>Result</th>
+    <th>Time</th>
+  </thead>
+  <tbody>
+    <col>
+    <col>
+    <col>
+    {{#each @data.measurements as |m|}}
+      <tr>
+        <td>{{m.type}}</td>
+        <td>{{m.result}}</td>
+        <td>{{moment-format m.datetime "h:mm:ss a"}}</td>
+      </tr>
+    {{/each}}
+  </tbody>
+</table>

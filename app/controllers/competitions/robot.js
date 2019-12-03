@@ -26,10 +26,4 @@ export default class CompetitionRootController extends Controller {
     let competition = this.store.peekRecord('competition', id);
     changeset.set('competition', competition);
   }
-
-  @action
-  changeRobotStatus(property, value) {
-    set(this.model, property, value);
-    this.model.save();
-  }
 }

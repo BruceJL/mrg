@@ -37,6 +37,17 @@ table.data td.label {
 table.form td {
   padding-left: 7px;
   padding-right: 7px;
+  padding-top: 7px;
+  padding-bottom: 7px;
+  border-bottom: 1px solid #ddd;
+}
+
+table.form th {
+  padding-left: 7px;
+  padding-right: 7px;
+  padding-top: 7px;
+  padding-bottom: 7px;
+  border-bottom: 1px solid #ddd;
 }
 
 table.list {

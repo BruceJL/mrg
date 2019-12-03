@@ -24,31 +24,37 @@ function formatDollars(amount) {
 
 export default class RobotModel extends Model {
 
+  // competitor information
   @attr('string') robot;
   @belongsTo('competition') competition;
-  @attr('string') driver1;
-  @attr('string') driver1Gr;
-  @attr('string') driver2;
-  @attr('string') driver2Gr;
-  @attr('string') driver3;
-  @attr('string') driver3Gr;
-  @attr('string') school;
-  @attr('string') coach;
-  @attr('string') email;
-  @attr('string') ph;
-  @attr('number') invoiced;
-  @attr('string') tookPayment;
-  @attr('number') paid;
-  @attr('boolean') signedIn;
-  @attr('boolean') late;
-  @attr('boolean') measured;
-  @attr('boolean') withdrawn;
-  @hasMany('robot-measurement') measurements; // used to be a hasMany, now readonly?
+  @attr('string') driver1; // Driver1 name
+  @attr('string') driver1Gr; // Driver 1 grade
+  @attr('string') driver2; // Driver 2 name
+  @attr('string') driver2Gr; // Driver 2 grade
+  @attr('string') driver3; // Driver 3 name
+  @attr('string') driver3Gr; // Driver 3 grade
+  @attr('string') school; // School
+  @attr('string') coach; // Coach's name
+  @attr('string') email; // Coach's email
+  @attr('string') ph; // Coach's phone #
+
+  // Check-in information
+  @attr('number') invoiced; // amount the person was invoiced.
+  @attr('number') paid; // Amount competitor paid.
+  @attr('string') tookPayment; // name of the person who collected the money
+  @attr('string') payment_type; // Cash / Credit Card / Cheque / Invoiced
+  @attr('date') registered; // Time the competitor's entry was created.
+  @attr('boolean') signedIn; // has the competitor checked-in at the check in desk - DEPRECIATED.
+  @attr('boolean') late; // Did the competitor register after the deadline. - DEPRECIATED.
+  @attr('boolean') withdrawn; // Has the competitor withdrawn. - DEPRECIATED.
+  @attr('string') status; //   Checked-in / Withdrawn / Standby / Declined.
+  @attr('boolean') measured; // Has the competitor successfully completed measurement.
+  @hasMany('robot-measurement') measurements; // All the measurements taken of this competitor.
 
   @computed('paid')
   get isPaid() {
     var paid = this.paid;
-    if (paid > 0) {
+    if (paid > 0.0) {
       return true;
     } else {
       return false;
@@ -64,7 +70,7 @@ export default class RobotModel extends Model {
   }
 
   @computed('paid')
-  get formattedPaidDollars(){
+  get formattedPaidDollars() {
     var paid = this.paid;
     return formatDollars(paid);
   }

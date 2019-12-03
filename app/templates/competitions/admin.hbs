@@ -1,52 +1,56 @@
 <h2>{{this.model.longName}}</h2>
-<h3>Restart Measurements</h3>
-  <p>
-    Clicking the "Set Measurement Time" button will cause all robot in this
-    competition to be marked as "not measured" and set the competition
-    "Measurement Start Time" to right now. This is useful when a reweigh of
-    robots is required.
-  </p>
-<button {{action "setMeasurementTime" this.model}}>
-  Set Measurment Time
-</button>
+<h3>Competition Capacity</h3>
 <p>
-  <b>Current Measurement Time:</b>
+  {{#with (changeset this.model) as |changeset|}}
+    <Input @value={{changeset.maxEntries}} type="number"/>
+    <button title="This will commit the new maximum entries value." {{action "saveMaxEntries" changeset}}>
+      Save
+    </button>
+  {{/with}}
+</p>
+<hr>
+<h3>Restart Measurements</h3>
+<p>
+  <button title="Clicking this button will cause all robot in this
+competition to be marked as &quot;not measured&quot; and set the competition
+&quot;Measurement Start Time&quot; to right now. This is useful when a reweigh of
+robots is required." {{action "setMeasurementTime" this.model}}>
+    Set Measurment Time
+  </button>
+  <b>&nbsp;&nbsp;&nbsp;&nbsp;Current Measurement Time:</b>
   {{moment-format this.model.registrationTime "LTS"}}
 </p>
+<hr>
 <h3>Required Measurements</h3>
-<p>
-  <b>Mass:</b>
-  <input
-    type="checkbox"
-    name="model.measureMass"
-    checked={{this.model.measureMass}}
-    onchange={{action "toggleProperty" "measureMass"}}
-  >
-</p>
-<p>
-  <b>Size:</b>
-  <input
-    type="checkbox"
-    name="model.measureSize"
-    checked={{this.model.measureSize}}
-    onchange={{action "toggleProperty" "measureSize"}}
-  >
-</p>
-<p>
-  <b>Time:</b>
-  <input
-    type="checkbox"
-    name="model.measureTime"
-    checked={{this.model.measureTime}}
-    onchange={{action "toggleProperty" "measureTime"}}
-  >
-</p>
-<p>
-  <b>Scratch:</b>
-  <input
-    type="checkbox"
-    name="model.measureScratch"
-    checked={{this.model.measureScratch}}
-    onchange={{action "toggleProperty" "measureScratch"}}
-  >
-</p>
+<table class="form">
+  <thead>
+    <th> Measurement </th>
+    <th> Required </th>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Mass:</td>
+      <td>
+        <input type="checkbox" name="model.measureMass" checked={{this.model.measureMass}} onchange={{action "toggleProperty" "measureMass"}}>
+      </td>
+    </tr>
+    <tr>
+      <td>Size:</td>
+      <td>
+        <input type="checkbox" name="model.measureSize" checked={{this.model.measureSize}} onchange={{action "toggleProperty" "measureSize"}}>
+      </td>
+    </tr>
+    <tr>
+      <td>Time:</td>
+      <td>
+        <input type="checkbox" name="model.measureTime" checked={{this.model.measureTime}} onchange={{action "toggleProperty" "measureTime"}}>
+      </td>
+    </tr>
+    <tr>
+      <td>Scratch:</td>
+      <td>
+        <input type="checkbox" name="model.measureScratch" checked={{this.model.measureScratch}} onchange={{action "toggleProperty" "measureScratch"}}>
+      </td>
+    </tr>
+  </tbody>
+</table>
