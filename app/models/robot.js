@@ -42,7 +42,7 @@ export default class RobotModel extends Model {
   @attr('number') invoiced; // amount the person was invoiced.
   @attr('number') paid; // Amount competitor paid.
   @attr('string') tookPayment; // name of the person who collected the money
-  @attr('string') payment_type; // Cash / Credit Card / Cheque / Invoiced
+  @attr('string') paymentType; // Cash / Credit Card / Cheque / Invoiced
   @attr('date') registered; // Time the competitor's entry was created.
   @attr('boolean') signedIn; // has the competitor checked-in at the check in desk - DEPRECIATED.
   @attr('boolean') late; // Did the competitor register after the deadline. - DEPRECIATED.

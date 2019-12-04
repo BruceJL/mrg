@@ -3,7 +3,7 @@
   <tbody>
     <tr>
       <td>Registered:</td>
-      <td colspan="2">{{moment-format @changeset.registered "YYYY MMM DD, h:mm:ss"}}</td>
+      <td colspan="2">{{moment-format @data.registered "YYYY MMM DD, h:mm:ss"}}</td>
     </tr>
     <tr>
       <td>Checked in:</td>
@@ -33,6 +33,18 @@
       <td colspan="2">
         {{#if @data.isPaid}}
           <button {{action "refund" @data}}>Refund</button>
+          <select onchange={{
+          action (action "selectPaymentType" @data)
+          value="target.value"}}>
+            <option value="" selected={{eq @data.paymentType null}} disabled={{true}}>
+              Select payment method
+            </option>
+            {{#each this.PaymentOptions as |o|}}
+              <option value={{o}} selected={{eq @data.paymentType o}}>
+                {{o}}
+              </option>
+            {{/each}}
+          </select>
         {{else}}
           <button {{action "paid5Dollars" @data}}>Paid $5.00</button>
           <button {{action "paid10Dollars" @data}}>Paid $10.00</button>
@@ -41,17 +53,19 @@
     </tr>
     <tr>
       <td>Measured:</td>
-      <td colspan="2">{{@data.formattedMeasured}}</td>
+      <td>{{@data.formattedMeasured}}</td>
+      <td></td>
     </tr>
     <tr>
       <td>Registered:</td>
-      <td colspan="2">
+      <td>
         {{#if @data.late}}
           LATE
         {{else}}
           ON-TIME
         {{/if}}
       </td>
+      <td></td>
     </tr>
   </tbody>
 </table>

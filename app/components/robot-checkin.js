@@ -1,6 +1,7 @@
 import Component from '@ember/component';
 import {
   action,
+  computed,
 } from '@ember/object';
 import {
   tracked,
@@ -11,55 +12,67 @@ import {
 
 export default class RobotCheckinController extends Component {
 
-  @action
-  save(changeset) {
-    console.log("Saving changeset");
-    changeset.save();
+  @computed()
+  get PaymentOptions() {
+    return ['CASH', 'INVOICED', 'CHEQUE', 'CREDIT CARD', 'COMPLEMENTARY'];
   }
 
   @action
-  withdraw(changeset) {
-    changeset.set('withdrawn', true); //Depreciated
-    changeset.set('status', "WITHDRAWN")
-    changeset.save();
+  save(model) {
+    console.log("Saving model");
+    model.save();
   }
 
   @action
-  reinstate(changeset) {
-    changeset.set('withdrawn', false); //depreciated
-    changeset.set('status', "UNKNOWN")
-    changeset.save();
+  withdraw(model) {
+    model.set('withdrawn', true); //Depreciated
+    model.set('status', "WITHDRAWN")
+    model.save();
   }
 
   @action
-  checkIn(changeset) {
-    changeset.set('signedIn', true); //depreciated
-    changeset.set('status', "CHECKED-IN")
-    changeset.save();
+  reinstate(model) {
+    model.set('withdrawn', false); //depreciated
+    model.set('status', "UNKNOWN")
+    model.save();
   }
 
   @action
-  cancelCheckin(changeset) {
-    changeset.set('signedIn', false); //depreciated
-    changeset.set('status', "UNKNOWN")
-    changeset.save();
+  checkIn(model) {
+    model.set('signedIn', true); //depreciated
+    model.set('status', "CHECKED-IN")
+    model.save();
   }
 
   @action
-  paid5Dollars(changeset) {
-    changeset.set('paid', 5.00);
-    changeset.save();
+  cancelCheckin(model) {
+    model.set('signedIn', false); //depreciated
+    model.set('status', "UNKNOWN")
+    model.save();
   }
 
   @action
-  paid10Dollars(changeset) {
-    changeset.set('paid', 10.00);
-    changeset.save();
+  paid5Dollars(model) {
+    model.set('paid', 5.00);
+    model.save();
   }
 
   @action
-  refund(changeset) {
-    changeset.set('paid', 0.00);
-    changeset.save();
+  paid10Dollars(model) {
+    model.set('paid', 10.00);
+    model.save();
+  }
+
+  @action
+  refund(model) {
+    model.set('paid', 0.00);
+    model.set('paymentType', null);
+    model.save();
+  }
+
+  @action
+  selectPaymentType(model, value){
+    model.set('paymentType', value)
+    model.save();
   }
 }
