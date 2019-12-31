@@ -17,37 +17,19 @@
   </table>
 </div>
 
-<table class="list">
-  <thead>
-    <tr>
-      <th>#</th>
-      <th>Robot</th>
-      <th>Competition</th>
-      <th>School</th>
-      <th>Driver</th>
-      <th>Late</th>
-      <th>Invoiced</th>
-      <th>Paid</th>
-      <th>Signed In</th>
-      <th>Measured</th>
-    </tr>
-  </thead>
+<RobotListing @edit-link="robots.edit" @robots={{this.filteredRobots}} />
+
+<table>
   <tbody>
-    {{#each this.filteredRobots as |item|}}
-      <RobotListing @edit-link="robots.edit" @item={{item}}/>
-    {{/each}}
     <tr>
-      <td><b>TOTAL:</b></td>
-      <td></td>
-      <td></td>
-      <td></td>
-      <td></td>
-      <td></td>
-      <td><b>{{this.invoicedTotal}}</b></td>
-      <td><b>{{this.paidTotal}}</b></td>
-      <td></td>
-      <td></td>
+      <td> Invoiced Total: </td>
+      <td> {{this.invoicedTotal}}</td>
+    </tr>
+    <tr>
+      <td>Paid Total</td>
+      <td>{{this.paidTotal}}</td>
     </tr>
   </tbody>
 </table>
+
 {{outlet}}

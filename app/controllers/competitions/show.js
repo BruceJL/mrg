@@ -3,18 +3,22 @@ import {
   get,
 } from '@ember/object';
 import Controller from '@ember/controller';
-import { debug } from '@ember/debug';
+import {
+  debug,
+} from '@ember/debug';
+import {
+  hasMany,
+} from '@ember-data/model';
 
 export default class CompetitionShowController extends Controller {
 
   queryParams = ['robotFilter'];
 
-  //Filter the currently displayed robots by robot name
   @computed('model', 'robotFilter')
   get filteredRobotsByName() {
-    let model = get(this, 'model')
-    let returnRobots = get(model, 'robots');
+    let model = this.get('model');
     let robotFilter = this.robotFilter;
+    let returnRobots = model.get('robots').sortBy('registered');
 
     if (robotFilter && robotFilter.length > 1) {
       let regex = new RegExp(robotFilter, "i");
@@ -23,7 +27,6 @@ export default class CompetitionShowController extends Controller {
         return regex.test(data);
       });
     } else {
-      debug("returning: " + returnRobots);
       return returnRobots;
     }
   }

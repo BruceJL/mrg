@@ -71,7 +71,19 @@ table.list td.centered {
 
 table.list tr.normal {}
 
-table.list tr.strikeout {
+table.list tr.confirmed {
+  background-color: #7dff8e;
+}
+
+table.list tr.standby {
+  background-color: #f8ff7d;
+}
+
+table.list tr.declined {
+  background-color: #FF6666;
+}
+
+table.list tr.withdrawn {
   text-decoration: line-through;
 }
 

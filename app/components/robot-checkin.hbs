@@ -7,13 +7,13 @@
     </tr>
     <tr>
       <td>Checked in:</td>
-      <td>{{@data.formattedSignedIn}}</td>
+      <td>{{@data.status}}</td>
       <td>
-        {{#if @data.signedIn}}
+        {{#if (eq @data.status "CHECKED-IN")}}
           <button {{action "cancelCheckin" @data}}>
             Cancel Check in
           </button>
-        {{else if @data.withdrawn}}
+        {{else if (eq @data.status "WITHDRAWN")}}
           <button {{action "reinstate" @data}}>
             Reinstate
           </button>

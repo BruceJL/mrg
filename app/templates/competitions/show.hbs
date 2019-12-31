@@ -10,26 +10,8 @@
   {{#link-to "robots.new" (query-params competition=this.model.name)}}New Entry{{/link-to}}<br><br>
   Filter by robot name:{{input value=this.robotFilter}}<br>
 </p>
-<table class="list">
-  <tbody>
-    <tr>
-      <th>#</th>
-      <th>Robot</th>
-      <th>Competition</th>
-      <th>School</th>
-      <th>Driver</th>
-      <th>Late</th>
-      <th>Invoiced</th>
-      <th>Paid</th>
-      <th>Checked In</th>
-      <th>Measured</th>
-    </tr>
 
-    {{#each this.filteredRobotsByName as |robot|}}
-      <RobotListing
-        @edit-link="robots.edit"
-        @item={{robot}}
-      />
-    {{/each}}
-  </tbody>
-</table>
+<RobotListing
+  @robots={{this.filteredRobotsByName}}
+  @edit-link="robots.edit"
+/>

@@ -8,7 +8,7 @@
   </thead>
   <tbody>
     {{#each this.sortedAssignments as |item|}}
-      <tr class={{if item.withdrawn "strikeout" "normal"}}>
+      <tr class={{if (eq item.status "WITHDRAWN") "strikeout" "normal"}}>
         <td>{{item.robot}}</td>
         <td>{{item.school}}</td>
         <td>{{item.driver1}}</td>

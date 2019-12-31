@@ -13,6 +13,10 @@ import {
   setProperties
 } from '@ember/object';
 
+import {
+  debug,
+} from '@ember/debug';
+
 function formatDollars(amount) {
   if (amount > 0) {
     var formatted = parseFloat(amount, 10).toFixed(2);
@@ -44,12 +48,11 @@ export default class RobotModel extends Model {
   @attr('string') tookPayment; // name of the person who collected the money
   @attr('string') paymentType; // Cash / Credit Card / Cheque / Invoiced
   @attr('date') registered; // Time the competitor's entry was created.
-  @attr('boolean') signedIn; // has the competitor checked-in at the check in desk - DEPRECIATED.
-  @attr('boolean') late; // Did the competitor register after the deadline. - DEPRECIATED.
-  @attr('boolean') withdrawn; // Has the competitor withdrawn. - DEPRECIATED.
-  @attr('string') status; //   Checked-in / Withdrawn / Standby / Declined.
+  @attr('string') status; //   Checked-in / Withdrawn
   @attr('boolean') measured; // Has the competitor successfully completed measurement.
-  @hasMany('robot-measurement') measurements; // All the measurements taken of this competitor.
+  @hasMany('robot-measurement', {
+    async: false
+  }) measurements; // All the measurements taken of this competitor.
 
   @computed('paid')
   get isPaid() {
@@ -64,7 +67,8 @@ export default class RobotModel extends Model {
   @computed('withdrawn', 'paid')
   get isPayable() {
     let paid = this.paid;
-    let withdrawn = this.withdrawn;
+    //let withdrawn = this.withdrawn;
+    let withdrawn = this.status === "WITHDRAWN";
 
     return ((paid === null || paid === 0) && (!withdrawn));
   }
@@ -81,32 +85,66 @@ export default class RobotModel extends Model {
     return formatDollars(invoiced);
   }
 
-  @computed('signedIn', 'withdrawn')
-  get formattedSignedIn() {
-    if (this.signedIn === true) {
-      return "IN";
-    } else if (this.withdrawn === true) {
+  @computed('slottedStatus', 'status')
+  get humanFriendlyStatus() {
+    if (this.status === "UNKNOWN") {
+      return "";
+    }
+    if (this.status === "WITHDRAWN") {
       return "WITHDRAWN";
     } else {
-      return "";
+      return this.status + " - " + this.slottedStatus;
     }
   }
 
-  @computed('measured')
-  get formattedMeasured() {
-    if (this.measured === true) {
-      return "MEASURED";
-    } else {
-      return "";
-    }
-  }
+  @computed('status', 'competition.robots.@each.status')
+  get slottedStatus() {
+    let competition = this.get('competition');
+    let robots = competition.get('robots').sortBy('registered');
+    let maxCompetitors = competition.get('maxEntries');
+    let index = 0;
+    let confirmedRobotCount = 0;
+    let withdrawnRobotCount = 0;
+    let id = this.get('id');
+    let item = null;
+    let itemId = "";
+    let itemStatus = "";
+    let status = this.get("status");
+    let slottedStatus = null;
 
-  @computed('late')
-  get formattedLate() {
-    if (this.late === true) {
-      return "LATE";
-    } else {
-      return "ON TIME";
+    if (status === "UNKNOWN") {
+      slottedStatus = "unknown";
+    } else if (status === "WITHDRAWN") {
+      slottedStatus = "withdrawn";
+    } else if (status === "CHECKED-IN") {
+      while (!slottedStatus && index < robots.length) {
+        item = robots[index];
+        itemStatus = item.status;
+        itemId = item.get('id');
+        if (itemStatus === "CHECKED-IN") {
+          // Declined status is easy.
+          if (confirmedRobotCount >= maxCompetitors) {
+            if (itemId === id) {
+              slottedStatus = "declined";
+            }
+          } else if (index - withdrawnRobotCount >= maxCompetitors) {
+            if (itemId === id) {
+              slottedStatus = "standby";
+            }
+          // Confirmed status is easy.
+          } else if (confirmedRobotCount < maxCompetitors) {
+            confirmedRobotCount++;
+            if (itemId === id) {
+              slottedStatus = "confirmed";
+            }
+          }
+        }
+        else if (itemStatus === "WITHDRAWN"){
+          withdrawnRobotCount++;
+        }
+        index++;
+      }
     }
+    return slottedStatus;
   }
 }
