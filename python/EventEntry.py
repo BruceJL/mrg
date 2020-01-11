@@ -4,7 +4,11 @@ class EventEntry(object):
     position = ""
     round  = ""
 
-    def __init__(self, entry = "", letter = "", position = ""):
+    def __init__(self,
+                 entry = "",
+                 letter = "",
+                 position = ""
+                ):
         self.entry = entry
         self.letter = letter
         self.position = position

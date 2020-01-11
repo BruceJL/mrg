@@ -4,8 +4,6 @@ from EventEntry import EventEntry
 
 byeEntry = EventEntry(Entry(0, 'bye', 'bye', 'bye', 'bye', 'bye', 'bye', 'bye', 'bye', 'bye', 'bye'))
 
-class RoundRobinError(Exception):
-    pass
 
 class RoundRobinTournament(object):
     def __init__(self, name, ring, event):
@@ -73,10 +71,9 @@ class RoundRobinTournament(object):
         if self.event_entries[length] == byeEntry:
             self.event_entries.remove(byeEntry)
 
-        if len(self.matches) != num_matches:
-            s = "DID NOT CALCULATE THE CORRECT NUMBER OF MATCHES. Should have got {}, got {}."
-            s = s.format(str(num_matches), str(self.matches))
-            raise RoundRobinError(s)
+        assert len(self.matches) == num_matches, \
+          "DID NOT CALCULATE THE CORRECT NUMBER OF MATCHES. Should have got " \
+          + str(num_matches) + ", got " + str(self.matches)
 
 
 class RoundRobinMatch(object):
