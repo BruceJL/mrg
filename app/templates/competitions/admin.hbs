@@ -2,10 +2,28 @@
 <h3>Competition Capacity</h3>
 <p>
   {{#with (changeset this.model) as |changeset|}}
-    <Input @value={{changeset.maxEntries}} type="number"/>
-    <button title="This will commit the new maximum entries value." {{action "saveMaxEntries" changeset}}>
-      Save
-    </button>
+    <table class="form">
+      <tbody>
+        <tr>
+          <td><b>Entries:</b></td>
+          <td><Input @value={{changeset.maxEntries}} type="number" title="This will commit the new maximum entries value." /></td>
+        </tr>
+        <tr>
+          <td><b>Rings:</b></td>
+          <td><Input @value={{changeset.rings}} type="number" title="This is the number of rings that will be used." /></td>
+        </tr>
+        <tr>
+          <td><b>Maximum Entries per ring:</b></td>
+          <td><Input @value={{changeset.maxRobotsPerRing}} type="number" title="This is the maximum allowable number of robots in a given ring" /></td>
+        </tr>
+        <tr>
+          <td><b>Minimum Entries per ring:</b></td>
+          <td><Input @value={{changeset.maxRobotsPerRing}} type="number" title="This is the maximum allowable number of robots in a given ring" /></td>
+        </tr>
+      </tbody>
+    </table>
+    <button {{action "save" changeset}}>Save</button>
+    <button {{action "rollback" changeset}}>Undo</button>
   {{/with}}
 </p>
 <hr>

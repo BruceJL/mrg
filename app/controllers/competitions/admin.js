@@ -15,11 +15,6 @@ import Controller from '@ember/controller';
 
 export default class CompetitionAdminController extends Controller {
 
-  @action saveMaxEntries(changeset) {
-    debug("Saving MaxEntries as: " + changeset.get('maxEntries'));
-    changeset.save();
-  }
-
   @action setMeasurementTime() {
     let model = this.model;
     let robots = get(model, 'robots');

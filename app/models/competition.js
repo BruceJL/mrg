@@ -13,6 +13,8 @@ export default class CompetitionModel extends Model {
   @attr('number') robotsPerRing;
   @hasMany('ring-assignments', {async: false}) ringAssignments; // used to be a hasMany, now readonly?
   @attr('number') maxEntries;
+  @attr('number') maxRobotsPerRing;
+  @attr('number') minRobotsPerRing;
   @attr('date') registrationTime;
   @attr('boolean') measureMass;
   @attr('boolean') measureSize;
