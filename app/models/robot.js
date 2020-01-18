@@ -102,48 +102,47 @@ export default class RobotModel extends Model {
     let competition = this.get('competition');
     let robots = competition.get('robots').sortBy('registered');
     let maxCompetitors = competition.get('maxEntries');
-    let index = 0;
-    let confirmedRobotCount = 0;
-    let withdrawnRobotCount = 0;
+    let checkedInOrUnknownCount = 0;
+    let checkedInCount = 0;
     let id = this.get('id');
     let item = null;
     let itemId = "";
+    let index = 0;
     let itemStatus = "";
     let status = this.get("status");
     let slottedStatus = null;
 
-    if (status === "UNKNOWN") {
-      slottedStatus = "unknown";
-    } else if (status === "WITHDRAWN") {
-      slottedStatus = "withdrawn";
-    } else if (status === "CHECKED-IN") {
-      while (!slottedStatus && index < robots.length) {
-        item = robots[index];
-        itemStatus = item.status;
-        itemId = item.get('id');
-        if (itemStatus === "CHECKED-IN") {
-          // Declined status is easy.
-          if (confirmedRobotCount >= maxCompetitors) {
-            if (itemId === id) {
-              slottedStatus = "declined";
-            }
-          } else if (index - withdrawnRobotCount >= maxCompetitors) {
-            if (itemId === id) {
-              slottedStatus = "standby";
-            }
-          // Confirmed status is easy.
-          } else if (confirmedRobotCount < maxCompetitors) {
-            confirmedRobotCount++;
-            if (itemId === id) {
-              slottedStatus = "confirmed";
-            }
+    while (!slottedStatus && checkedInOrUnknownCount < robots.length) {
+      item = robots[index];
+      itemStatus = item.status;
+      itemId = item.get('id');
+
+      if (itemId === id) {
+        // Declined status is easy.
+        if (checkedInCount > maxCompetitors) {
+          slottedStatus = "declined";
+
+          // standby status
+        } else if (checkedInOrUnknownCount > maxCompetitors) {
+          slottedStatus = "standby";
+
+          // confirmed status. There's room at the inn.
+        } else if (checkedInCount <= maxCompetitors) {
+          if (itemStatus === "CHECKED-IN") {
+            slottedStatus = "confirmed";
+          } else {
+            slottedStatus = "unknown"
           }
         }
-        else if (itemStatus === "WITHDRAWN"){
-          withdrawnRobotCount++;
-        }
-        index++;
       }
+
+      if (itemStatus === "CHECKED-IN") {
+        checkedInOrUnknownCount++;
+        checkedInCount++;
+      }else if (itemStatus === "UNKNOWN"){
+        checkedInOrUnknownCount++;
+      }
+      index++;
     }
     return slottedStatus;
   }
