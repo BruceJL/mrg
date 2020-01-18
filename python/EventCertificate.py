@@ -1,5 +1,6 @@
 import datetime
 import calendar
+from typing import TYPE_CHECKING
 from odf.opendocument import OpenDocumentDrawing
 from odf.style import Style, MasterPage, PageLayout, PageLayoutProperties, \
   TextProperties, ParagraphProperties, FontFace, GraphicProperties
@@ -7,10 +8,13 @@ from odf.text import P, Span
 from odf.draw import Page, Frame, TextBox, Image
 from odf import teletype
 
+if TYPE_CHECKING:
+    from Entry import Entry
+    from typing import List
 
 # stolen from:
 # https://stackoverflow.com/questions/9647202/ordinal-numbers-replacement
-def make_ordinal(n):
+def make_ordinal(n: 'int'):
     '''
     Convert an integer into its ordinal representation::
 
@@ -26,32 +30,12 @@ def make_ordinal(n):
     return suffix
 
 
-def make_odf_certificates(competition, winners_id):
-    competition_code = {
-      'LFS': 'Line Follower (Scratch built)',
-      'LFK': 'Line Follower (Kit built)',
-      'LMA': 'Line Maze Autonomous',
-      'DRA': 'Drag Racer Autonomous',
-      'TPM': 'Tractor Pull',
-      'NXT': 'Lego Challenge',
-      'JC1': 'Judges Choice',
-      'SSR': 'Super Scramble Rookie',
-      'SSL': 'Super Scramble Light',
-      'SSH': 'Super Scramble Heavy',
-      'MSR': 'Mini Sumo Rookie',
-      'MS1': 'Mini Sumo One',
-      'MS2': 'Mini Sumo Two ',
-      'MS3': 'Mini Sumo Three',
-      'MSA': 'Mini Sumo Autonomous',
-      'PST': 'Prairie Sumo',
-      'PSA': 'Prairie Sumo Autonomous',
-      'RC1': 'Robo-Critter',
-    }
+def make_odf_certificates(event, winners: 'List[Entry]'):
 
     now = datetime.datetime.now()
-    games_iteration = now.year - 1995
+    games_iteration: 'int' = now.year - 1995
 
-    competitionName = competition_code.get(competition)
+    competition_name: 'str' = event.long_name
 
     document = OpenDocumentDrawing()
 
@@ -67,8 +51,8 @@ def make_odf_certificates(competition, winners_id):
     page_layout_style = PageLayout(name=page_layout_)
     page_layout_properties = PageLayoutProperties(
       writingmode="lr-tb",
-      margintop="0.5in",
-      marginbottom="0.5in",
+      margintop="1.25in",
+      marginbottom="1.25in",
       marginleft="1.25in",
       marginright="1.25in",
       printorientation="landscape",
@@ -101,7 +85,7 @@ def make_odf_certificates(competition, winners_id):
 
     # Cooper Black font
     cooper_black_font_name = "Cooper Black"
-    s = FontFace(
+    s: 'FontFace' = FontFace(
       name=cooper_black_font_name,
       fontfamily=cooper_black_font_name,
     )
@@ -109,7 +93,7 @@ def make_odf_certificates(competition, winners_id):
 
     # Big Caslon font
     big_caslon_font_name = "Big Caslon"
-    s = FontFace(
+    s: 'FontFace' = FontFace(
       name=big_caslon_font_name,
       fontfamily=big_caslon_font_name,
     )
@@ -117,7 +101,7 @@ def make_odf_certificates(competition, winners_id):
 
     # Big Caslon Pro font
     big_caslon_pro_font_name = "Adobe Caslon Pro"
-    s = FontFace(
+    s: 'FontFace' = FontFace(
       name=big_caslon_pro_font_name,
       fontfamily=big_caslon_pro_font_name,
     )
@@ -128,7 +112,7 @@ def make_odf_certificates(competition, winners_id):
 
     # PARAGRAPH - Big Caslon Pro 12pt
     sponsors_paragraph_style = "sponsorsParagraphStyle"
-    s = Style(
+    s: 'Style' = Style(
       name=sponsors_paragraph_style,
       family="paragraph",
       displayname="Big Caslon Pro 12pt",
@@ -137,6 +121,20 @@ def make_odf_certificates(competition, winners_id):
     s.addElement(TextProperties(
       fontname=big_caslon_pro_font_name,
       fontsize="12pt",
+    ))
+    styles.addElement(s)
+
+    # TEXT - Big Caslon Pro 12pt Superscript
+    big_caslon_pro_12pt_bold = "bigCaslon12ptBold"
+    s = Style(
+      name=big_caslon_pro_12pt_bold,
+      family="text",
+      displayname="Big Caslon Pro 12pt Bold",
+    )
+    s.addElement(TextProperties(
+      fontname=big_caslon_pro_font_name,
+      fontsize="12pt",
+      fontweight="bold",
     ))
     styles.addElement(s)
 
@@ -331,11 +329,11 @@ def make_odf_certificates(competition, winners_id):
     # Add in the robot logo picture.
     robot_logo_href = document.addPicture('robot.png')
 
-    for i in range(len(winners_id)):
+    for i in range(len(winners)):
         place = i + 1
 
         # Create a page to contain the drawing
-        page = Page(
+        page: 'Page' = Page(
           masterpagename=masterpage,
           name="page-" + str(place),
           stylename=drawing_page,
@@ -343,16 +341,16 @@ def make_odf_certificates(competition, winners_id):
         document.drawing.addElement(page)
 
         # Replace winner's information
-        competitorname = winners_id[i][0].get('driver1')
-        robotname = '“' + winners_id[i][0].get('robot') + '”'
+        competitorname = winners[i][0].driver1
+        robotname = '"' + winners[i][0].robot + '"'
 
         # Add image
         photoframe = Frame(
           stylename=frame_style,
           width="2.08in",
           height="3.28in",
-          x="1.75in",  # 0.51 in
-          y="1.67in",  # 0.67 in
+          x="1.75in",
+          y="1.67in",
         )
 
         winner_frame = Frame(
@@ -433,7 +431,7 @@ def make_odf_certificates(competition, winners_id):
         teletype.addTextToElement(p, "\n")
 
         p.addElement(Span(
-          text=competitionName,
+          text=competition_name,
           stylename=big_caslon_pro_26pt_bold,
         ))
 
@@ -501,13 +499,21 @@ def make_odf_certificates(competition, winners_id):
           + "SCIENCE COUNCIL MANITOBA\n"
           + "and the generous support and "
           + "contributions of: CTTAM, EGM, Emergent BioSolutions, IEEE, "
-          + "MicroPilot, U of M Faculty of Engineering, "
-          + "Vehicle Technology Centre,\n"
+        )
+
+        p.addElement(Span(
+          text="MicroPilot",
+          stylename=big_caslon_pro_12pt_bold,
+        ))
+
+        teletype.addTextToElement(
+          p,
+          ", U of M Faculty of Engineering,\n"
           + "and the Winnipeg School Division."
         )
         sponsors_text_box.addElement(p)
 
     # Save document
-    file_name = "./ScoreSheets/" + competition + "-certificates"
+    file_name = "./ScoreSheets/" + event.competition + "-certificates"
     document.save(file_name, True)
     return file_name

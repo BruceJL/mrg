@@ -1,28 +1,55 @@
-from Entry import Entry
+from typing import TYPE_CHECKING
 from math import floor
+from Entry import Entry
 from EventEntry import EventEntry
 
-byeEntry = EventEntry(Entry(0, 'bye', 'bye', 'bye', 'bye', 'bye', 'bye', 'bye', 'bye', 'bye', 'bye'))
+if TYPE_CHECKING:
+    from typing import List, Dict, Any
+    from Event import Event
+
+byeEntry = EventEntry(
+  Entry(
+    id=0,
+    robotName='bye',
+    coach='bye',
+    school='bye',
+    competition='bye',
+    driver1='bye',
+    driver1Grade=0,
+    driver2='bye',
+    driver2Grade=0,
+    driver3='bye',
+    driver3Grade=0,
+  ))
 
 
 class RoundRobinTournament(object):
-    def __init__(self, name, ring, event):
+    def __init__(
+      self,
+      name: 'str',
+      ring: 'int',
+      event: 'Event',
+    ) -> 'None':
         self.name = name
         self.ring = ring
-        self.round = round
-        self.event_entries = []
-        self.matches = []
         self.event = event
 
-    def add_entry(self, entry):
+        self.event_entries: 'List[EventEntry]' = []
+        self.matches: 'List[RoundRobinMatch]' = []
+
+    def add_entry(
+      self,
+      entry: 'Entry',
+    ) -> 'EventEntry':
         letter = self.get_next_free_letter()
         event_entry = EventEntry(entry, letter)
         self.event_entries.append(event_entry)
         return event_entry
 
-    def get_next_free_letter(self):
-        letter = ""
-        letters = []
+    def get_next_free_letter(self) -> 'str':
+        letter: 'str' = ""
+        letters: 'List[str]' = []
+
         for event_entry in self.event_entries:
             letters.append(event_entry.letter)
 
@@ -34,13 +61,13 @@ class RoundRobinTournament(object):
                 letter_index += 1
         return letter
 
-    def add_event_entry(self, event_entry):
+    def add_event_entry(self, event_entry) -> 'None':
         self.event_entries.append(event_entry)
 
-    def remove_event_entry(self, event_entry):
+    def remove_event_entry(self, event_entry) -> 'None':
         self.event_entries.remove(event_entry)
 
-    def create_round_robin_matches(self):
+    def create_round_robin_matches(self) -> 'None':
         self.event_entries = sorted(self.event_entries, key=lambda x: x.letter)
         n = len(self.event_entries)
         if n % 2 == 1:
@@ -55,25 +82,37 @@ class RoundRobinTournament(object):
             lhs = 0
             rhs = length - i
 
-            if not (self.event_entries[rhs] == byeEntry or self.event_entries[lhs] == byeEntry):
+            if not (
+              self.event_entries[rhs] == byeEntry
+              or self.event_entries[lhs] == byeEntry):
                 # This is the bye condition.
-                self.matches.append(RoundRobinMatch(self.event_entries[lhs], self.event_entries[rhs]))
+                self.matches.append(
+                  RoundRobinMatch(
+                    self.event_entries[lhs],
+                    self.event_entries[rhs],
+                  ))
 
             for j in range(0, floor(length / 2), 1):
                 lhs = (j - i + length) % length + 1
                 rhs = (-i - j + length - 2) % length + 1
-                # print(str(lhs) + " vs " + str(rhs) + " length: " + str(length))
-                if not (self.event_entries[rhs] == byeEntry or self.event_entries[lhs] == byeEntry):
+
+                if not (
+                  self.event_entries[rhs] == byeEntry
+                  or self.event_entries[lhs] == byeEntry):
                     # This is the bye condition.
-                    self.matches.append(RoundRobinMatch(self.event_entries[lhs], self.event_entries[rhs]))
+                    self.matches.append(
+                      RoundRobinMatch(
+                        self.event_entries[lhs],
+                        self.event_entries[rhs]))
 
         # clean out the bye entry if it's still in there:
         if self.event_entries[length] == byeEntry:
             self.event_entries.remove(byeEntry)
 
         assert len(self.matches) == num_matches, \
-          "DID NOT CALCULATE THE CORRECT NUMBER OF MATCHES. Should have got " \
-          + str(num_matches) + ", got " + str(self.matches)
+            "DID NOT CALCULATE THE CORRECT NUMBER OF MATCHES. " \
+            + "Should have got " + str(num_matches) + ", got " \
+            + str(self.matches)
 
 
 class RoundRobinMatch(object):

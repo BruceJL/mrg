@@ -1,3 +1,4 @@
+from typing import TYPE_CHECKING
 from odf.opendocument import OpenDocumentText
 from odf.table import Table, TableColumn, TableRow, TableCell
 from odf.style import Style, TextProperties, ParagraphProperties, \
@@ -7,8 +8,14 @@ from odf import style
 from odf.text import P, H
 from time import strftime, gmtime
 
+if TYPE_CHECKING:
+    # from typing import List, Dict
+    from Event import Event
 
-def make_odf_score_sheets(competition, round_robin_tournaments):
+
+def make_odf_score_sheets(
+  event: 'Event',
+) -> 'str':
     document = OpenDocumentText()
 
     name_column_width = 1.25
@@ -60,7 +67,9 @@ def make_odf_score_sheets(competition, round_robin_tournaments):
 
     # Table Style
     score_card_table_style_name = "ScoreCardTableStyle"
-    table_width = 2 * (2 * name_column_width + 2 * letter_column_width + 2 * wl_column_width)
+    table_width = 2 * \
+        (2 * name_column_width + 2 * letter_column_width + 2 * wl_column_width)
+
     s = Style(
       name=score_card_table_style_name,
       family="table",
@@ -69,7 +78,7 @@ def make_odf_score_sheets(competition, round_robin_tournaments):
     t = TableProperties(
       align="center",
       width=str(table_width) + "in",
-      maybreakbetweenrows="false",
+      maybreakbetweenrows="true",
     )
     s.addElement(t)
     s.addElement(t)
@@ -218,7 +227,8 @@ def make_odf_score_sheets(competition, round_robin_tournaments):
     styles.addElement(s)
 
     # Summary Robot Detail paragraph style
-    robot_summary_detail_paragraph_style_name = "RobotSummaryDetailParagraphStyle"
+    robot_summary_detail_paragraph_style_name = \
+        "RobotSummaryDetailParagraphStyle"
     s = Style(
       name=robot_summary_detail_paragraph_style_name,
       family="paragraph",
@@ -282,20 +292,20 @@ def make_odf_score_sheets(competition, round_robin_tournaments):
     s.addElement(t)
     styles.addElement(s)
 
-    # for i in range(0, len(self.round_robin_tournaments), 1):
-    for key, tournament in round_robin_tournaments.items():
-        # tournament = self.round_robin_tournaments[i]
+    for tournament in event.round_robin_tournaments.values():
 
+        print("building sheet for tournament: " + str(tournament.ring))
         h = H(
           outlinelevel=1,
-          text=tournament.name + " Score Sheet -  "
+          text=event.competition + " Score Sheet -  "
           + strftime("%H:%M", gmtime()),
           stylename=heading_paragraph_style_name,
         )
         document.text.addElement(h)
         document.text.addElement(P(text=""))
         p = P(
-          text="Judge:_____________________________________   "
+          text=
+          "Judge:_____________________________________   "
           + "Timer:_____________________________________",
           stylename=judge_timer_style_name,
         )
@@ -338,6 +348,11 @@ def make_odf_score_sheets(competition, round_robin_tournaments):
         # Populate the first row with  the rest of the robot names
         # (1 per column).
         for j in range(0, len(tournament.matches)):
+            print(
+              "building entry for match: "
+              + tournament.matches[j].contestant1.entry.robotName + " vs "
+              + tournament.matches[j].contestant2.entry.robotName
+            )
             if j % 2 == 0:
                 # Only add a new row for every 2nd competition
                 tr1 = TableRow(stylename=row_style_name)
@@ -480,7 +495,8 @@ def make_odf_score_sheets(competition, round_robin_tournaments):
 
                 # If the score_table is two long break it into two columns.
                 # if (2 * len(tournament.matches) * row_height > 5.0):
-                #    section = text.Section(name="Section" + str(i), stylename=section_style_name)
+                #    section = text.Section(name="Section" + str(i), \
+                #      stylename=section_style_name)
                 #    section.addElement(score_table)
                 #    document.text.addElement(section)
                 # else:
@@ -494,7 +510,9 @@ def make_odf_score_sheets(competition, round_robin_tournaments):
 
         summary_table_width = summary_column_width * 4
 
-        summary_table_style_name = "SummaryTableStyleName" + str(tournament.ring)
+        summary_table_style_name = "SummaryTableStyleName" \
+            + str(tournament.ring)
+
         s = Style(
           name=summary_table_style_name,
           family="table",
@@ -508,19 +526,24 @@ def make_odf_score_sheets(competition, round_robin_tournaments):
         s.addElement(t)
         styles.addElement(s)
 
-        summary_info_column_style_name = "SummaryInfoColumnStyle" + str(tournament.ring)
+        summary_info_column_style_name = "SummaryInfoColumnStyle" \
+            + str(tournament.ring)
+
         s = Style(
           name=summary_info_column_style_name,
           family="table-column",
           displayname="Summary Info Table Column " + str(tournament.ring),
         )
+
         t = TableColumnProperties(
           columnwidth=str(summary_column_width-0.375) + "in"
         )
         s.addElement(t)
         styles.addElement(s)
 
-        summary_spacer_column_style_name = "SummarySpacerColumnStyle" + str(tournament.ring)
+        summary_spacer_column_style_name = "SummarySpacerColumnStyle" + \
+            str(tournament.ring)
+
         s = Style(
           name=summary_spacer_column_style_name,
           family="table-column",
@@ -551,6 +574,7 @@ def make_odf_score_sheets(competition, round_robin_tournaments):
           name="SummaryTable" + str(tournament.ring),
           stylename=summary_table_style_name,
         )
+
         for i in range(0, 4):
             summary_table.addElement(
               TableColumn(stylename=summary_info_column_style_name)
@@ -558,7 +582,6 @@ def make_odf_score_sheets(competition, round_robin_tournaments):
             summary_table.addElement(
               TableColumn(stylename=summary_spacer_column_style_name)
             )
-
 
         for j in range(0, len(tournament.event_entries), 1):
             if j % 4 == 0:
@@ -573,10 +596,12 @@ def make_odf_score_sheets(competition, round_robin_tournaments):
                 P(text=tournament.event_entries[j].letter + " -  "
                   + tournament.event_entries[j].entry.robotName,
                   stylename=robot_summary_name_paragraph_style_name,
-            ))
+                ))
+
             tc.addElement(
                 P(text=tournament.event_entries[j].entry.driver1,
                   stylename=robot_summary_detail_paragraph_style_name))
+
             tc.addElement(
                 P(text=tournament.event_entries[j].entry.school,
                   stylename=robot_summary_detail_paragraph_style_name))
@@ -601,7 +626,7 @@ def make_odf_score_sheets(competition, round_robin_tournaments):
         # TODO add checkboxes for the "Entered on Scoreboard" and
         # "Entered on spreadsheet."
 
-    filename = "./ScoreSheets/" + competition
+    filename = "./ScoreSheets/" + event.competition
     document.save(filename, True)
 
     return filename
