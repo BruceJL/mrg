@@ -49,7 +49,7 @@ export default class RobotCheckinController extends Component {
     let robot = model;
     let type = this.selectedMeasurementOption;
     let date = new Date('1970-01-01T00:00:00Z');
-    console.log("Logging " + type + " measurement of: " + value + " for robot " + robot.id);
+    debug("Logging " + type + " measurement of: " + value + " for robot " + robot.id);
     let measurement = this.store.createRecord('robot-measurement', {
       robot: robot,
       result: value,

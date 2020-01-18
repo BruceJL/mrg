@@ -97,6 +97,15 @@ export default class RobotModel extends Model {
     }
   }
 
+  @computed('measured')
+  get formattedMeasured(){
+    if(this.measured){
+      return "MEASURED";
+    }else{
+      return "";
+    }
+  }
+
   @computed('status', 'competition.robots.@each.status')
   get slottedStatus() {
     let competition = this.get('competition');
