@@ -21,7 +21,7 @@ export default class RobotCheckinController extends Component {
 
   @computed()
   get measurementOptions() {
-    return ['Mass', 'Size', 'Time', 'Scratch']; // Time between polls (in ms)
+    return ['Mass', 'Size', 'Time', 'Scratch', 'Deadman'];
   }
 
   @action
@@ -111,6 +111,7 @@ export default class RobotCheckinController extends Component {
       let requiresSize = competition.get('measureSize');
       let requiresTime = competition.get('measureTime');
       let requiresScratch = competition.get('measureScratch');
+      let requireDeadman = competition.get('measureDeadman')
 
       let registrationTime = competition.get('registrationTime');
       let measured = true;
@@ -133,6 +134,11 @@ export default class RobotCheckinController extends Component {
       if (requiresScratch &&
         (registrationTime > lastMeasuredScratchTime || measuredScratch === "Fail")) {
         debug("failed on scratch");
+        measured = false;
+      }
+      if (requiresScratch &&
+        (registrationTime > lastMeasuredScratchTime || measureDeadman === "Fail")) {
+        debug("failed on deadman");
         measured = false;
       }
       robot.set('measured', measured);

@@ -2,15 +2,12 @@ import Controller from '@ember/controller';
 import Changeset from 'ember-changeset';
 import {
   action,
-  set,
-  get,
-  computed,
 } from '@ember/object';
 
 export default class RobotEditController extends Controller {
   @action
-  done() {
-    history.back();
+  done(competition) {
+    this.transitionToRoute('competitions.show', competition);
   }
 
   @action

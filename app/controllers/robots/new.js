@@ -36,9 +36,8 @@ export default class RobotNewController extends Controller {
     if (get(robot, 'competition') === "RC1") {
       set(robot, 'invoiced', "5.00");
     } else {
-      set(robot, 'invoiced', "10.00");
+      set(robot, 'invoiced', "20.00");
     }
-    // this.competitions = this.store.findAll('competition');
   }
 
   @action

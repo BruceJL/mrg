@@ -20,6 +20,7 @@ export default class CompetitionModel extends Model {
   @attr('boolean') measureSize;
   @attr('boolean') measureTime;
   @attr('boolean') measureScratch;
+  @attr('boolean') measureDeadman;
   @hasMany('robot', {async: false}) robots; // used to be a hasMany, now readonly?
 
   @computed('robots.@each')

@@ -45,7 +45,7 @@ export default class RobotModel extends Model {
   // Check-in information
   @attr('number') invoiced; // amount the person was invoiced.
   @attr('number') paid; // Amount competitor paid.
-  @attr('string') tookPayment; // name of the person who collected the money
+  //@attr('string') tookPayment; // name of the person who collected the money
   @attr('string') paymentType; // Cash / Credit Card / Cheque / Invoiced
   @attr('date') registered; // Time the competitor's entry was created.
   @attr('string') status; //   Checked-in / Withdrawn

@@ -70,5 +70,11 @@ robots is required." {{action "setMeasurementTime" this.model}}>
         <input type="checkbox" name="model.measureScratch" checked={{this.model.measureScratch}} onchange={{action "toggleProperty" "measureScratch"}}>
       </td>
     </tr>
+    <tr>
+      <td>Deadman:</td>
+      <td>
+        <input type="checkbox" name="model.measureDeadMan" checked={{this.model.measureDeadman}} onchange={{action "toggleProperty" "measureDeadman"}}>
+      </td>
+    </tr>
   </tbody>
 </table>

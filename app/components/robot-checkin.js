@@ -52,14 +52,14 @@ export default class RobotCheckinController extends Component {
   }
 
   @action
-  paid5Dollars(model) {
-    model.set('paid', 5.00);
+  paid10Dollars(model) {
+    model.set('paid', 10.00);
     model.save();
   }
 
   @action
-  paid10Dollars(model) {
-    model.set('paid', 10.00);
+  paid20Dollars(model) {
+    model.set('paid', 20.00);
     model.save();
   }
 

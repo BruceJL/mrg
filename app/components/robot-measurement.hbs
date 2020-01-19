@@ -1,4 +1,6 @@
 <h3>Measurement Information</h3>
+
+<p><b>Measured:</b> {{@data.formattedMeasured}}</p>
 <select onchange={{
 action (mut this.selectedMeasurementOption)
 value="target.value"}}>
@@ -27,10 +29,5 @@ value="target.value"}}>
         <td>{{moment-format m.datetime "h:mm:ss a"}}</td>
       </tr>
     {{/each}}
-    <tr>
-      <td>Measured:</td>
-      <td>{{@data.formattedMeasured}}</td>
-      <td></td>
-    </tr>
   </tbody>
 </table>
