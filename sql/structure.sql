@@ -1,8 +1,8 @@
--- MySQL dump 10.16  Distrib 10.1.29-MariaDB, for debian-linux-gnu (x86_64)
+-- MySQL dump 10.17  Distrib 10.3.21-MariaDB, for debian-linux-gnu (x86_64)
 --
 -- Host: registration    Database: mrg_db
 -- ------------------------------------------------------
--- Server version	10.1.26-MariaDB-0+deb9u1
+-- Server version	10.3.17-MariaDB-0+deb10u1
 
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
 /*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
@@ -33,11 +33,12 @@ CREATE TABLE `competition` (
   `checkString` char(50) DEFAULT NULL,
   `createdAt` datetime DEFAULT NULL,
   `updatedAt` datetime DEFAULT NULL,
-  `registrationTime` datetime DEFAULT CURRENT_TIMESTAMP,
+  `registrationTime` datetime DEFAULT current_timestamp(),
   `measureMass` tinyint(4) NOT NULL,
   `measureSize` tinyint(4) NOT NULL,
   `measureTime` tinyint(4) NOT NULL,
   `measureScratch` tinyint(4) DEFAULT NULL,
+  `measureDeadman` tinyint(4) NOT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -78,9 +79,9 @@ CREATE TABLE `ring-assignment` (
   `placed` tinyint(3) unsigned DEFAULT NULL,
   `createdAt` datetime DEFAULT NULL,
   `updatedAt` datetime DEFAULT NULL,
-  `datetime` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `datetime` datetime NOT NULL DEFAULT current_timestamp(),
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='INSERT into `ring-assignment` (robot, competition, ring, letter) VALUES (''4'',''PST'',''4'',''I'')';
+) ENGINE=InnoDB AUTO_INCREMENT=636 DEFAULT CHARSET=utf8mb4 COMMENT='INSERT into `ring-assignment` (robot, competition, ring, letter) VALUES (''4'',''PST'',''4'',''I'')';
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -107,14 +108,14 @@ CREATE TABLE `robot` (
   `invoiced` decimal(4,2) DEFAULT NULL,
   `paid` decimal(4,2) DEFAULT NULL,
   `signedIn` tinyint(4) DEFAULT NULL,
-  `tookPayment` char(30) DEFAULT NULL,
   `measured` tinyint(4) DEFAULT NULL,
   `late` tinyint(4) DEFAULT NULL,
-  `createdAt` datetime DEFAULT NULL,
-  `updatedAt` datetime DEFAULT NULL,
   `withdrawn` tinyint(4) DEFAULT NULL,
+  `status` enum('UNKNOWN','CHECKED-IN','WITHDRAWN','STANDBY','DECLINED') NOT NULL,
+  `paymentType` enum('CASH','CHEQUE','INVOICED','CREDIT CARD','COMPLEMENTARY') DEFAULT NULL,
+  `registered` datetime NOT NULL DEFAULT current_timestamp(),
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=1625 DEFAULT CHARSET=latin1 COMMENT='robot registrations';
+) ENGINE=InnoDB AUTO_INCREMENT=1442 DEFAULT CHARSET=latin1 COMMENT='robot registrations';
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -126,12 +127,12 @@ DROP TABLE IF EXISTS `robotMeasurement`;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `robotMeasurement` (
   `robot` int(11) NOT NULL,
-  `datetime` datetime DEFAULT CURRENT_TIMESTAMP,
+  `datetime` datetime DEFAULT current_timestamp(),
   `result` varchar(4) DEFAULT NULL,
   `type` varchar(32) DEFAULT NULL,
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=117 DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB AUTO_INCREMENT=93 DEFAULT CHARSET=utf8mb4;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -147,4 +148,4 @@ CREATE TABLE `robotMeasurement` (
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2018-03-10 15:45:38
+-- Dump completed on 2020-01-18 20:27:36
