@@ -7,7 +7,7 @@
     </tr>
     <tr>
       <td>Checked in:</td>
-      <td>{{@data.status}}</td>
+      <td>{{@data.status}} - {{@data.slottedStatus}}</td>
       <td>
         {{#if (eq @data.status "CHECKED-IN")}}
           <button {{action "cancelCheckin" @data}}>

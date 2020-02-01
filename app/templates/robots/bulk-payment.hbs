@@ -1,70 +1,38 @@
-<h3>Bulk Payment</h3>
-<div>
-  <table>
-    <tbody>
-      <tr>
-        <td colspan="2"><b>Filters:</b></td>
-      </tr>
-      <tr>
-        <td>School:</td>
-        <td>{{input value=this.schoolFilter}}</td>
-      </tr>
-      <tr>
-        <td><b>TOTAL:</b></td>
-        <td>{{this.invoicedTotal}}</td>
-      </tr>
-      <tr>
-        <td>Count: </td>
-        <td>{{this.totalRobots}}</td>
-      </tr>
-      <tr>
-        <td colspan="2">
-          <button {{action "pay"}} disabled={{this.isPayDisabled}}>Pay</button>
-        </td>
-      </tr>
-    </tbody>
-  </table>
-</div>
-
-<table class="list">
-  <thead>
-    <tr>
-      <th>#</th>
-      <th>Robot</th>
-      <th>Competition</th>
-      <th>School</th>
-      <th>Driver</th>
-      <th>Late</th>
-      <th>Invoiced</th>
-      <th>Paid</th>
-      <th>Signed In</th>
-      <th>Paying</th>
-    </tr>
-  </thead>
-  <tbody>
-    {{#each this.filteredRobots as |item|}}
-      <tr>
-        <td>{{item.id}}</td>
-        <td>{{#link-to "robots.edit" item.id}}{{item.robot}}{{/link-to}}</td>
-        <td>{{item.competition.name}}</td>
-        <td>{{item.school}}</td>
-        <td>{{item.driver1}}</td>
-        <td>{{#if item.late}}LATE{{/if}}</td>
-        <td>{{item.formattedInvoicedDollars}}</td>
-        <td>{{item.formattedPaidDollars}}</td>
-        <td class="centered">{{item.formattedSignedIn}}</td>
-        <td>
-          {{#if item.isPayable}}
-            {{input
-              type="checkbox"
-              checked=false
-              click=(action "checkboxClicked" item)
-            }}
-          {{/if}}
-        </td>
-      </tr>
-    {{/each}}
-  </tbody>
-</table>
-
-{{outlet}}
+ <h2>Bulk Payment</h2>
+ <table class="list">
+   <tbody>
+     {{#each-in this.coaches as |coach data|}}
+       <tr>
+         <td colspan="5">
+           <h4>{{data.name}} - {{data.school}}</h4>
+         </td>
+       </tr>
+       <tr>
+         <th>Robot</th>
+         <th>Competition</th>
+         <th>Driver</th>
+         <th>Price</th>
+         <th>Payment</th>
+         <th>Particpated</th>
+       </tr>
+       {{#each data.entries as |entry|}}
+         <tr>
+           <td>{{#link-to "robots.edit" entry.id}}{{entry.robot}}{{/link-to}}</td>
+           <td>{{entry.competition.name}}</td>
+           <td>{{entry.driver1}}</td>
+           <td>{{entry.formattedInvoicedDollars}}</td>
+           <td>{{entry.paymentType}}</td>
+           <td>{{if entry.participated "✓"}}</td>
+         </tr>
+       {{/each}}
+       <tr>
+         <td></td>
+         <td></td>
+         <td></td>
+         <td><b>Invoiced:</b></td>
+         <td>${{data.invoiced}}.00</td>
+       </tr>
+       <tr></tr>
+     {{/each-in}}
+   </tbody>
+ </table>

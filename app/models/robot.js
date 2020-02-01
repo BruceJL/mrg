@@ -5,12 +5,15 @@ const {
   belongsTo,
   Model,
   attr,
-  get
 } = DS;
 
 import {
+  get,
+} from '@ember/object';
+
+import {
   computed,
-  setProperties
+  setProperties,
 } from '@ember/object';
 
 import {
@@ -43,13 +46,14 @@ export default class RobotModel extends Model {
   @attr('string') ph; // Coach's phone #
 
   // Check-in information
-  @attr('number') invoiced; // amount the person was invoiced.
-  @attr('number') paid; // Amount competitor paid.
+  @attr('number') invoiced; // amount the entry was invoiced.
+  @attr('number') paid; // Amount entry paid.
   //@attr('string') tookPayment; // name of the person who collected the money
   @attr('string') paymentType; // Cash / Credit Card / Cheque / Invoiced
-  @attr('date') registered; // Time the competitor's entry was created.
-  @attr('string') status; //   Checked-in / Withdrawn
-  @attr('boolean') measured; // Has the competitor successfully completed measurement.
+  @attr('date') registered; // Time the entry was created.
+  @attr('string') status; // Checked-in / Withdrawn
+  @attr('boolean') measured; // Has the entry successfully completed measurement.
+  @attr('boolean') participated; // Has the entry been accepted for competition
   @hasMany('robot-measurement', {
     async: false
   }) measurements; // All the measurements taken of this competitor.
@@ -109,50 +113,55 @@ export default class RobotModel extends Model {
   @computed('status', 'competition.robots.@each.status')
   get slottedStatus() {
     let competition = this.get('competition');
-    let robots = competition.get('robots').sortBy('registered');
-    let maxCompetitors = competition.get('maxEntries');
-    let checkedInOrUnknownCount = 0;
-    let checkedInCount = 0;
-    let id = this.get('id');
-    let item = null;
-    let itemId = "";
-    let index = 0;
-    let itemStatus = "";
-    let status = this.get("status");
-    let slottedStatus = null;
+    if (competition == undefined){
+      return "unknown";
+    }else{
+      debug("competition is of type:"  + typeof(competition))
+      let robots = competition.get('robots').sortBy('registered');
+      let maxCompetitors = competition.get('maxEntries');
+      let checkedInOrUnknownCount = 0;
+      let checkedInCount = 0;
+      let id = this.get('id');
+      let item = null;
+      let itemId = "";
+      let index = 0;
+      let itemStatus = "";
+      let status = this.get("status");
+      let slottedStatus = null;
 
-    while (!slottedStatus && checkedInOrUnknownCount < robots.length) {
-      item = robots[index];
-      itemStatus = item.status;
-      itemId = item.get('id');
+      while (!slottedStatus && checkedInOrUnknownCount < robots.length) {
+        item = robots[index];
+        itemStatus = item.status;
+        itemId = item.get('id');
 
-      if (itemId === id) {
-        // Declined status is easy.
-        if (checkedInCount > maxCompetitors) {
-          slottedStatus = "declined";
+        if (itemId === id) {
+          // Declined status is easy.
+          if (checkedInCount > maxCompetitors) {
+            slottedStatus = "declined";
 
-          // standby status
-        } else if (checkedInOrUnknownCount > maxCompetitors) {
-          slottedStatus = "standby";
+            // standby status
+          } else if (checkedInOrUnknownCount > maxCompetitors) {
+            slottedStatus = "standby";
 
-          // confirmed status. There's room at the inn.
-        } else if (checkedInCount <= maxCompetitors) {
-          if (itemStatus === "CHECKED-IN") {
-            slottedStatus = "confirmed";
-          } else {
-            slottedStatus = "unknown"
+            // confirmed status. There's room at the inn.
+          } else if (checkedInCount <= maxCompetitors) {
+            if (itemStatus === "CHECKED-IN") {
+              slottedStatus = "confirmed";
+            } else {
+              slottedStatus = "unknown"
+            }
           }
         }
-      }
 
-      if (itemStatus === "CHECKED-IN") {
-        checkedInOrUnknownCount++;
-        checkedInCount++;
-      }else if (itemStatus === "UNKNOWN"){
-        checkedInOrUnknownCount++;
+        if (itemStatus === "CHECKED-IN") {
+          checkedInOrUnknownCount++;
+          checkedInCount++;
+        }else if (itemStatus === "UNKNOWN"){
+          checkedInOrUnknownCount++;
+        }
+        index++;
       }
-      index++;
+      return slottedStatus;
     }
-    return slottedStatus;
   }
 }

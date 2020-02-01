@@ -1,19 +1,4 @@
 <h2>{{this.model.longName}}</h2>
-<table class="list">
-  <thead>
-    <th>Name</th>
-    <th>School</th>
-    <th>Driver</th>
-    <th>Signed-In</th>
-  </thead>
-  <tbody>
-    {{#each this.sortedAssignments as |item|}}
-      <tr class={{if (eq item.status "WITHDRAWN") "strikeout" "normal"}}>
-        <td>{{item.robot}}</td>
-        <td>{{item.school}}</td>
-        <td>{{item.driver1}}</td>
-        <td>{{item.formattedSignedIn}}</td>
-      </tr>
-    {{/each}}
-  </tbody>
-</table>
+<RobotCheckinListing
+  @robots={{this.sortedAssignments}}
+/>

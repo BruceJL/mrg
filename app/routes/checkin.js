@@ -3,7 +3,9 @@ import {
 } from '@ember/utils';
 import Route from '@ember/routing/route';
 import Pollster from './pollster';
-import { debug } from '@ember/debug';
+import {
+  debug,
+} from '@ember/debug';
 
 export default class CheckinRoute extends Route {
   model(params) {
@@ -14,7 +16,7 @@ export default class CheckinRoute extends Route {
       });
   }
 
-  activate(){
+  activate() {
     //this._super(controller, model);
     if (isNone(this.pollster)) {
       var inst = this;
