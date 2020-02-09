@@ -74,6 +74,9 @@ export default class RobotCheckinController extends Component {
       let measuredScratch = "Fail";
       let lastMeasuredScratchTime = false;
 
+      let measuredDeadman = "Fail";
+      let lastMeasuredDeadmanTime = false;
+
       let measurements = robot.get('measurements');
 
       //Get all latest measurements for the robot
@@ -83,42 +86,46 @@ export default class RobotCheckinController extends Component {
         let result = item.get('result');
 
         if (type === "Mass") {
-          if (lastMeasuredMassTime === false || datetime > lastMeasuredMassTime) {
+          if (lastMeasuredMassTime == false || datetime > lastMeasuredMassTime) {
             lastMeasuredMassTime = datetime;
             measuredMass = result;
           }
         } else if (type === "Time") {
-          if (lastMeasuredTimeTime === false || datetime > lastMeasuredTimeTime) {
+          if (lastMeasuredTimeTime == false || datetime > lastMeasuredTimeTime) {
             lastMeasuredTimeTime = datetime;
             measuredTime = result;
           }
         } else if (type === "Scratch") {
-          if (lastMeasuredScratchTime === false || datetime > lastMeasuredScratchTime) {
+          if (lastMeasuredScratchTime == false || datetime > lastMeasuredScratchTime) {
             lastMeasuredScratchTime = datetime;
             measuredScratch = result;
           }
         } else if (type === "Size") {
-          if (lastMeasuredSizeTime === false || datetime > lastMeasuredSizeTime) {
+          if (lastMeasuredSizeTime == false || datetime > lastMeasuredSizeTime) {
             lastMeasuredSizeTime = datetime;
             measuredSize = result;
+          }
+        } else if (type === "Deadman") {
+          if (lastMeasuredDeadmanTime == false || datetime > lastMeasuredDeadmanTime) {
+            lastMeasuredDeadmanTime = datetime;
+            measuredDeadman = result;
           }
         }
       });
 
       let competition = robot.get('competition');
-
       let requiresMass = competition.get('measureMass');
       let requiresSize = competition.get('measureSize');
       let requiresTime = competition.get('measureTime');
       let requiresScratch = competition.get('measureScratch');
-      let requireDeadman = competition.get('measureDeadman')
+      let requiresDeadman = competition.get('measureDeadman')
 
       let registrationTime = competition.get('registrationTime');
       let measured = true;
 
       if (requiresMass &&
         (registrationTime > lastMeasuredMassTime || measuredMass === "Fail")) {
-        debug("Failed on mass");
+        debug("Failed on mass: " + registrationTime + " > " + lastMeasuredMassTime);
         measured = false;
       }
       if (requiresSize &&
@@ -136,8 +143,8 @@ export default class RobotCheckinController extends Component {
         debug("failed on scratch");
         measured = false;
       }
-      if (requiresScratch &&
-        (registrationTime > lastMeasuredScratchTime || measureDeadman === "Fail")) {
+      if (requiresDeadman &&
+        (registrationTime > lastMeasuredDeadmanTime || measuredDeadman === "Fail")) {
         debug("failed on deadman");
         measured = false;
       }

@@ -12,4 +12,14 @@ export default class RobotDetailController extends Component {
         const c = this.competitions.findBy('id', id);
         this.changeset.set('competition', c);
     }
+
+    @action
+    save(changeset) {
+      changeset.save();
+    }
+    
+    @action
+    rollback(changeset) {
+      changeset.rollback();
+    }
 }

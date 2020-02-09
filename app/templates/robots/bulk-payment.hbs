@@ -4,7 +4,11 @@
      {{#each-in this.coaches as |coach data|}}
        <tr>
          <td colspan="5">
-           <h4>{{data.name}} - {{data.school}}</h4>
+           <h4>{{data.name}} - {{data.school}}
+             <button title="Clicking this button will cause all entries for this coach to be marked as &quot;INVOICED&quot; - unless they've already paid." {{action "invoiceAll" data.email}}>
+               Invoice All Entries
+             </button>
+           </h4>
          </td>
        </tr>
        <tr>
@@ -13,7 +17,7 @@
          <th>Driver</th>
          <th>Price</th>
          <th>Payment</th>
-         <th>Particpated</th>
+         <th>Participated</th>
        </tr>
        {{#each data.entries as |entry|}}
          <tr>

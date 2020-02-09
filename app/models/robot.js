@@ -97,26 +97,26 @@ export default class RobotModel extends Model {
     if (this.status === "WITHDRAWN") {
       return "WITHDRAWN";
     } else {
-      return this.status + " - " + this.slottedStatus;
+      return this.status;
     }
   }
 
   @computed('measured')
-  get formattedMeasured(){
-    if(this.measured){
+  get formattedMeasured() {
+    if (this.measured) {
       return "MEASURED";
-    }else{
+    } else {
       return "";
     }
   }
 
-  @computed('status', 'competition.robots.@each.status')
+  @computed('competition.robots.@each.status')
   get slottedStatus() {
     let competition = this.get('competition');
-    if (competition == undefined){
+    if (competition == undefined) {
       return "unknown";
-    }else{
-      debug("competition is of type:"  + typeof(competition))
+    } else {
+      debug("competition is of type:" + typeof(competition))
       let robots = competition.get('robots').sortBy('registered');
       let maxCompetitors = competition.get('maxEntries');
       let checkedInOrUnknownCount = 0;
@@ -129,6 +129,13 @@ export default class RobotModel extends Model {
       let status = this.get("status");
       let slottedStatus = null;
 
+      if (status === "WITHDRAWN") {
+        return "withdrawn";
+      }
+      if (status === "UNKNOWN"){
+        return "unknown";
+      }
+
       while (!slottedStatus && checkedInOrUnknownCount < robots.length) {
         item = robots[index];
         itemStatus = item.status;
@@ -136,11 +143,11 @@ export default class RobotModel extends Model {
 
         if (itemId === id) {
           // Declined status is easy.
-          if (checkedInCount > maxCompetitors) {
+          if (checkedInCount >= maxCompetitors) {
             slottedStatus = "declined";
 
             // standby status
-          } else if (checkedInOrUnknownCount > maxCompetitors) {
+          } else if (checkedInOrUnknownCount >= maxCompetitors) {
             slottedStatus = "standby";
 
             // confirmed status. There's room at the inn.
@@ -156,7 +163,7 @@ export default class RobotModel extends Model {
         if (itemStatus === "CHECKED-IN") {
           checkedInOrUnknownCount++;
           checkedInCount++;
-        }else if (itemStatus === "UNKNOWN"){
+        } else if (itemStatus === "UNKNOWN") {
           checkedInOrUnknownCount++;
         }
         index++;

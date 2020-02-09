@@ -38,25 +38,39 @@ function getTotalDollars(items, property) {
 
 export default class RobotBulkPaymentController extends Controller {
 
-  @computed('model.robots')
+  @computed('model.robots.@each.paymentType')
   get coaches() {
     let coaches = {};
     let robots = get(this, 'model');
     robots.forEach((robot) => {
-      if (coaches[robot.coach] == null) {
-        coaches[robot.coach] = {};
-        coaches[robot.coach].entries = [];
-        coaches[robot.coach].name = robot.coach;
-        coaches[robot.coach].school = robot.school;
-        coaches[robot.coach].invoiced = 0.0;
+      if (coaches[robot.email] == null) {
+        coaches[robot.email] = {};
+        coaches[robot.email].entries = [];
+        coaches[robot.email].name = robot.coach;
+        coaches[robot.email].school = robot.school;
+        coaches[robot.email].invoiced = 0.0;
+        coaches[robot.email].email = robot.email;
       }
-      coaches[robot.coach].entries.push(robot);
+      coaches[robot.email].entries.push(robot);
       if (robot.paymentType === "INVOICED" &&
         robot.participated) {
-        coaches[robot.coach].invoiced += robot.invoiced;
+        coaches[robot.email].invoiced += robot.invoiced;
       }
     });
     return coaches
   }
 
+  @action
+  invoiceAll(email) {
+    debug("Invoicing all robots for " + email);
+    let robots = get(this, 'model');
+    robots.forEach((robot) => {
+      if (robot.email === email) {
+        if (robot.get('paymentType') == null) {
+          robot.set('paymentType', "INVOICED");
+        }
+      }
+    });
+    robots.save();
+  }
 }

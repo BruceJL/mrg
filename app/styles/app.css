@@ -85,6 +85,7 @@ table.list tr.declined {
 
 table.list tr.withdrawn {
   text-decoration: line-through;
+  background-color: #FF6666;
 }
 
 input.full-width {

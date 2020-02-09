@@ -50,29 +50,4 @@ export default class RobotCheckinController extends Component {
     model.set('status', "UNKNOWN")
     model.save();
   }
-
-  @action
-  paid10Dollars(model) {
-    model.set('paid', 10.00);
-    model.save();
-  }
-
-  @action
-  paid20Dollars(model) {
-    model.set('paid', 20.00);
-    model.save();
-  }
-
-  @action
-  refund(model) {
-    model.set('paid', 0.00);
-    model.set('paymentType', null);
-    model.save();
-  }
-
-  @action
-  selectPaymentType(model, value){
-    model.set('paymentType', value)
-    model.save();
-  }
 }

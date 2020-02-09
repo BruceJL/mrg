@@ -14,7 +14,7 @@ export default class CompetitionShowController extends Controller {
 
   queryParams = ['robotFilter'];
 
-  @computed('model', 'robotFilter')
+  @computed('model.robots.@each', 'robotFilter')
   get filteredRobotsByName() {
     let model = this.get('model');
     let robotFilter = this.robotFilter;

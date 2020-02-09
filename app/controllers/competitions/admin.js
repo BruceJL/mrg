@@ -38,4 +38,13 @@ export default class CompetitionAdminController extends Controller {
     competition.set(property, !b);
     this.model.save();
   }
+
+  @action
+  save(changeset) {
+    changeset.save();
+  }
+  @action
+  rollback(changeset) {
+    changeset.rollback();
+  }
 }

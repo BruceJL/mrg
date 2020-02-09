@@ -7,7 +7,7 @@
     </tr>
     <tr>
       <td>Checked in:</td>
-      <td>{{@data.status}} - {{@data.slottedStatus}}</td>
+      <td>{{@data.status}}</td>
       <td>
         {{#if (eq @data.status "CHECKED-IN")}}
           <button {{action "cancelCheckin" @data}}>
@@ -24,42 +24,8 @@
       </td>
     </tr>
     <tr>
-      <td>Invoiced:</td>
-      <td colspan="2">{{@data.formattedInvoicedDollars}}</td>
-    </tr>
-    <tr>
-      <td>Paid:</td>
-      <td>{{@data.formattedPaidDollars}}</td>
-      <td colspan="2">
-        {{#if @data.isPaid}}
-          <button {{action "refund" @data}}>Refund</button>
-          <select onchange={{
-          action (action "selectPaymentType" @data)
-          value="target.value"}}>
-            <option value="" selected={{eq @data.paymentType null}} disabled={{true}}>
-              Select payment method
-            </option>
-            {{#each this.PaymentOptions as |o|}}
-              <option value={{o}} selected={{eq @data.paymentType o}}>
-                {{o}}
-              </option>
-            {{/each}}
-          </select>
-        {{else}}
-          <button {{action "paid10Dollars" @data}}>Paid $10.00</button>
-          <button {{action "paid20Dollars" @data}}>Paid $20.00</button>
-        {{/if}}
-      </td>
-    </tr>
-    <tr>
-      <td>On-time/Late:</td>
-      <td>
-        {{#if @data.late}}
-          LATE
-        {{else}}
-          ON-TIME
-        {{/if}}
-      </td>
+      <td>Slotting Status:</td>
+      <td>{{@data.slottedStatus}}</td>
       <td></td>
     </tr>
   </tbody>

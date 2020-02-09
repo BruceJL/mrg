@@ -14,11 +14,9 @@ export default class CompetitionModel extends Model {
   @attr('string') name;
   @attr('string') longName;
   @attr('number') rings;
-  @attr('number') robotsPerRing;
   @hasMany('ring-assignments', {
     async: false
   }) ringAssignments; // used to be a hasMany, now readonly?
-  @attr('number') maxEntries;
   @attr('number') maxRobotsPerRing;
   @attr('number') minRobotsPerRing;
   @attr('date') registrationTime;
@@ -31,9 +29,9 @@ export default class CompetitionModel extends Model {
     async: false
   }) robots; // used to be a hasMany, now readonly?
 
-  @computed('robots.@each')
-  get robotCount() {
-    return get(this, 'robots.length');
+  @computed('rings', 'maxRobotsPerRing')
+  get maxEntries() {
+    return get(this, 'maxRobotsPerRing') * get(this, 'rings');
   }
 
   @computed('robots.@each.signedIn')
@@ -44,6 +42,11 @@ export default class CompetitionModel extends Model {
         return item;
       }
     }).length;
+  }
+
+  @computed('robots.@each')
+  get robotCount() {
+    return get(this, 'robots.length');
   }
 
   @computed('robotCount')

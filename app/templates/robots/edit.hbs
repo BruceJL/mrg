@@ -1,14 +1,10 @@
 <h2>Robot: "{{this.model.robot.robot}}"</h2>
 <hr>
-{{#with (changeset this.model.robot this.RobotValidation) as |changeset|}}
-  <RobotDetail @changeset={{changeset}} @competitions={{this.model.competitions}} />
-  <button {{action "rollback" changeset}}>Undo</button>
-  <button {{action "save" changeset}} disabled={{changeset.isInvalid}}>
-    Save Changes
-  </button>
-{{/with}}
+<RobotDetail @data={{this.model.robot}} @competitions={{this.model.competitions}} />
 <hr>
 <RobotCheckin @data={{this.model.robot}} />
+<hr>
+<RobotPayment @data={{this.model.robot}} />
 <hr>
 <RobotMeasurement @data={{this.model.robot}} />
 <hr>

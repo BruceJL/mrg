@@ -9,10 +9,4 @@ export default class RobotEditController extends Controller {
   done(competition) {
     this.transitionToRoute('competitions.show', competition);
   }
-
-  @action
-  rollback(changeset) {
-    console.log("edit.js rollback");
-    changeset.rollback();
-  }
 };
