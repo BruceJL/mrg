@@ -27,7 +27,7 @@ class Frontend():
         conn = create_database_connection()
         self.cursor: 'cursors.Cursor' = conn.cursor(cursors.DictCursor)
         self.events: 'Dict[str, Event]' = \
-            get_event_list_from_database(cursor=self.cursor)
+          get_event_list_from_database(cursor=self.cursor)
 
         self.event_list: 'List[Event]' = [v for v in self.events.keys()]
         self.event_list.sort()
@@ -116,8 +116,7 @@ class Frontend():
         conn.close()
 
     def gui_competition_changed(self, *args) -> 'None':
-        self.events = \
-            get_event_list_from_database(cursor=self.cursor)
+        self.events = get_event_list_from_database(cursor=self.cursor)
         competition: 'str' = self.selected_competition.get()
         event = self.events[competition]
         self.number_rings.set(event.max_rings)
@@ -153,15 +152,11 @@ class Frontend():
           + " and cannot be undone.")
 
         if result:
+            # Clear out all ring assignements.
             competition = self.selected_competition.get()
-            s = "DELETE from `ring-assignment` where competition='{}'"
-            s = s.format(competition)
-            print(s)
-            self.cursor.execute(s)
             event = self.events[competition]
-
-            # clear out the object data.
-            event.round_robin_tournaments = {}
+            query = event.reset_round_robin_tournaments()
+            self.cursor.execute(query)
 
     # Make labels for robots
     def gui_make_odf_label_sheets(self) -> 'None':
@@ -354,12 +349,11 @@ def open_file(filename: 'str') -> 'None':
 # Defines and returns the database connection
 def create_database_connection():
     return connect(
-      host='registration',
+      host='check-in',
       # host='localhost',
       port=3306,
       # port=9999,
       user='mrg-sign-in',
-      passwd='Swordfish',
       db='mrg_db',
       autocommit=True,
     )

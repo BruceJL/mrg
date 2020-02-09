@@ -37,8 +37,22 @@ class Event(object):
         self.entries: 'List[Entry]' = []
         self.round_robin_tournaments: 'Dict[int, RoundRobinTournament]' = {}
 
-    def reset_round_robin_tournaments(self) -> 'None':
+    def reset_round_robin_tournaments(self) -> 'List[str]':
+        sql = []
+        s = "DELETE from `ring-assignment` where competition='{}'"
+        s = s.format(self.competition)
+        sql.append(s)
+
+        # Clear all participated flags.
+        s = "UPDATE `robot` SET participated=FALSE WHERE " \
+            + " competition='{}'"
+        s = s.format(self.competition)
+        sql.append(s)
+
+        # clear out the object data.
         self.round_robin_tournaments = {}
+
+        return sql
 
     def create_ring(
       self,
@@ -139,32 +153,46 @@ class Event(object):
                     entries.remove(entries[index])
                     i += 1
 
-    def update_round_robin_assignments(self, number_rings):
+    def update_round_robin_assignments(
+      self,
+      number_rings: 'int') -> 'List[str]':
         sql = []
 
-        if len(list(self.round_robin_tournaments.keys())) == 0:
+        if not self.round_robin_tournaments:
             print("Doing inital ring assignment for " + self.competition)
             # There not been any slotting done. Do initial assignments.
             self.create_round_robin_tournaments(number_rings)
 
-            query = "INSERT into `ring-assignment` " \
-                "(robot, competition, ring, letter) " \
-                "VALUES " \
+            ring_assignment_query = \
+              "INSERT into `ring-assignment` " \
+              "(robot, competition, ring, letter) " \
+              "VALUES "
+
+            participation_query = \
+              "UPDATE `robot` SET `participated`=TRUE WHERE "
 
             for tournament in self.round_robin_tournaments.values():
                 for event_entry in tournament.event_entries:
                     s = "({}, '{}', {}, '{}'),"
-                    query += s.format(
+                    ring_assignment_query += s.format(
                       str(event_entry.entry.id),
                       self.competition,
                       str(tournament.ring),
                       event_entry.letter,
                     )
+                    s = "{} OR "
+                    participation_query += s.format(event_entry.entry.id)
 
             # get rid of that last comma.
-            query = query[:-1]
-            query += ";"
-            sql.append(query)
+            ring_assignment_query = ring_assignment_query[:-1]
+            ring_assignment_query += ";"
+            sql.append(ring_assignment_query)
+
+            # get rid of the last 'OR'
+            participation_query = participation_query[:-3]
+            participation_query += ";"
+            sql.append(participation_query)
+
             return sql
 
         # There are already existing assignments.
@@ -189,9 +217,20 @@ class Event(object):
                         # The assignment data needs to be removed.
                         print(
                           "\tRemoving " + name + " from ring "
-                          + str(tournament.ring))
+                          + str(tournament.ring)
+                        )
+
+                        # Remove the event entry from the tournament
                         tournament.remove_event_entry(event_entry)
-                        s = "DELETE from `ring-assignment` where robot = {};"
+
+                        # delete the ring-assignment entry
+                        s = "DELETE from `ring-assignment` where `robot`={};"
+                        s = s.format(str(event_entry.entry.id))
+                        sql.append(s)
+
+                        # clear the participated flag.
+                        s = "UPDATE `robot` set `participated`=false WHERE " \
+                            + "`id`={};"
                         s = s.format(str(event_entry.entry.id))
                         sql.append(s)
 
@@ -243,6 +282,10 @@ class Event(object):
                                  self.competition,
                                  str(smallest_tournament.ring),
                                  event_entry.letter)
+                    sql.append(s)
+
+                    s = "UPDATE `robot` SET `participated`=true WHERE id = {};"
+                    s = s.format(str(event_entry.entry.id))
 
                     sql.append(s)
 
