@@ -116,7 +116,6 @@ export default class RobotModel extends Model {
     if (competition == undefined) {
       return "unknown";
     } else {
-      debug("competition is of type:" + typeof(competition))
       let robots = competition.get('robots').sortBy('registered');
       let maxCompetitors = competition.get('maxEntries');
       let checkedInOrUnknownCount = 0;
