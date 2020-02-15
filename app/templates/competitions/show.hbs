@@ -7,7 +7,7 @@
   Spaces Not Checked-in: {{this.model.uncheckedinSpaces}}<br>
 
   Measurment Start Time: {{moment-format this.model.registrationTime "LTS"}}<br>
-  {{#link-to "robots.new" (query-params competition=this.model.name)}}New Entry{{/link-to}}<br><br>
+  <LinkTo @route={{robots.new}} @query={{hash competition=this.model.name}}>New Entry</LinkTo><br><br>
   Filter by robot name:{{input value=this.robotFilter}}<br>
 </p>
 

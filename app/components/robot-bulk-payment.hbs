@@ -16,7 +16,7 @@
     {{#each @items as |item|}}
       <tr>
         <td>{{item.id}}</td>
-        <td>{{#link-to @robots.edit item.id}}{{item.robot}}{{/link-to}}</td>
+        <td><LinkTo route={{@robots.edit}} model={{item.id}}>{{item.robot}}</LinkTo></td>
         <td>{{item.competition.name}}</td>
         <td>{{item.school}}</td>
         <td>{{item.driver1}}</td>
