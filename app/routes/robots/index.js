@@ -2,7 +2,6 @@ import {
   isNone
 } from '@ember/utils';
 import RefreshedRoute from '../RefreshedRoute';
-import { debug } from '@ember/debug';
 
 export default class RobotsIndexRoute extends RefreshedRoute {
   model() {

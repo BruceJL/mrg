@@ -1,6 +1,6 @@
-import Route from '@ember/routing/route';
+import RefreshedRoute from  '../RefreshedRoute';
 
-export default class RobotsBulkPaymentRoute extends Route {
+export default class RobotsBulkPaymentRoute extends RefreshedRoute {
   model() {
 
     this.store.findAll('competition', {
