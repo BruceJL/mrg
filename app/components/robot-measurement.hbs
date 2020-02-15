@@ -1,17 +1,30 @@
 <h3>Measurement Information</h3>
 
 <p><b>Measured:</b> {{@data.formattedMeasured}}</p>
-<select onchange={{
-action (mut this.selectedMeasurementOption)
-value="target.value"}}>
-  {{#each this.measurementOptions as |o|}}
-    <option value={{o}} selected={{eq this.selectedMeasurementOption o}}>
-      {{o}}
-    </option>
-  {{/each}}
-</select>
-<button {{action "measurementPass" @data}}>Pass</button>
-<button {{action "measurementFail" @data}}>Fail</button>
+<table class="form" {{did-insert (action this.PopulateRadioBoxes @data)}}>
+  <thead>
+    <th>Measurement</th>
+    <th>Pass</th>
+    <th>Fail</th>
+  </thead>
+  <tbody>
+    {{#each this.requiredMeasurements as |measurement|}}
+      <tr>
+        <td>{{measurement}}:</td>
+        <td>
+          <RadioButton @value={{true}} @groupValue={{get this measurement}} @changed={{action createMeasurement true measurement @data}}>
+          </RadioButton>
+        </td>
+        <td>
+          <RadioButton @value={{false}} @groupValue={{get this measurement}}  @changed={{action createMeasurement false measurement @data}}>
+          </RadioButton>
+        </td>
+      </tr>
+    {{/each}}
+  </tbody>
+</table>
+<p>Mass: {{this.Mass}}, Size: {{this.Size}}, Scratch: {{this.Scratch}}</p>
+
 <table class="form">
   <thead>
     <th>Type</th>
@@ -25,7 +38,7 @@ value="target.value"}}>
     {{#each @data.measurements as |m|}}
       <tr>
         <td>{{m.type}}</td>
-        <td>{{m.result}}</td>
+        <td>{{m.humanReadableResult}}</td>
         <td>{{moment-format m.datetime "h:mm:ss a"}}</td>
       </tr>
     {{/each}}

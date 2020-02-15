@@ -1,5 +1,6 @@
 import Component from '@ember/component';
 import {
+  get,
   action,
   computed,
 } from '@ember/object';
@@ -14,42 +15,85 @@ import {
 } from '@ember/service';
 
 
-export default class RobotCheckinController extends Component {
-  selectedMeasurementOption = 'Mass';
+function passedMeasurement(measurements, type, registrationTime) {
+  let result = undefined
+  let done = false
+  let itemType = "";
+  let itemDatetime = "";
 
+  measurements = measurements.sortBy('datetime').reverse();
+  measurements.forEach(function(item, index, array) {
+    if (!done) {
+      itemDatetime = item.get('datetime');
+      if (itemDatetime < registrationTime) {
+        result = undefined;
+        done = true;
+        debug("passedMeasurement No pass found for " + type);
+      } else {
+        itemType = item.get('type');
+        if (type === itemType) {
+          result = item.get('result');
+          debug("passedMeasurement found: " + result + " for " + type);
+          done = true;
+        }
+      }
+    }
+  });
+  return result;
+}
+
+export default class RobotMeasurementComponent extends Component {
   @service store;
 
-  @computed()
-  get measurementOptions() {
-    return ['Mass', 'Size', 'Time', 'Scratch', 'Deadman'];
+  @tracked Mass = false
+  @tracked Size = false
+  @tracked Scratch = false
+  @tracked Time = false
+  @tracked Deadman = false
+
+  @action
+  PopulateRadioBoxes(model) {
+    debug("PopulateRadioBoxes fired");
+    let registrationTime = model.get('competition').get('registrationTime');
+    let measurements = model.get('measurements');
+    this.Mass = passedMeasurement(measurements, "Mass", registrationTime);
+    this.Size = passedMeasurement(measurements, "Size", registrationTime);
+    this.Scratch = passedMeasurement(measurements, "Scratch", registrationTime);
+    this.Time = passedMeasurement(measurements, "Time", registrationTime);
+    this.Deadman = passedMeasurement(measurements, "Deadman", registrationTime);
+  }
+
+  // Get the measurements required for this entry based upon the competition
+  // that is it registered in.
+  @computed
+  get requiredMeasurements() {
+    let measurements = [];
+    let comp = this.get('data').get('competition');
+
+    if (comp.get('measureMass')) {
+      measurements.push('Mass');
+    }
+    if (comp.get('measureSize')) {
+      measurements.push('Size');
+    }
+    if (comp.get('measureScratch')) {
+      measurements.push('Scratch');
+    }
+    if (comp.get('measureTime')) {
+      measurements.push('Time');
+    }
+    if (comp.get('measureDeadman')) {
+      measurements.push('Deadman');
+    }
+    return measurements;
   }
 
   @action
-  updateMeasurement(value) {
-    this.set('measurementType', value);
-  }
-
-  @action
-  measurementPass(model) {
-    this.createMeasurement("Pass", model);
-  }
-
-  @action
-  measurementFail(model) {
-    this.createMeasurement("Fail", model);
-  }
-
-  @action
-  toggleMeasured(changeset) {
-    changeset.toggleProperty('measured');
-    changeset.save();
-  }
-
-  createMeasurement(value, model) {
+  createMeasurement(value, type, model) {
     let robot = model;
-    let type = this.selectedMeasurementOption;
-    let date = new Date('1970-01-01T00:00:00Z');
     debug("Logging " + type + " measurement of: " + value + " for robot " + robot.id);
+    let date = new Date('1970-01-01T00:00:00Z');
+    //this.set(type, value);
     let measurement = this.store.createRecord('robot-measurement', {
       robot: robot,
       result: value,
@@ -58,98 +102,22 @@ export default class RobotCheckinController extends Component {
     });
 
     measurement.save().then(() => {
-      debug("Robot measured has id: " + robot.id);
       measurement.reload();
 
-      //Determine if a robot is fully measured
-      let measuredMass = "Fail";
-      let lastMeasuredMassTime = false;
-
-      let measuredSize = "Fail";
-      let lastMeasuredSizeTime = false;
-
-      let measuredTime = "Fail";
-      let lastMeasuredTimeTime = false;
-
-      let measuredScratch = "Fail";
-      let lastMeasuredScratchTime = false;
-
-      let measuredDeadman = "Fail";
-      let lastMeasuredDeadmanTime = false;
-
       let measurements = robot.get('measurements');
-
-      //Get all latest measurements for the robot
-      measurements.forEach(function(item) {
-        let type = item.get('type');
-        let datetime = item.get('datetime');
-        let result = item.get('result');
-
-        if (type === "Mass") {
-          if (lastMeasuredMassTime == false || datetime > lastMeasuredMassTime) {
-            lastMeasuredMassTime = datetime;
-            measuredMass = result;
-          }
-        } else if (type === "Time") {
-          if (lastMeasuredTimeTime == false || datetime > lastMeasuredTimeTime) {
-            lastMeasuredTimeTime = datetime;
-            measuredTime = result;
-          }
-        } else if (type === "Scratch") {
-          if (lastMeasuredScratchTime == false || datetime > lastMeasuredScratchTime) {
-            lastMeasuredScratchTime = datetime;
-            measuredScratch = result;
-          }
-        } else if (type === "Size") {
-          if (lastMeasuredSizeTime == false || datetime > lastMeasuredSizeTime) {
-            lastMeasuredSizeTime = datetime;
-            measuredSize = result;
-          }
-        } else if (type === "Deadman") {
-          if (lastMeasuredDeadmanTime == false || datetime > lastMeasuredDeadmanTime) {
-            lastMeasuredDeadmanTime = datetime;
-            measuredDeadman = result;
-          }
-        }
-      });
-
       let competition = robot.get('competition');
-      let requiresMass = competition.get('measureMass');
-      let requiresSize = competition.get('measureSize');
-      let requiresTime = competition.get('measureTime');
-      let requiresScratch = competition.get('measureScratch');
-      let requiresDeadman = competition.get('measureDeadman')
-
       let registrationTime = competition.get('registrationTime');
       let measured = true;
 
-      if (requiresMass &&
-        (registrationTime > lastMeasuredMassTime || measuredMass === "Fail")) {
-        debug("Failed on mass: " + registrationTime + " > " + lastMeasuredMassTime);
-        measured = false;
-      }
-      if (requiresSize &&
-        (registrationTime > lastMeasuredSizeTime || measuredSize === "Fail")) {
-        debug("failed on size");
-        measured = false;
-      }
-      if (requiresTime &&
-        (registrationTime > lastMeasuredTimeTime || measuredTime === "Fail")) {
-        debug("failed on time delay");
-        measured = false;
-      }
-      if (requiresScratch &&
-        (registrationTime > lastMeasuredScratchTime || measuredScratch === "Fail")) {
-        debug("failed on scratch");
-        measured = false;
-      }
-      if (requiresDeadman &&
-        (registrationTime > lastMeasuredDeadmanTime || measuredDeadman === "Fail")) {
-        debug("failed on deadman");
-        measured = false;
-      }
-      robot.set('measured', measured);
+        this.requiredMeasurements.forEach(function(item) {
+        if (!passedMeasurement(measurements, item, registrationTime)) {
+          measured = false;
+          debug("failed on " + item);
+        }
+      });
+
       debug("Setting measured to " + measured);
+      robot.set('measured', measured);
       robot.save();
     });
   }
