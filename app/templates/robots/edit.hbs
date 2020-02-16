@@ -8,4 +8,4 @@
 <hr>
 <RobotMeasurement @data={{this.model.robot}} />
 <hr>
-<button {{action "done" this.model.robot.competition}}>Done</button>
+<button {{on "click" this.done this.model.robot.competition}}>Done</button>

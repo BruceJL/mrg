@@ -10,7 +10,23 @@ import {
   debug,
 } from '@ember/debug';
 
+import {
+  inject as service
+} from '@ember/service';
+
+function createLogEntry(store, entry, action) {
+  let record = store.createRecord('activity-log', {
+    datetime: new Date('1970-01-01T00:00:00Z'),
+    volunteer: "Nobody",
+    entry: entry,
+    function: "CHECK-IN",
+    action: action,
+  });
+  record.save();
+}
+
 export default class RobotCheckinController extends Component {
+  @service store;
 
   @computed()
   get PaymentOptions() {
@@ -28,6 +44,11 @@ export default class RobotCheckinController extends Component {
     model.set('withdrawn', true); //Depreciated
     model.set('status', "WITHDRAWN")
     model.save();
+    createLogEntry(
+      this.store,
+      model,
+      "WITHDRAWN",
+    );
   }
 
   @action
@@ -35,6 +56,11 @@ export default class RobotCheckinController extends Component {
     model.set('withdrawn', false); //depreciated
     model.set('status', "UNKNOWN")
     model.save();
+    createLogEntry(
+      this.store,
+      model,
+      "RE-INSTATED",
+    );
   }
 
   @action
@@ -42,6 +68,11 @@ export default class RobotCheckinController extends Component {
     model.set('signedIn', true); //depreciated
     model.set('status', "CHECKED-IN")
     model.save();
+    createLogEntry(
+      this.store,
+      model,
+      "CHECKED-IN",
+    );
   }
 
   @action
@@ -49,5 +80,10 @@ export default class RobotCheckinController extends Component {
     model.set('signedIn', false); //depreciated
     model.set('status', "UNKNOWN")
     model.save();
+    createLogEntry(
+      this.store,
+      model,
+      "CHECK-IN CANCELLED",
+    );
   }
 }

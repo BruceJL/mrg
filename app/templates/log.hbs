@@ -1,0 +1,34 @@
+<table>
+  <thead>
+    <th>
+      Time
+    </th>
+    <th>
+      Entry
+    </th>
+    <th>
+      Volunteer
+    </th>
+    <th>
+      Action
+    </th>
+  </thead>
+  <tbody>
+    {{#each this.model as |item|}}
+      <tr>
+        <td>
+          {{moment-format item.datetime "h:mm:ss a"}}
+        </td>
+        <td>
+          <LinkTo @route="robots.edit" @model={{item.entry.id}}>{{item.entry.robot}}</LinkTo>
+        </td>
+        <td>
+          {{item.volunteer}}
+        </td>
+        <td>
+          {{item.action}}
+        </td>
+      </tr>
+    {{/each}}
+  </tbody>
+</table>

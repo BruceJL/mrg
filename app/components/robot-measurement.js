@@ -26,7 +26,6 @@ function passedMeasurement(measurements, type, registrationTime) {
     if (!done) {
       itemDatetime = item.get('datetime');
       if (itemDatetime < registrationTime) {
-        result = undefined;
         done = true;
         debug("passedMeasurement No pass found for " + type);
       } else {

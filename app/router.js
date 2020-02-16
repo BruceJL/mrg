@@ -32,4 +32,5 @@ Router.map(function() {
   });
 
   this.route('robot', function() {});
+  this.route('log');
 });
