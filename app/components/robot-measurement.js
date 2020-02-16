@@ -16,8 +16,8 @@ import {
 
 
 function passedMeasurement(measurements, type, registrationTime) {
-  let result = undefined
-  let done = false
+  let done = false;
+  let result = undefined;
   let itemType = "";
   let itemDatetime = "";
 
@@ -27,12 +27,12 @@ function passedMeasurement(measurements, type, registrationTime) {
       itemDatetime = item.get('datetime');
       if (itemDatetime < registrationTime) {
         done = true;
-        debug("passedMeasurement No pass found for " + type);
+        debug("passedMeasurement: No current measurements found for " + type);
       } else {
         itemType = item.get('type');
         if (type === itemType) {
           result = item.get('result');
-          debug("passedMeasurement found: " + result + " for " + type);
+          debug("passedMeasurement: Found: " + result + " for " + type);
           done = true;
         }
       }
@@ -108,7 +108,7 @@ export default class RobotMeasurementComponent extends Component {
       let registrationTime = competition.get('registrationTime');
       let measured = true;
 
-        this.requiredMeasurements.forEach(function(item) {
+      this.requiredMeasurements.forEach(function(item) {
         if (!passedMeasurement(measurements, item, registrationTime)) {
           measured = false;
           debug("failed on " + item);

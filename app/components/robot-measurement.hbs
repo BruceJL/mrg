@@ -1,7 +1,7 @@
 <h3>Measurement Information</h3>
 
 <p><b>Measured:</b> {{@data.formattedMeasured}}</p>
-<table class="form" {{did-insert (action this.PopulateRadioBoxes @data)}}>
+<table class="form" {{did-insert (fn this.PopulateRadioBoxes @data)}}>
   <thead>
     <th>Measurement</th>
     <th>Pass</th>
@@ -12,11 +12,17 @@
       <tr>
         <td>{{measurement}}:</td>
         <td>
-          <RadioButton @value={{true}} @groupValue={{get this measurement}} @changed={{action createMeasurement true measurement @data}}>
+          <RadioButton
+            @value={{true}}
+            @groupValue={{get this measurement}}
+            @changed={{fn this.createMeasurement true measurement @data}}>
           </RadioButton>
         </td>
         <td>
-          <RadioButton @value={{false}} @groupValue={{get this measurement}}  @changed={{action createMeasurement false measurement @data}}>
+          <RadioButton
+            @value={{false}}
+            @groupValue={{get this measurement}}
+            @changed={{fn this.createMeasurement false measurement @data}}>
           </RadioButton>
         </td>
       </tr>

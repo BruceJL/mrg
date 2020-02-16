@@ -9,9 +9,7 @@
       <tr>
         <td>Paid:</td>
         <td>
-          <select onchange={{
-          action (action "selectPaymentType" changeset)
-          value="target.value"}}>
+          <select {{on "change" (val (fn this.selectPaymentType changeset))}} disabled={{changeset.isPaid}}>
             <option value="" selected={{eq changeset.paymentType null}} disabled={{true}}>
               Select payment method
             </option>
@@ -28,10 +26,10 @@
           {{else if (not-eq changeset.paymentType null)}}
             {{#if changeset.isPaid}}
               {{changeset.formattedPaidDollars}}
-              <button {{action "refund" changeset}}>Refund</button>
+              <button {{on "click" (fn this.refund changeset)}}>Refund</button>
             {{else}}
-              <button {{action "paid" changeset "10"}}>Paid $10.00</button><br>
-              <button {{action "paid" changeset "20"}}>Paid $20.00</button>
+              <button {{on "click" (fn this.paid changeset "10")}}>Paid $10.00</button><br>
+              <button {{on "click" (fn this.paid changeset "20")}}>Paid $20.00</button>
             {{/if}}
           {{/if}}
         </td>

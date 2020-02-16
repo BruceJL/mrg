@@ -68,6 +68,7 @@ export default class RobotCheckinController extends Component {
 
   @action
   selectPaymentType(cs, value) {
+    debug("selectPaymentType fired.");
     let store = get(this, 'store');
     if (value === "INVOICED" && get(cs, 'paid') > 0.0) {
       alert(
@@ -82,6 +83,7 @@ export default class RobotCheckinController extends Component {
         cs.get('_internalModel'),
         "MARKED AS INVOICED");
     } else {
+      debug("setting paymentType to " + value);
       cs.set('paymentType', value);
       cs.save();
     }

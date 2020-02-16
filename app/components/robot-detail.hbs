@@ -11,7 +11,7 @@
       <tr>
         <td>Competition:</td>
         <td>
-          <select id="competition" {{on "change" this.updateCompetition}}>
+          <select id="competition" {{on "change" (val (fn this.updateCompetition changeset))}}>
             <option value="" selected={{eq changeset.competition.id ""}} disabled={{true}}>
               Select competition
             </option>
@@ -85,8 +85,8 @@
       </tr>
     </tbody>
   </table>
-  <button {{action "rollback" changeset}}>Undo</button>
-  <button {{action "save" changeset}} disabled={{changeset.isInvalid}}>
+  <button {{on "click" (fn this.rollback changeset)}}>Undo</button>
+  <button {{on "click" (fn this.save changeset)}} disabled={{changeset.isInvalid}}>
     Save Changes
   </button>
 {{/with}}

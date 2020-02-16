@@ -1,25 +1,41 @@
 import Component from '@ember/component';
-import { action } from '@ember/object';
-import { tracked } from '@glimmer/tracking';
-import { debug } from '@ember/debug';
+import {
+  action
+} from '@ember/object';
+import {
+  tracked
+} from '@glimmer/tracking';
+import {
+  debug
+} from '@ember/debug';
 
 export default class RobotDetailController extends Component {
-    @tracked changeset;
 
-    @action
-    updateCompetition(event) {
-        const id = event.target.value;
-        const c = this.competitions.findBy('id', id);
-        this.changeset.set('competition', c);
-    }
-
-    @action
-    save(changeset) {
-      changeset.save();
-    }
-    
-    @action
-    rollback(changeset) {
+  @action
+  updateCompetition(changeset, event) {
+    debug("got competition change to " + event);
+    let ok = confirm(
+      "Changing the competition of this entry will cause the registration" +
+      " of the entry to be reset to the current time, moving this entry to " +
+      " the end of the stand-by queue. Are you Sure?"
+    );
+    if (ok) {
+      const id = event;
+      const c = this.competitions.findBy('id', id);
+      changeset.set('competition', c);
+      changeset.set('registered', new Date('1970-01-01T00:00:00Z'));
+    }else{
       changeset.rollback();
     }
+  }
+
+  @action
+  save(changeset) {
+    changeset.save();
+  }
+
+  @action
+  rollback(changeset) {
+    changeset.rollback();
+  }
 }

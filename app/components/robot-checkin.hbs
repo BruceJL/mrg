@@ -10,16 +10,16 @@
       <td>{{@data.status}}</td>
       <td>
         {{#if (eq @data.status "CHECKED-IN")}}
-          <button {{action "cancelCheckin" @data}}>
+          <button {{on "click" (fn this.cancelCheckin @data)}}>
             Cancel Check in
           </button>
         {{else if (eq @data.status "WITHDRAWN")}}
-          <button {{action "reinstate" @data}}>
+          <button {{on "click" (fn this.reinstate @data)}}>
             Reinstate
           </button>
         {{else}}
-          <button {{action "checkIn" @data}}>Check in</button>
-          <button {{action "withdraw" @data}}>Withdraw</button>
+          <button {{on "click" (fn this.checkIn @data)}}>Check in</button>
+          <button {{on "click" (fn this.withdraw @data)}}>Withdraw</button>
         {{/if}}
       </td>
     </tr>
