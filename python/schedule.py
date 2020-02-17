@@ -9,6 +9,7 @@ from docx import Document
 from databaseInteraction import dbInteractionInstance
 # from scheduler import Scheduler
 
+
 class Session(object):
     """Part of a Schedule"""
     def __init__(self, startDatetime=None, endDatetime=None):
@@ -50,7 +51,7 @@ class Session(object):
             return True
         else:
             return False
-            
+
     def export(self, csvFile):
         """Export this session to a csv.  The csvFile parameter must be a file with write permissions"""
         s = '"{startDate}","{endDate}","{numEvents} events"\n'.format(
@@ -78,6 +79,7 @@ class Session(object):
             p = document.add_paragraph()
             p.add_run(eventTitle).bold = True
             event.toWordFile(document)
+
 
 class Schedule(object):
     """Used by the scheduling algorithm"""
@@ -126,18 +128,18 @@ class Schedule(object):
         fout = open(filename, 'w')
         pickle.dump(self, fout)
         fout.close()
-        
+
     def load(self, filename):
         """Load the schedule from a pickled blob"""
         fin = open(filename, 'r')
         loaded = pickle.load(fin)
         fin.close()
-        
+
         # copy the data we loaded into self
         self.sessions = []
         for s in loaded.sessions:
             self.sessions.append(s)
-            
+
     def export(self, filename):
         """Export the schedule as a reasonably-nicely formatted .csv file so they can play around with in in Excel"""
         fout = open(filename, 'w')

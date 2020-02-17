@@ -39,7 +39,7 @@ class Event(object):
 
     def reset_round_robin_tournaments(self) -> 'List[str]':
         sql = []
-        s = "DELETE from `ring-assignment` where competition='{}'"
+        s = "DELETE from `ringAssignment` where competition='{}'"
         s = s.format(self.competition)
         sql.append(s)
 
@@ -66,6 +66,7 @@ class Event(object):
           )
 
     def create_round_robin_tournaments(self, number_rings: 'int') -> 'None':
+        print("Creating round robin tournaments")
         best_remainder: 'int' = len(self.entries)
         best_rings: 'int' = 1
         self.version += 1
@@ -164,7 +165,7 @@ class Event(object):
             self.create_round_robin_tournaments(number_rings)
 
             ring_assignment_query = \
-              "INSERT into `ring-assignment` " \
+              "INSERT into `ringAssignment` " \
               "(robot, competition, ring, letter) " \
               "VALUES "
 
@@ -223,8 +224,8 @@ class Event(object):
                         # Remove the event entry from the tournament
                         tournament.remove_event_entry(event_entry)
 
-                        # delete the ring-assignment entry
-                        s = "DELETE from `ring-assignment` where `robot`={};"
+                        # delete the ringAssignment entry
+                        s = "DELETE from `ringAssignment` where `robot`={};"
                         s = s.format(str(event_entry.entry.id))
                         sql.append(s)
 
@@ -273,7 +274,7 @@ class Event(object):
 
                     event_entry = smallest_tournament.add_entry(entry)
 
-                    s = "INSERT into `ring-assignment` " \
+                    s = "INSERT into `ringAssignment` " \
                         "(robot, competition, ring, letter) " \
                         "VALUES " \
                         "({}, '{}', {}, '{}')"

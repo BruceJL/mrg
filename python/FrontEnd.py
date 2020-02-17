@@ -156,14 +156,16 @@ class Frontend():
             competition = self.selected_competition.get()
             event = self.events[competition]
             query = event.reset_round_robin_tournaments()
-            self.cursor.execute(query)
+            for q in query:
+                print(q)
+                self.cursor.execute(q)
 
     # Make labels for robots
     def gui_make_odf_label_sheets(self) -> 'None':
         competition = self.selected_competition.get()
         event = self.events[competition]
         event.entries = \
-            get_event_entries_from_database(self.cursor, competition)
+            get_event_entries_from_database(self.cursor, event)
 
         filename = make_odf5160_labels(competition, event.entries)
         filename = os.path.realpath(filename) + ".odt"
@@ -285,7 +287,7 @@ def load_ring_assignments_from_database(
   event: 'Event',
 ) -> 'None':
     event.reset_round_robin_tournaments()
-    sql = "SELECT * FROM `ring-assignment` WHERE competition=%s;"
+    sql = "SELECT * FROM `ringAssignment` WHERE competition=%s;"
     cursor.execute(sql, event.competition)
     data = cursor.fetchall()
     found_entry: 'Entry' = None
@@ -356,6 +358,7 @@ def create_database_connection():
       user='mrg-sign-in',
       db='mrg_db',
       autocommit=True,
+      password='Swordfish',
     )
 
 

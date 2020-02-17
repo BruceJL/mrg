@@ -297,24 +297,24 @@ def make_odf_score_sheets(
         print("building sheet for tournament: " + str(tournament.ring))
         h = H(
           outlinelevel=1,
-          text=event.competition + " Score Sheet -  "
-          + strftime("%H:%M", gmtime()),
+          text=event.competition + " - Ring " + str(tournament.ring)
+          + " - Score Sheet -  " + strftime("%H:%M", gmtime()),
           stylename=heading_paragraph_style_name,
         )
         document.text.addElement(h)
         document.text.addElement(P(text=""))
-        p = P(
-          text=
+        p=P(
+          text =
           "Judge:_____________________________________   "
           + "Timer:_____________________________________",
-          stylename=judge_timer_style_name,
+          stylename = judge_timer_style_name,
         )
         document.text.addElement(p)
         document.text.addElement(P(text=""))
 
-        score_table = Table(
-          name="Table" + str(tournament.ring),
-          stylename=score_card_table_style_name,
+        score_table=Table(
+          name = "Table" + str(tournament.ring),
+          stylename = score_card_table_style_name,
         )
         score_table.addElement(
           TableColumn(stylename=letter_column_style_name))

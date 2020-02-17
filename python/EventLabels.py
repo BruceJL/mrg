@@ -3,7 +3,6 @@ from odf.table import Table, TableColumn, TableRow, TableCell
 from odf.style import Style, TextProperties, ParagraphProperties, \
   TableCellProperties, TableRowProperties, TableColumnProperties, \
   TableProperties, FontFace, PageLayout, PageLayoutProperties, MasterPage
-from odf import style
 from odf.text import P, Span
 from datetime import date
 import math

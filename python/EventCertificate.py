@@ -12,6 +12,7 @@ if TYPE_CHECKING:
     from Entry import Entry
     from typing import List
 
+
 # stolen from:
 # https://stackoverflow.com/questions/9647202/ordinal-numbers-replacement
 def make_ordinal(n: 'int'):
