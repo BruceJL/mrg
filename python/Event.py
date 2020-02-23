@@ -65,104 +65,97 @@ class Event(object):
             self,
           )
 
-    def create_round_robin_tournaments(self, number_rings: 'int') -> 'None':
-        print("Creating round robin tournaments")
-        best_remainder: 'int' = len(self.entries)
-        best_rings: 'int' = 1
-        self.version += 1
+    def update_round_robin_assignments(
+      self,
+      number_rings: 'int') -> 'List[str]':
+        sql = []
+        slotted_entries = []
         num_entries = 0
-        for entry in self.entries:
-            if entry.status == "CHECKED-IN":
-                num_entries += 1
-
         max_entries = self.max_entries_per_ring * self.max_rings
+
+        # Sort the entries by date registered.
+        self.entries.sort()
+
+        for entry in self.entries:
+            if entry.status == "CHECKED-IN" and entry.measured == 1:
+                num_entries = num_entries + 1
+                if num_entries > max_entries:
+                    break
+                slotted_entries.append(entry)
 
         assert num_entries != 0, "There are no entries to slot!"
 
-        if number_rings == 0:
-            # Locate a solution that uses the maximum number of rings with a
-            # zero remainder
-            for i in range(self.max_rings, 1, -1):
-                if num_entries / i < self.min_entries_per_ring:
-                    # print(str(i) + " rings has " + str(num_entries/i) +
-                    # robots per ring, which is too few.")
-                    continue
-                if num_entries / i > self.max_entries_per_ring:
-                    # print(str(i) + " rings has " + str(num_entries/i) +
-                    # " robots per ring, which is too many.")
-                    continue
-                elif num_entries % i == 0:
-                    self.rings = i
-                    # print(str(i) + " rings works perfectly.")
-                    break
-                elif num_entries % i < best_remainder:
-                    # print(str(i) + " rings has a better remainder of "
-                    # + str(num_entries % i))
-                    best_remainder = len(self.entries) % i
-                    best_rings = i
+        if not self.round_robin_tournaments:
+            print("Doing inital ring assignment for " + self.competition)
+            best_remainder: 'int' = len(self.entries)
+            best_rings: 'int' = 1
+            self.version += 1
 
-            if self.rings == 0:
-                self.rings = best_rings
-        else:
-            self.rings = number_rings
+            if number_rings == 0:
+                # Locate a solution that uses the maximum number of rings with
+                # a zero remainder
+                for i in range(self.max_rings, 1, -1):
+                    if num_entries / i < self.min_entries_per_ring:
+                        # print(str(i) + " rings has " + str(num_entries/i) +
+                        # robots per ring, which is too few.")
+                        continue
+                    if num_entries / i > self.max_entries_per_ring:
+                        # print(str(i) + " rings has " + str(num_entries/i) +
+                        # " robots per ring, which is too many.")
+                        continue
+                    elif num_entries % i == 0:
+                        self.rings = i
+                        # print(str(i) + " rings works perfectly.")
+                        break
+                    elif num_entries % i < best_remainder:
+                        # print(str(i) + " rings has a better remainder of "
+                        # + str(num_entries % i))
+                        best_remainder = num_entries % i
+                        best_rings = i
 
-        print(
-          self.competition + " - using " + str(self.rings)
-          + " rings with an average of "
-          + str(float(num_entries) / float(self.rings)) + " robots per ring.")
+                if self.rings == 0:
+                    self.rings = best_rings
+            else:
+                self.rings = number_rings
 
-        # Build the dict to hold the rings and their entries.
-        for i in range(1, self.rings+1, 1):
-            self.create_ring(i)
+            print(
+              self.competition + " - using " + str(self.rings)
+              + " rings with an average of "
+              + str(float(num_entries) / float(self.rings))
+              + " robots per ring.")
 
-        # Make dict containing the entries from a given school
-        school_entries: 'Dict[str, List[Entry]]' = {}
-        slotted: 'int' = 0
-        self.entries.sort()
-        for entry in self.entries:
-            if entry.status == "CHECKED-IN":
-                slotted += 1
+            # Build the dict to hold the rings and their entries.
+            for i in range(1, self.rings+1, 1):
+                self.create_ring(i)
+
+            # Make dict containing the entries from a given school
+            school_entries: 'Dict[str, List[Entry]]' = {}
+            slotted: 'int' = 0
+            slotted_entries.sort()
+            for entry in slotted_entries:
                 if entry.school not in school_entries.keys():
                     school_entries[entry.school] = []
                 school_entries[entry.school].append(entry)
                 if slotted == max_entries:
                     break
 
-        # Slot the entries into the rings based upon school.
-        # This will minimize the number of entries from the same school in
-        # a given ring.
-        i = 0
-        round_robin_keys = list(self.round_robin_tournaments.keys())
-        length = len(round_robin_keys)
-        for key in school_entries.keys():
-            entries = school_entries[key]
-            while len(entries):
-                index = math.floor(random.random() * len(entries))
-                found = 0
+            # Slot the entries into the rings based upon school.
+            # This will minimize the number of entries from the same school in
+            # a given ring.
+            i = 0
+            round_robin_keys = list(self.round_robin_tournaments.keys())
+            length = len(round_robin_keys)
+            for key in school_entries.keys():
+                entries = school_entries[key]
+                while len(entries):
+                    index = math.floor(random.random() * len(entries))
+                    found = 0
 
-                # TODO fix the following logic as it may paint itself into a
-                # corner. e.g. the only entry remaining
-                # is a duplicate entry
-                # for tournament in self.round_robin_tournaments:
-                #    for event_entry in tournament.event_entries:
-                #       if event_entry.entry.driver1 == entries[index].driver1:
-                #            found = 1
-
-                if not found:
-                    self.round_robin_tournaments[
-                      round_robin_keys[i % length]].add_entry(entries[index])
-                    entries.remove(entries[index])
-                    i += 1
-
-    def update_round_robin_assignments(
-      self,
-      number_rings: 'int') -> 'List[str]':
-        sql = []
-
-        if not self.round_robin_tournaments:
-            print("Doing inital ring assignment for " + self.competition)
-            # There not been any slotting done. Do initial assignments.
-            self.create_round_robin_tournaments(number_rings)
+                    if not found:
+                        self.round_robin_tournaments[
+                          round_robin_keys[i % length]].add_entry(entries[index])
+                        entries.remove(entries[index])
+                        i += 1
 
             ring_assignment_query = \
               "INSERT into `ringAssignment` " \
@@ -203,13 +196,12 @@ class Event(object):
             # since been removed.
             for tournament in self.round_robin_tournaments.values():
                 for event_entry in tournament.event_entries:
-                    remove = 0
+                    remove = 1
                     name = ""
-                    for entry in self.entries:
+                    for entry in slotted_entries:
                         if event_entry.entry.id == entry.id:
+                            remove = 0
                             name = entry.robotName
-                            if not entry.status == "CHECKED-IN":
-                                remove = 1
                             break
 
                     if remove:
@@ -236,20 +228,17 @@ class Event(object):
                         sql.append(s)
 
             # locate checked-in competitors that have not been assigned a ring.
-            for entry in self.entries:
-                if entry.status == "CHECKED-IN":
-                    add = 1
-                    for tournament in self.round_robin_tournaments.values():
-                        if 0 == add:
+            for entry in slotted_entries:
+                add = 1
+                for tournament in self.round_robin_tournaments.values():
+                    if 0 == add:
+                        break
+                    for event_entry in tournament.event_entries:
+                        if event_entry.entry.id == entry.id:
+                            # We found the competitor, we don't need to
+                            # add them
+                            add = 0
                             break
-                        for event_entry in tournament.event_entries:
-                            if event_entry.entry.id == entry.id:
-                                # We found the competitor, we don't need to
-                                # add them
-                                add = 0
-                                break
-                else:
-                    add = 0
 
                 if add:
                     # The competitor is checked in, but no ring assignment

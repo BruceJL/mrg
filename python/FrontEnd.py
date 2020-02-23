@@ -129,8 +129,7 @@ class Frontend():
         event = self.events[competition]
 
         # get all the entries for a given event.
-        event.entries = \
-            get_event_entries_from_database(self.cursor, event)
+        event.entries = get_event_entries_from_database(self.cursor, event)
 
         # Fetch the current ring assignements from the database for the event.
         load_ring_assignments_from_database(self.cursor, event)
