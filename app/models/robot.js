@@ -110,7 +110,7 @@ export default class RobotModel extends Model {
     }
   }
 
-  @computed('competition.robots.@each.status')
+  @computed('competition.robots.@each.status', 'competition.robots.@each.measured')
   get slottedStatus() {
     let competition = this.get('competition');
     if (competition == undefined) {
@@ -125,6 +125,7 @@ export default class RobotModel extends Model {
       let itemId = "";
       let index = 0;
       let itemStatus = "";
+      let itemMeasured = false;
       let status = this.get("status");
       let slottedStatus = null;
 
@@ -138,6 +139,7 @@ export default class RobotModel extends Model {
       while (!slottedStatus && checkedInOrUnknownCount < robots.length) {
         item = robots[index];
         itemStatus = item.status;
+        itemMeasured = item.measured;
         itemId = item.get('id');
 
         if (itemId === id) {
@@ -151,7 +153,7 @@ export default class RobotModel extends Model {
 
             // confirmed status. There's room at the inn.
           } else if (checkedInCount <= maxCompetitors) {
-            if (itemStatus === "CHECKED-IN") {
+            if (itemStatus === "CHECKED-IN" && itemMeasured===true){
               slottedStatus = "confirmed";
             } else {
               slottedStatus = "unknown"
