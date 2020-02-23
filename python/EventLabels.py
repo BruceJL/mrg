@@ -450,109 +450,110 @@ def make_odf5160_labels(competition, entries):
           stylename=school_style_name,
         ))
 
-        def add_mass_checkbox(p):
-            p.addText("Mass")
-            p.addElement(Span(text="r", stylename=wingdings_text_style))
-            return p
+        # def add_mass_checkbox(p):
+        #     p.addText("Mass")
+        #     p.addElement(Span(text="r", stylename=wingdings_text_style))
+        #     return p
+        #
+        # def add_size_checkbox(p):
+        #     p.addText("Size")
+        #     p.addElement(Span(text="r", stylename=wingdings_text_style))
+        #     return p
+        #
+        # def add_delay_checkbox(p):
+        #     p.addText("Delay")
+        #     p.addElement(Span(text="r", stylename=wingdings_text_style))
+        #     return p
+        #
+        # def add_lipo_checkbox(p):
+        #     p.addText("Li")
+        #     p.addElement(Span(text="r", stylename=wingdings_text_style))
+        #     return p
+        #
+        # def add_space(p):
+        #     p.addText(" ")
+        #     return p
+        #
+        # p = P(text="", stylename=measurement_style_name)
+        # if competition == "PST":
+        #     p = add_mass_checkbox(p)
+        #     p = add_space(p)
+        #     p = add_size_checkbox(p)
+        #     p = add_space(p)
+        #     p = add_lipo_checkbox(p)
+        #
+        # elif competition == "PSA":
+        #     p = add_mass_checkbox(p)
+        #     p = add_space(p)
+        #     p = add_size_checkbox(p)
+        #     p = add_space(p)
+        #     p = add_delay_checkbox(p)
+        #     p = add_space(p)
+        #     p = add_lipo_checkbox(p)
+        #
+        # elif competition == "MS1":
+        #     p = add_mass_checkbox(p)
+        #     p = add_space(p)
+        #     p = add_lipo_checkbox(p)
+        #
+        # elif competition == "MS2":
+        #     p = add_mass_checkbox(p)
+        #     p = add_space(p)
+        #     p = add_lipo_checkbox(p)
+        #
+        # elif competition == "MS3":
+        #     p = add_mass_checkbox(p)
+        #     p = add_space(p)
+        #     p = add_lipo_checkbox(p)
+        #
+        # elif competition == "MSR":
+        #     p = add_mass_checkbox(p)
+        #
+        # elif competition == "MSA":
+        #     p = add_mass_checkbox(p)
+        #     p = add_space(p)
+        #     p = add_delay_checkbox(p)
+        #     p = add_space(p)
+        #     p = add_lipo_checkbox(p)
+        #
+        # elif competition == 'TPM':
+        #     p = add_mass_checkbox(p)
+        #     p = add_space(p)
+        #     p = add_size_checkbox(p)
+        #     p = add_space(p)
+        #     p = add_lipo_checkbox(p)
+        #
+        # elif competition == 'LFA':
+        #     p = add_size_checkbox(p)
+        #     p = add_space(p)
+        #     p = add_lipo_checkbox(p)
+        #
+        # elif competition == 'SSA':
+        #     p = add_mass_checkbox(p)
+        #     p = add_space(p)
+        #     p = add_size_checkbox(p)
+        #     p = add_space(p)
+        #     p = add_lipo_checkbox(p)
+        #
+        # elif competition == 'SSB':
+        #     p = add_mass_checkbox(p)
+        #     p = add_space(p)
+        #     p = add_size_checkbox(p)
+        #     p = add_space(p)
+        #     p = add_lipo_checkbox(p)
+        #
+        # elif competition == 'JC1':
+        #     p = add_mass_checkbox(p)
+        #     p = add_space(p)
+        #     p = add_size_checkbox(p)
+        #     p = add_space(p)
+        #     p = add_lipo_checkbox(p)
+        #
+        # elif competition == 'NXT':
+        #     pass
 
-        def add_size_checkbox(p):
-            p.addText("Size")
-            p.addElement(Span(text="r", stylename=wingdings_text_style))
-            return p
-
-        def add_delay_checkbox(p):
-            p.addText("Delay")
-            p.addElement(Span(text="r", stylename=wingdings_text_style))
-            return p
-
-        def add_lipo_checkbox(p):
-            p.addText("Li")
-            p.addElement(Span(text="r", stylename=wingdings_text_style))
-            return p
-
-        def add_space(p):
-            p.addText(" ")
-            return p
-
-        p = P(text="", stylename=measurement_style_name)
-        if competition == "PST":
-            p = add_mass_checkbox(p)
-            p = add_space(p)
-            p = add_size_checkbox(p)
-            p = add_space(p)
-            p = add_lipo_checkbox(p)
-
-        elif competition == "PSA":
-            p = add_mass_checkbox(p)
-            p = add_space(p)
-            p = add_size_checkbox(p)
-            p = add_space(p)
-            p = add_delay_checkbox(p)
-            p = add_space(p)
-            p = add_lipo_checkbox(p)
-
-        elif competition == "MS1":
-            p = add_mass_checkbox(p)
-            p = add_space(p)
-            p = add_lipo_checkbox(p)
-
-        elif competition == "MS2":
-            p = add_mass_checkbox(p)
-            p = add_space(p)
-            p = add_lipo_checkbox(p)
-
-        elif competition == "MS3":
-            p = add_mass_checkbox(p)
-            p = add_space(p)
-            p = add_lipo_checkbox(p)
-
-        elif competition == "MSR":
-            p = add_mass_checkbox(p)
-
-        elif competition == "MSA":
-            p = add_mass_checkbox(p)
-            p = add_space(p)
-            p = add_delay_checkbox(p)
-            p = add_space(p)
-            p = add_lipo_checkbox(p)
-
-        elif competition == 'TPM':
-            p = add_mass_checkbox(p)
-            p = add_space(p)
-            p = add_size_checkbox(p)
-            p = add_space(p)
-            p = add_lipo_checkbox(p)
-
-        elif competition == 'LFA':
-            p = add_size_checkbox(p)
-            p = add_space(p)
-            p = add_lipo_checkbox(p)
-
-        elif competition == 'SSA':
-            p = add_mass_checkbox(p)
-            p = add_space(p)
-            p = add_size_checkbox(p)
-            p = add_space(p)
-            p = add_lipo_checkbox(p)
-
-        elif competition == 'SSB':
-            p = add_mass_checkbox(p)
-            p = add_space(p)
-            p = add_size_checkbox(p)
-            p = add_space(p)
-            p = add_lipo_checkbox(p)
-
-        elif competition == 'JC1':
-            p = add_mass_checkbox(p)
-            p = add_space(p)
-            p = add_size_checkbox(p)
-            p = add_space(p)
-            p = add_lipo_checkbox(p)
-
-        elif competition == 'NXT':
-            pass
-
-        table_cell.addElement(p)
+        # table_cell.addElement(p)
+        
         sub_table_tr.addElement(table_cell)
 
         # Create the ring cell
