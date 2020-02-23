@@ -19,7 +19,6 @@ export default class RobotsNewRoute extends Route {
   }
 
   setupController(controller) {
-     let store = this.store;
      super.setupController(...arguments);
      controller.setupNewRobot();
    }

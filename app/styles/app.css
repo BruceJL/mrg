@@ -140,6 +140,10 @@ nav li.dropdown {
   display: inline-block;
 }
 
+nav li.dropdown-right {
+  float: right;
+}
+
 .dropdown-content {
   display: none;
   position: absolute;

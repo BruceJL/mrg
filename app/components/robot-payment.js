@@ -18,18 +18,9 @@ import {
   inject as service
 } from '@ember/service';
 
-function createLogEntry(store, entry, action) {
-  let record = store.createRecord('activity-log', {
-    datetime: new Date('1970-01-01T00:00:00Z'),
-    volunteer: "Nobody",
-    entry: entry,
-    function: "PAYMENT",
-    action: action,
-  });
-  record.save();
-}
 
 export default class RobotCheckinController extends Component {
+  @service session;
   @service store;
   @computed()
   get PaymentOptions() {
@@ -46,20 +37,18 @@ export default class RobotCheckinController extends Component {
     set(cs, 'paid', amount);
     cs.save();
     let store = get(this, 'store');
-    createLogEntry(
-      store,
+    this._createLogEntry(
       cs.get('_internalModel'),
-      "PAID $" + amount + " " + get(cs, 'paymentType')
+      "PAID $" + amount + " " + get(cs, 'paymentType'),
     );
   }
 
   @action
   refund(cs) {
     let store = get(this, 'store');
-    createLogEntry(
-      store,
+    this._createLogEntry(
       cs.get('_internalModel'),
-      "REFUNDED $" + get(cs, 'paid') + " " + get(cs, 'paymentType')
+      "REFUNDED $" + get(cs, 'paid') + " " + get(cs, 'paymentType'),
     );
     set(cs, 'paid', 0.00);
     set(cs, 'paymentType', null);
@@ -78,14 +67,27 @@ export default class RobotCheckinController extends Component {
       cs.rollback()
     } else if(value === "INVOICED"){
       cs.set('paymentType', value);
-      createLogEntry(
-        store,
+      this._createLogEntry(
         cs.get('_internalModel'),
-        "MARKED AS INVOICED");
+        "MARKED AS INVOICED",
+      );
     } else {
       debug("setting paymentType to " + value);
       cs.set('paymentType', value);
       cs.save();
     }
+  }
+
+  _createLogEntry(model, action) {
+    let store = get(this, 'store');
+    let session = get(this, 'session')
+    let record = store.createRecord('activity-log', {
+      datetime: new Date('1970-01-01T00:00:00Z'),
+      volunteer: session.data.authenticated.fullname,
+      entry: model,
+      function: "PAYMENT",
+      action: action,
+    });
+    record.save();
   }
 }

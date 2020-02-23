@@ -1,23 +1,16 @@
 import {
   inject as service
 } from '@ember/service';
+import {
+  action,
+} from '@ember/object'; 
 import Controller from '@ember/controller';
 
-export default Controller.extend({
-  session: service('session'),
+export default class ApplicationController extends Controller {
+  @service session;
 
-  actions: {
-    invalidateSession() {
-      this.session.invalidate();
-    },
-
-    authenticate() {
-      let {
-        identification
-      } = this;
-      this.session.authenticate('authenticator:simple', identification).catch((reason) => {
-        this.set('errorMessage', reason.error || reason);
-      });
-    },
+  @action
+  invalidateSession() {
+    this.session.invalidate();
   }
-});
+}
