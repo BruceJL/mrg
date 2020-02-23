@@ -1,22 +1,21 @@
-{{#with (changeset @data this.RobotValidation) as |changeset|}}
   <h3>Registration Details</h3>
   <table class="form">
     <tbody>
       <tr>
         <td>Robot Name:</td>
         <td>
-          <ValidatedInput @changeset={{changeset}} @propertyName="robot" />
+          <ValidatedInput @changeset={{@changeset}} @propertyName="robot" />
         </td>
       </tr>
       <tr>
         <td>Competition:</td>
         <td>
-          <select id="competition" {{on "change" (val (fn this.updateCompetition changeset))}}>
-            <option value="" selected={{eq changeset.competition.id ""}} disabled={{true}}>
+          <select id="competition" {{on "change" (val (fn this.updateCompetition @changeset))}}>
+            <option value="" selected={{eq @changeset.competition.id ""}} disabled={{true}}>
               Select competition
             </option>
             {{#each @competitions as |c|}}
-              <option value={{c.id}} selected={{eq changeset.competition.id c.id}}>
+              <option value={{c.id}} selected={{eq @changeset.competition.id c.id}}>
                 {{c.name}}
               </option>
             {{/each}}
@@ -26,67 +25,62 @@
       <tr>
         <td>Driver 1:</td>
         <td>
-          <ValidatedInput @changeset={{changeset}} @propertyName="driver1" }} />
+          <ValidatedInput @changeset={{@changeset}} @propertyName="driver1" }} />
         </td>
       </tr>
       <tr>
         <td>Driver 1 Grade:</td>
         <td>
-          <Input class="full-width" @value={{changeset.driver1Gr}} />
+          <Input class="full-width" @value={{@changeset.driver1Gr}} />
         </td>
       </tr>
       <tr>
         <td>Driver 2:</td>
         <td>
-          <Input class="full-width" @value={{changeset.driver2}} />
+          <Input class="full-width" @value={{@changeset.driver2}} />
         </td>
       </tr>
       <tr>
         <td>Driver 2 Grade:</td>
         <td>
-          <Input class="full-width" @value={{changeset.driver2Gr}} />
+          <Input class="full-width" @value={{@changeset.driver2Gr}} />
         </td>
       </tr>
       <tr>
         <td>Driver 3:</td>
         <td>
-          <Input class="full-width" @value={{changeset.driver3}} />
+          <Input class="full-width" @value={{@changeset.driver3}} />
         </td>
       </tr>
       <tr>
         <td>Driver 3 Grade:</td>
         <td>
-          <Input class="full-width" @value={{changeset.driver3Gr}} />
+          <Input class="full-width" @value={{@changeset.driver3Gr}} />
         </td>
       </tr>
       <tr>
         <td>School:</td>
         <td>
-          <Input class="full-width" @value={{changeset.school}} />
+          <Input class="full-width" @value={{@changeset.school}} />
         </td>
       </tr>
       <tr>
         <td>Coach:</td>
         <td>
-          <ValidatedInput @changeset={{changeset}} propertyName="coach" }} />
+          <ValidatedInput @changeset={{@changeset}} propertyName="coach" }} />
         </td>
       </tr>
       <tr>
         <td>Email:</td>
         <td>
-          <ValidatedInput @changeset={{changeset}} @propertyName="email" }} />
+          <ValidatedInput @changeset={{@changeset}} @propertyName="email" }} />
         </td>
       </tr>
       <tr>
         <td>Ph:</td>
         <td>
-          <ValidatedInput @changeset={{changeset}} @propertyName="ph" }} />
+          <ValidatedInput @changeset={{@changeset}} @propertyName="ph" }} />
         </td>
       </tr>
     </tbody>
   </table>
-  <button {{on "click" (fn this.rollback changeset)}}>Undo</button>
-  <button {{on "click" (fn this.save changeset)}} disabled={{changeset.isInvalid}}>
-    Save Changes
-  </button>
-{{/with}}

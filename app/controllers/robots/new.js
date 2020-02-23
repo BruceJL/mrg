@@ -48,10 +48,4 @@ export default class RobotNewController extends Controller {
       this.transitionToRoute('robots.edit', id);
     });
   }
-
-  @action
-  validate() {
-    let changeset = this.changeset;
-    changeset.validate();
-  }
 }

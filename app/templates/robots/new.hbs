@@ -1,22 +1,8 @@
 &nbsp;
+<p>Adding a new Entry!</p>
 {{#with (changeset this.model.robot this.RobotValidation) as |c|}}
-  <p>Adding a new Entry!</p>
-  <form>
-    <table class="form">
-      <tbody>
-        <col width="125">
-        <col width="100">
-        <col width="200">
-        <RobotDetail
-          @changeset={{c}}
-          @competitions={{this.model.competitions}}
-        />
-      </tbody>
-    </table>
-    <button
-      {{action "save" c}}
-      disabled={{c.isInvalid}}>
-      Save Changes
-    </button>
-  </form>
+  <RobotDetail @changeset={{c}} @competitions={{this.model.competitions}} />
+  <button {{on "click" (fn this.save c)}} disabled={{c.isInvalid}}>
+    Save Changes
+  </button>
 {{/with}}

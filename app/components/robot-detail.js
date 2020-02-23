@@ -3,9 +3,6 @@ import {
   action
 } from '@ember/object';
 import {
-  tracked
-} from '@glimmer/tracking';
-import {
   debug
 } from '@ember/debug';
 
@@ -27,15 +24,5 @@ export default class RobotDetailController extends Component {
     }else{
       changeset.rollback();
     }
-  }
-
-  @action
-  save(changeset) {
-    changeset.save();
-  }
-
-  @action
-  rollback(changeset) {
-    changeset.rollback();
   }
 }
