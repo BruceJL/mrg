@@ -21,7 +21,7 @@
        </tr>
        {{#each data.entries as |entry|}}
          <tr>
-           <td><LinkTo @route={{robots.edit}} @model={{entry.id}}>{{entry.robot}}</LinkTo></td>
+           <td><LinkTo @route="robots.edit" @model={{entry.id}}>{{entry.robot}}</LinkTo></td>
            <td>{{entry.competition.name}}</td>
            <td>{{entry.driver1}}</td>
            <td>{{entry.formattedInvoicedDollars}}</td>
