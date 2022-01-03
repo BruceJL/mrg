@@ -1,14 +1,12 @@
 import DS from 'ember-data';
-import pluralize from 'ember-inflector';
 import ENV from 'mrg-sign-in/config/environment';
 
-//var hostValue = '';
+var hostValue = '';
 var nameSpace = 'api/mrg';
-var hostValue = 'http://registration';
 
 if (ENV.environment === 'development') {
-  hostValue = 'http://registration';
-  //hostValue = 'http://localhost:1337';
+  hostValue = 'http://check-in';
+  //hostValue = 'http://481.1045.ca:5309';
   //nameSpace = '';
 }
 
