@@ -1,17 +1,18 @@
-import { MinimumAdapterInterface } from '@ember-data/adapter';
+//import { MinimumAdapterInterface } from '@ember-data/adapter';
 import Adapter from '@ember-data/adapter';
 //import ModelSchema from '@ember-data/model';
 import type ModelRegistry from 'ember-data/types/registries/model';
 
 import { inject as service } from '@ember/service';
 import RSVP from 'rsvp';
-import fetch from 'ember-fetch';
+import fetch from 'fetch';
 
 import type Store from '@ember-data/store';
-import type DS from 'ember-data';
+import type { Snapshot } from '@ember-data/store';
+//import type DS from 'ember-data';
 
 export default class PostgrestAdapter extends Adapter {
-    @service store;
+    //@service store;
     host = "";
     namespace = "";
 
@@ -20,11 +21,11 @@ export default class PostgrestAdapter extends Adapter {
     createRecord<K extends keyof ModelRegistry>(
       store: Store,
       type: ModelRegistry[K], //ModelSchema?
-      snapshot: DS.Snapshot,
+      snapshot: Snapshot,
     ): RSVP.Promise<any> {
         let data = JSON.stringify(snapshot.serialize({ includeId: false }));
         let url = this.prefixURL(type.modelName)
-        debugger;
+        //debugger;
         return fetch(
           url, {
             method: 'post',
@@ -44,7 +45,7 @@ export default class PostgrestAdapter extends Adapter {
       type: ModelRegistry[K], //ModelSchema?
     ): RSVP.Promise<any> {
         let url = this.prefixURL(type.modelName);
-        debugger;
+        //debugger;
         return fetch(
           url, {
             method: 'GET',
@@ -60,7 +61,7 @@ export default class PostgrestAdapter extends Adapter {
     // http://check-in:3000/robotmeasurements?id=eq.424&select=*,robot(*)
     findBelongsTo <K extends keyof ModelRegistry>( // [OPTIONAL]
       store: store,
-      snapshot: DS.Snapshot<K>,
+      snapshot: Snapshot<K>,
       relatedLink: string,
       relationship,
     ): RSVP.Promise<any> {
@@ -74,9 +75,9 @@ export default class PostgrestAdapter extends Adapter {
     //URL looks like: http://site/robots?or=(id.eq.1191,id.eq.1192)
     findMany<K extends keyof ModelRegistry> ( // [OPTIONAL]
       store: Store,
-      type: ModelRegistry[K], //ModelSchema?
+      type: ModelRegistry[K],
       ids: Array<String>,
-      snapshots: Array<DS.Snapshot>
+      snapshots: Array<Snapshot>
     ): RSVP.Promise<any> {
       let s = [];
       for (const id of ids) {
@@ -91,9 +92,9 @@ export default class PostgrestAdapter extends Adapter {
     // URL looks like this: https://site/robots?id=eq.1234)
     findRecord<K extends keyof ModelRegistry>(
       store: Store,
-      type: ModelRegistry[K], // ModelSchema?
+      type: ModelRegistry[K],
       id: string,
-      snapshot : DS.Snapshot
+      snapshot : Snapshot
     ): RSVP.Promise<any> {
         let url = this.prefixURL(type.modelName + '?id=eq.' + id);
         return fetch(url);
@@ -103,9 +104,9 @@ export default class PostgrestAdapter extends Adapter {
     // URL looks like this: robots?id=eq.1422&select=*,robotmeasurements(*)
     findhasMany ( // [OPTIONAL]
       store: Store,
-      snapshot: DS.Snapshot,
+      snapshot: Snapshot,
       relatedLink: String,
-      relationship //:RelationshipSchema,
+      relationship: any, //:RelationshipSchema, No way to import this currently.
     ): RSVP.Promise<any> {
         let s = "?id=eq." + snapshot.id + "&select=*," + relatedLink + "(*)";
         let url = this.prefixURL(s)
@@ -124,13 +125,13 @@ export default class PostgrestAdapter extends Adapter {
     query<K extends keyof ModelRegistry>(
       store: Store,
       type: ModelRegistry[K],
-      query: Object,
-      recordArray, //: Collection,
-      options: Object,
+      query: {[key: string]: Object},
+      recordArray: any, //: Collection,
+      // options: Object, Spec'd in MinimumInterfaceAdapter, but not Adapter?
     ): RSVP.Promise<any>  {
         let url = "";
         let s = [];
-        for (var key in query) {
+        for (let key in query) {
           let value = query[key];
           if (typeof value == "boolean") {
             s.push(key + "=is." + value);
@@ -142,15 +143,17 @@ export default class PostgrestAdapter extends Adapter {
         return fetch(url);
     }
 
+    // UNSURE: I don't know what differentiates a "queryrecord" from a "query"
+    // The docs are not too helpful.
     queryRecord<K extends keyof ModelRegistry>(
       store: Store,
       type: ModelRegistry[K],
-      query: Object, //Dict<unknown>,
-      options: { adapterOptions?: unknown }
+      query: {[key: string]: Object}, //Dict<unknown>, as per MinimumAdapterInterface
+      //options: { adapterOptions?: unknown }, Spec'd in MinimumInterfaceAdapter, but not Adapter?
     ): RSVP.Promise<any> {
         let url = "";
         let s = [];
-        for (var key in query) {
+        for (let key in query) {
           let value = query[key];
           if (typeof value == "boolean") {
             s.push(key + "=is." + value);
@@ -164,15 +167,15 @@ export default class PostgrestAdapter extends Adapter {
 
     updateRecord<K extends keyof ModelRegistry>(
       store: Store,
-      type, ModelRegistry[K],
-      snapshot: DS.Snapshot[K],
+      type: ModelRegistry[K],
+      snapshot: Snapshot,
     ): RSVP.Promise<any>  {
     //   const data = serializeIntoHash(store, schema, snapshot, {});
     //   const type = snapshot.modelName;
     //   const id = snapshot.id;
     //   assert(`Attempted to update the ${type} record, but the record has no id`, typeof id === 'string' && id.length > 0);
     //   let url = this.buildURL(type, id, snapshot, 'updateRecord');
-        let data = JSON.stringify(snapshot.serialize({ includeId: false }));
+        let data = JSON.stringify(snapshot.serialize({ includeId: true }));
         let url = this.prefixURL(type.modelName);
         return fetch(
           url, {
@@ -182,7 +185,8 @@ export default class PostgrestAdapter extends Adapter {
               "Prefer": "return=representation",
             },
             body: data,
-      }
+          }
+        );
     }
 
     /*
@@ -223,9 +227,9 @@ export default class PostgrestAdapter extends Adapter {
     _urlPrefix(
       path?: string | null,
       parentURL?: string,
-    ): string[] {
+    ): Array<string> {
         let { host, namespace } = this;
-        let url: Array<string>;
+        let url: Array<string> = [];
 
         if (!host || host === '/') {
           host = '';

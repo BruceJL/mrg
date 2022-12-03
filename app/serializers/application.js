@@ -1,9 +1,9 @@
 // // import RESTSerializer from '@ember-data/serializer/rest';
 // // import { debug } from '@ember/debug';
-// import JSONSerializer from '@ember-data/serializer/json';
+import JSONSerializer from '@ember-data/serializer/json';
 
 // //export default class ApplicationSerializer extends RESTSerializer {
-//   export default class ApplicationSerializer extends JSONSerializer {
+   export default class ApplicationSerializer extends JSONSerializer {
 
 // 	//Overrideing the serializeAttibute so that only dirty data is written
 // 	//Back to the database. snippet stolen from:
@@ -23,4 +23,4 @@
 //   //   return obj;
 //   // }
 
-// };
+};
