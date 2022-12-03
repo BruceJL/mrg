@@ -1,14 +1,12 @@
 import {
-  debug,
-} from '@ember/debug';
-
-import {
   hash
 } from 'rsvp';
 
 import Route from '@ember/routing/route';
+import { inject as service } from '@ember/service';
 
 export default class RobotsNewRoute extends Route {
+  @service store
 
   model() {
     let store = this.store;

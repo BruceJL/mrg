@@ -9,4 +9,11 @@ module('Unit | Adapter | application', function(hooks) {
     let adapter = this.owner.lookup('adapter:application');
     assert.ok(adapter);
   });
+
+  test('Produce a findAll URL', function(assert) {
+    let adapter = this.owner.lookup('adapter:application');
+
+    let s = someThing.findAllUrl("robot");
+    assert.equal(s, './robot');
+  });
 });

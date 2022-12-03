@@ -3,8 +3,11 @@ import {
 } from 'rsvp';
 
 import Route from '@ember/routing/route';
+import { inject as service } from '@ember/service';
 
 export default class RobotsEditRoute extends Route {
+  @service store;
+
   model(params) {
    return hash({
      robot: this.store.findRecord('robot',

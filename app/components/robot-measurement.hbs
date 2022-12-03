@@ -12,18 +12,18 @@
       <tr>
         <td>{{measurement}}:</td>
         <td>
-          <RadioButton
-            @value={{true}}
-            @groupValue={{get this measurement}}
-            @changed={{fn this.createMeasurement true measurement @data}}>
-          </RadioButton>
+          <radio-button
+            value={{true}}
+            name={{get this measurement}}
+            changed={{fn this.createMeasurement true measurement @data}}>
+          </radio-button>
         </td>
         <td>
-          <RadioButton
-            @value={{false}}
-            @groupValue={{get this measurement}}
-            @changed={{fn this.createMeasurement false measurement @data}}>
-          </RadioButton>
+          <radio-button
+            value={{false}}
+            name={{get this measurement}}
+            changed={{fn this.createMeasurement false measurement @data}}>
+          </radio-button>
         </td>
       </tr>
     {{/each}}

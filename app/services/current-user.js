@@ -9,11 +9,12 @@ import {
   resolve
 } from 'rsvp';
 
-export default Service.extend({
-  session: service(),
-  store: service(),
+export default class CurrentUserService extends Service {
+  @service session;
+  @service store;
 
   load() {
+    this.session.setup();
     let userId = this.get('session.data.authenticated.user_id');
     if (!isEmpty(userId)) {
       return this.get('store').findRecord('user', userId).then((user) => {
@@ -23,4 +24,4 @@ export default Service.extend({
       return resolve();
     }
   }
-});
+}s;

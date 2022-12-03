@@ -1,14 +1,16 @@
 import {
   Promise
 } from 'rsvp';
+
 import BaseAuthenticator from 'ember-simple-auth/authenticators/base';
 
 import {
   debug,
 } from '@ember/debug';
 
-export default class SimpleAuthenticator extends BaseAuthenticator {
+import { inject as service } from '@ember/service';
 
+export default class SimpleAuthenticator extends BaseAuthenticator {
   restore(data) {
     let promise = new Promise(function(resolve, reject) {
       resolve(data);

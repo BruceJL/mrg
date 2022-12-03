@@ -3,6 +3,7 @@ import {
   setProperties,
   get,
 } from '@ember/object';
+
 import DS from 'ember-data';
 const {
   Model,

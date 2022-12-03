@@ -1,12 +1,9 @@
-import {
-  isNone
-} from '@ember/utils';
+
 import RefreshedRoute from './RefreshedRoute';
-import {
-  debug,
-} from '@ember/debug';
+import { inject as service } from '@ember/service';
 
 export default class CheckinRoute extends RefreshedRoute {
+  @service store;
   model(params) {
     this.set('params', params);
     return this.store.findRecord('competition',
