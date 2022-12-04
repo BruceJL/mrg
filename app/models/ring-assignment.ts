@@ -14,11 +14,11 @@ export default class RingAssignmentModel extends Model {
     }) declare competition: AsyncBelongsTo<CompetitionModel>;
 
     @belongsTo('robot',  {
-      inverse: 'ringAssignments',
+      inverse: null,
       async: true,
     }) declare robot: AsyncBelongsTo<RobotModel>;
 
     @attr('number') declare ring?: number;
     @attr('string') declare letter?: string;
-    @attr('number') declare round?: number;
+    //@attr('number') declare round?: number;
 }

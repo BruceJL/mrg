@@ -14,7 +14,7 @@ import type RobotModel from './robot';
 
 export default class RobotMeasurementModel extends Model {
   @belongsTo('robot',  {
-    inverse: 'measurements',
+    inverse: null,
     async: true,
   }) declare robot: AsyncBelongsTo<RobotModel>;
 

@@ -9,7 +9,12 @@ import fetch from 'fetch';
 
 import type Store from '@ember-data/store';
 import type { Snapshot } from '@ember-data/store';
-//import type DS from 'ember-data';
+
+import {
+  isAbortError,
+  isServerErrorResponse,
+  isUnauthorizedResponse
+} from 'ember-fetch/errors';
 
 export default class PostgrestAdapter extends Adapter {
     //@service store;
@@ -45,14 +50,28 @@ export default class PostgrestAdapter extends Adapter {
       type: ModelRegistry[K], //ModelSchema?
     ): RSVP.Promise<any> {
         let url = this.prefixURL(type.modelName);
-        //debugger;
         return fetch(
           url, {
             method: 'GET',
             headers: {
               "Accept": "application/json; charset=utf-8",
             }
-          });
+        }).then(function(response) {
+          //debugger;
+          if (response.ok) {
+            return response.json();
+          } else if (isUnauthorizedResponse(response)) {
+            // handle 401 response
+          } else if (isServerErrorResponse(response)) {
+            // handle 5xx respones
+          }
+        })
+        .catch(function(error) {
+          if (isAbortError(error)) {
+            // handle aborted network error
+          }
+          // handle network error
+        });
     }
 
     /*

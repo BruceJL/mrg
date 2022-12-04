@@ -4,12 +4,6 @@ import {
   action,
   computed,
 } from '@ember/object';
-import {
-  tracked,
-} from '@glimmer/tracking';
-import {
-  debug,
-} from '@ember/debug';
 
 import {
   inject as service

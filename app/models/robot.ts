@@ -70,7 +70,7 @@ export default class RobotModel extends Model {
 
   @belongsTo('competition', {
     async: false,
-    inverse: 'robots',
+    inverse: null,
   }) declare competition: CompetitionModel;
 
   @computed('paid')
@@ -129,8 +129,10 @@ export default class RobotModel extends Model {
     'competition.robots.@each.status',
     'competition.robots.@each.measured',
   ) get slottedStatus(): string | undefined {
-      let competition = this.competition;
-      if (competition == undefined) {
+      debugger;
+      let driver = this.driver1;
+      let competition: CompetitionModel = this.competition;
+      if (competition === undefined) {
           return "unknown";
       } else {
           let robots = competition.hasMany("robots").value()?.sortBy("registered");

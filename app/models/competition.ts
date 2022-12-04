@@ -33,7 +33,7 @@ export default class CompetitionModel extends Model {
 
     @hasMany('ring-assignment',{
       async: true,
-      inverse: null,
+      inverse: 'competition',
     }) declare ringAssignments: AsyncHasMany<RingAssignmentModel>;
 
     @computed('rings', 'maxRobotsPerRing')

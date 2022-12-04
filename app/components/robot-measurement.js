@@ -1,6 +1,5 @@
 import Component from '@ember/component';
 import {
-  get,
   action,
   computed,
 } from '@ember/object';
