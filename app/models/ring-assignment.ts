@@ -9,13 +9,13 @@ import type RobotModel from './robot';
 
 export default class RingAssignmentModel extends Model {
     @belongsTo('competition',  {
-      inverse: null,
+      inverse: 'competition',
       async: true,
     }) declare competition: AsyncBelongsTo<CompetitionModel>;
 
     @belongsTo('robot',  {
-      inverse: null,
-      async: true,
+      inverse: 'robot',
+      async: false,
     }) declare robot: AsyncBelongsTo<RobotModel>;
 
     @attr('number') declare ring?: number;

@@ -29,12 +29,12 @@ export default class CompetitionModel extends Model {
     @hasMany('robot', {
       async: false,
       inverse: 'competition',
-    })declare robots: RobotModel;
+    })declare robot: RobotModel;
 
     @hasMany('ring-assignment',{
       async: true,
       inverse: 'competition',
-    }) declare ringAssignments: AsyncHasMany<RingAssignmentModel>;
+    }) declare ringAssignment: AsyncHasMany<RingAssignmentModel>;
 
     @computed('rings', 'maxRobotsPerRing')
     get maxEntries() {
@@ -46,7 +46,7 @@ export default class CompetitionModel extends Model {
       // The next line is a workaround. See
       // https://github.com/typed-ember/ember-cli-typescript/issues/1416
       let inst = this as CompetitionModel;
-      let robots = inst.hasMany("robots").value();
+      let robots = inst.hasMany("robot").value();
       if(robots === null){
         return 0;
       }else{
@@ -63,10 +63,10 @@ export default class CompetitionModel extends Model {
       // The next line is a workaround. See
       // https://github.com/typed-ember/ember-cli-typescript/issues/1416
       let inst = this as CompetitionModel;
-      if (inst.hasMany("robots").value() === null) {
+      if (inst.hasMany("robot").value() === null) {
         return 0;
       }
-      return inst.hasMany("robots").ids().length;
+      return inst.hasMany("robot").ids().length;
     }
 
     @computed('robotCount')

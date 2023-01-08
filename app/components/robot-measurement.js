@@ -20,7 +20,7 @@ function passedMeasurement(measurements, type, registrationTime) {
   let itemType = "";
   let itemDatetime = "";
 
-  measurements = measurements.sortBy('datetime').reverse();
+  measurements = measurements.slice().sortBy('datetime').reverse();
   measurements.forEach(function(item, index, array) {
     if (!done) {
       itemDatetime = item.get('datetime');

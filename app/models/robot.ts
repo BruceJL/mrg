@@ -23,17 +23,17 @@ function formatDollars(
 export default class RobotModel extends Model {
 
   // competitor information
-  @attr('string') declare robot?: string; // Robot Name
-  @attr('string') declare driver1?: string; // Driver1 name
-  @attr('string') declare driver1Gr?: string; // Driver 1 grade
+  @attr('string') declare name: string; // Robot Name
+  @attr('string') declare driver1: string; // Driver1 name
+  @attr('string') declare driver1Gr: string; // Driver 1 grade
   @attr('string') declare driver2?: string; // Driver 2 name
   @attr('string') declare driver2Gr?: string; // Driver 2 grade
   @attr('string') declare driver3?: string; // Driver 3 name
   @attr('string') declare driver3Gr?: string; // Driver 3 grade
-  @attr('string') declare school?: string; // School
-  @attr('string') declare coach?: string; // Coach's name
-  @attr('string') declare email?: string; // Coach's email
-  @attr('string') declare ph?: string; // Coach's phone #
+  @attr('string') declare school: string; // School
+  @attr('string') declare coach: string; // Coach's name
+  @attr('string') declare email: string; // Coach's email
+  @attr('string') declare ph: string; // Coach's phone #
 
   // Check-in information
   @attr('number',{  // amount the entry was invoiced.
@@ -70,7 +70,7 @@ export default class RobotModel extends Model {
 
   @belongsTo('competition', {
     async: false,
-    inverse: null,
+    inverse: 'robot',
   }) declare competition: CompetitionModel;
 
   @computed('paid')
@@ -128,18 +128,17 @@ export default class RobotModel extends Model {
   @computed(
     'competition.robots.@each.status',
     'competition.robots.@each.measured',
-  ) get slottedStatus(): string | undefined {
-      debugger;
-      let driver = this.driver1;
-      let competition: CompetitionModel = this.competition;
+  )
+  get slottedStatus(): string | undefined {
+      let competition: CompetitionModel = this.get('competition');
       if (competition === undefined) {
           return "unknown";
       } else {
-          let robots = competition.hasMany("robots").value()?.sortBy("registered");
+          let robots = competition.hasMany("robot").value()?.slice().sortBy("registered");
           if(robots === null || robots === undefined){
               return "unknown";
           }
-          let robotslength = competition.hasMany("robots").ids().length;
+          let robotslength = competition.hasMany("robot").ids().length;
           let maxCompetitors = competition.get('maxEntries');
           let checkedInOrUnknownCount = 0;
           let checkedInCount = 0;
@@ -195,5 +194,6 @@ export default class RobotModel extends Model {
               return slottedStatus;
           }
       }
+      return "unknown";
   }
 }

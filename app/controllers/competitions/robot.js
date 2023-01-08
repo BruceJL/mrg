@@ -1,9 +1,7 @@
 import {
   get,
-  set
 } from '@ember/object';
 import Controller from '@ember/controller';
-import { debug } from '@ember/debug';
 
 import RobotValidation from '../../validations/robot';
 

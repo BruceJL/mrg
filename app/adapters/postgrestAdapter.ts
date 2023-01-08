@@ -3,8 +3,8 @@ import Adapter from '@ember-data/adapter';
 //import ModelSchema from '@ember-data/model';
 import type ModelRegistry from 'ember-data/types/registries/model';
 
-import { inject as service } from '@ember/service';
-import RSVP from 'rsvp';
+//import { inject as service } from '@ember/service';
+import RSVP, { reject } from 'rsvp';
 import fetch from 'fetch';
 
 import type Store from '@ember-data/store';
@@ -17,9 +17,37 @@ import {
 } from 'ember-fetch/errors';
 
 export default class PostgrestAdapter extends Adapter {
-    //@service store;
     host = "";
     namespace = "";
+
+    _fetch(
+      input: URL | RequestInfo,
+      init?: RequestInit | undefined
+    ): RSVP.Promise<Response> {
+      return fetch(
+        input,
+        init,
+      // The following stolen from: https://github.com/ember-cli/ember-fetch
+      ).then(function(response) {
+        if (response.ok) {
+          return response.json();
+        } else if (isUnauthorizedResponse(response)) {
+          // handle 401 response
+          reject(response);
+        } else if (isServerErrorResponse(response)) {
+          // handle 5xx respones
+          reject(response);
+        }
+      })
+      .catch(function(error) {
+        if (isAbortError(error)) {
+          // handle aborted network error
+          reject(error);
+        }
+        // handle network error
+      });
+    }
+
 
     //POST /table_name HTTP/1.1
     //{ "col1": "value1", "col2": "value2" }
@@ -30,10 +58,9 @@ export default class PostgrestAdapter extends Adapter {
     ): RSVP.Promise<any> {
         let data = JSON.stringify(snapshot.serialize({ includeId: false }));
         let url = this.prefixURL(type.modelName)
-        //debugger;
-        return fetch(
+        return this._fetch(
           url, {
-            method: 'post',
+            method: 'POST',
             headers: {
               "Content-type": "application/json; charset=utf-8",
               "Prefer": "return=representation",
@@ -50,45 +77,41 @@ export default class PostgrestAdapter extends Adapter {
       type: ModelRegistry[K], //ModelSchema?
     ): RSVP.Promise<any> {
         let url = this.prefixURL(type.modelName);
-        return fetch(
+        return this._fetch(
           url, {
             method: 'GET',
             headers: {
               "Accept": "application/json; charset=utf-8",
             }
-        }).then(function(response) {
-          //debugger;
-          if (response.ok) {
-            return response.json();
-          } else if (isUnauthorizedResponse(response)) {
-            // handle 401 response
-          } else if (isServerErrorResponse(response)) {
-            // handle 5xx respones
-          }
-        })
-        .catch(function(error) {
-          if (isAbortError(error)) {
-            // handle aborted network error
-          }
-          // handle network error
-        });
+        }
     }
 
-    /*
+    // Find a record with all associated records from another table.
+    // URL looks like this: robots?id=eq.1422&select=*,robotmeasurements(*)
+    findHasMany ( // [OPTIONAL]
+      store: Store,
+      snapshot: Snapshot,
+      relatedLink: String,
+      relationship: any, //FIXME :RelationshipSchema, No way to import this currently.
+    ): RSVP.Promise<any> {
+        let s = "?id=eq." + snapshot.id + "&select=*," + relatedLink + "(*)";
+        let url = this.prefixURL(s)
+        return this._fetch(url);
+    }
+
     // Find the "owning" record for a given record. The URL works just like a
     // "findMany". The URL looks like this:
-    // http://check-in:3000/robotmeasurements?id=eq.424&select=*,robot(*)
+    // http://site/robotmeasurements?id=eq.424&select=*,robot(*)
     findBelongsTo <K extends keyof ModelRegistry>( // [OPTIONAL]
-      store: store,
+      store: Store,
       snapshot: Snapshot<K>,
       relatedLink: string,
-      relationship,
+      relationship: any, //:RelationshipSchema.
     ): RSVP.Promise<any> {
-        let s =
+        let s = "?id=eq." + snapshot.id + "&select=*," + relatedLink + "(*)";
         let url = this.prefixURL(s);
-        return fetch(url);
+        return this._fetch(url);
     }
-    */
 
     // Finds entries from a given table for a given list of IDs.
     //URL looks like: http://site/robots?or=(id.eq.1191,id.eq.1192)
@@ -104,7 +127,7 @@ export default class PostgrestAdapter extends Adapter {
       }
       let q: string = s.join(",");
       let url = this.prefixURL(type.modelName + '?or=(' + q + ')');
-      return fetch(url);
+      return this._fetch(url);
     }
 
     // Find a specific record
@@ -113,23 +136,23 @@ export default class PostgrestAdapter extends Adapter {
       store: Store,
       type: ModelRegistry[K],
       id: string,
-      snapshot : Snapshot
+      snapshot : any, // FIXME: Snapshot - but I cannot access include because?
     ): RSVP.Promise<any> {
-        let url = this.prefixURL(type.modelName + '?id=eq.' + id);
-        return fetch(url);
-    }
+        let includes = snapshot.include;
+        let s = "";
 
-    // Find a record with all associated records from another table.
-    // URL looks like this: robots?id=eq.1422&select=*,robotmeasurements(*)
-    findhasMany ( // [OPTIONAL]
-      store: Store,
-      snapshot: Snapshot,
-      relatedLink: String,
-      relationship: any, //:RelationshipSchema, No way to import this currently.
-    ): RSVP.Promise<any> {
-        let s = "?id=eq." + snapshot.id + "&select=*," + relatedLink + "(*)";
-        let url = this.prefixURL(s)
-        return fetch(url);
+        if(includes === undefined){
+            s = type.modelName + '?id=eq.' + id;
+        }else{
+            let a = includes.split(",");
+            s = type.modelName + '?id=eq.' + id + "&select=*";
+            a.array.forEach((element: string) => {
+              s = s + "," + element + "(*)";
+            });
+        }
+
+        let url = this.prefixURL(s);
+        return this._fetch(url)
     }
 
     /* Don't need generateIdForRecordStore as Postgrest will be taking care of
@@ -159,7 +182,7 @@ export default class PostgrestAdapter extends Adapter {
           }
         }
         url = this.prefixURL(type.modelName + url);
-        return fetch(url);
+        return this._fetch(url);
     }
 
     // UNSURE: I don't know what differentiates a "queryrecord" from a "query"
@@ -196,9 +219,9 @@ export default class PostgrestAdapter extends Adapter {
     //   let url = this.buildURL(type, id, snapshot, 'updateRecord');
         let data = JSON.stringify(snapshot.serialize({ includeId: true }));
         let url = this.prefixURL(type.modelName);
-        return fetch(
+        return this._fetch(
           url, {
-            method: 'post',
+            method: 'POST',
             headers: {
               "Content-type": "application/json;",
               "Prefer": "return=representation",
@@ -207,25 +230,6 @@ export default class PostgrestAdapter extends Adapter {
           }
         );
     }
-
-    /*
-    // Stolen from https://github.com/emberjs/data/blob/v4.7.3/packages/serializer/addon/rest.js#L481
-    serialize(snapshot, options) {
-      let json = {};
-      snapshot.eachAttribute(function(name) {
-        json[serverAttributeName(name)] = snapshot.attr(name);
-      });
-      snapshot.eachRelationship(function(name, relationship) {
-        if (relationship.kind === 'hasMany') {
-          json[serverHasManyName(name)] = snapshot.hasMany(name, { ids: true });
-        }
-      });
-      if (options.includeId) {
-        json.ID_ = snapshot.id;
-      }
-      return json;
-    }
-    */
 
     prefixURL(modelName: string){
         let url = [];

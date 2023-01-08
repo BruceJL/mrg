@@ -1,5 +1,6 @@
-import { tracked } from '@glimmer/tracking';
 import Controller from '@ember/controller';
+
+import { tracked } from '@glimmer/tracking';
 import { service } from '@ember/service';
 import DS from 'ember-data';
 
@@ -39,9 +40,8 @@ export default class RobotIndexController extends Controller {
   @tracked robotFilter = "";
   @tracked robotIDFilter = "";
 
-  get filteredRobots(): RobotModel[] {
-    //debugger;
-    let returnRobots = this.store.peekAll('robot').map(item => new(RobotModel))
+  get filteredRobots(): Array<any> {
+    let returnRobots = this.store.peekAll('robot').slice();
     let robotFilter = this.get('robotFilter');
     let schoolFilter = this.get('schoolFilter');
     let robotIDFilter = this.get('robotIDFilter');
@@ -72,7 +72,7 @@ export default class RobotIndexController extends Controller {
       if (robotFilter && robotFilter.length > 1) {
         regex = new RegExp(robotFilter, "i");
         returnRobots = returnRobots.filter(function(i) {
-          let data = i.get('robot');
+          let data = i.get('name');
           if(data === undefined){
             return false;
           }else{
