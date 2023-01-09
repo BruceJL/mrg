@@ -78,12 +78,13 @@ export default class PostgrestAdapter extends Adapter {
     ): RSVP.Promise<any> {
         let url = this.prefixURL(type.modelName);
         return this._fetch(
-          url, {
-            method: 'GET',
-            headers: {
-              "Accept": "application/json; charset=utf-8",
+            url, {
+                method: 'GET',
+                headers: {
+                  "Accept": "application/json; charset=utf-8",
+                }
             }
-        }
+        )
     }
 
     // Find a record with all associated records from another table.
@@ -94,7 +95,8 @@ export default class PostgrestAdapter extends Adapter {
       relatedLink: String,
       relationship: any, //FIXME :RelationshipSchema, No way to import this currently.
     ): RSVP.Promise<any> {
-        let s = "?id=eq." + snapshot.id + "&select=*," + relatedLink + "(*)";
+        let s = snapshot.modelName + "?id=eq." + snapshot.id
+          + "&select=*," + relatedLink + "(*)";
         let url = this.prefixURL(s)
         return this._fetch(url);
     }
@@ -138,15 +140,13 @@ export default class PostgrestAdapter extends Adapter {
       id: string,
       snapshot : any, // FIXME: Snapshot - but I cannot access include because?
     ): RSVP.Promise<any> {
-        let includes = snapshot.include;
-        let s = "";
+        let includes: 'string' | undefined = snapshot.include;
+        let s = type.modelName + '?id=eq.' + id;
 
-        if(includes === undefined){
-            s = type.modelName + '?id=eq.' + id;
-        }else{
+        if(includes !== undefined){
             let a = includes.split(",");
-            s = type.modelName + '?id=eq.' + id + "&select=*";
-            a.array.forEach((element: string) => {
+            s = s + "&select=*";
+            a.forEach((element: string) => {
               s = s + "," + element + "(*)";
             });
         }

@@ -1,4 +1,4 @@
-<h2>Robot: "{{this.model.robot.robot}}"</h2>
+<h2>Robot: "{{this.model.robot.name}}"</h2>
 <hr>
 {{#with (changeset this.model.robot this.RobotValidation) as |c|}}
   <RobotDetail @changeset={{c}} @competitions={{this.model.competitions}} />

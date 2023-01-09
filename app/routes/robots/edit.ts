@@ -11,7 +11,7 @@ export default class RobotsEditRoute extends Route {
      competitions: this.store.findAll('competition'),
      robot: this.store.findRecord('robot',
        params.robot_id, {
-         include: ['robot-measurement', 'compeition']
+         include: 'robot-measurement'
        }),
    });
  }
