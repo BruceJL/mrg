@@ -11,9 +11,6 @@ export default class RobotsIndexRoute extends Route {
     return RSVP.hash({
       competition: this.store.findAll('competition', {reload: true}),
       robot: this.store.findAll('robot', {reload: true}),
-      //ringAssignment: this.store.findAll('ringAssignment', {reload: true}),
     });
-    // this.store.findAll('competition', {reload: true});
-    // this.store.findAll('robot', {reload: true});
   }
 }
