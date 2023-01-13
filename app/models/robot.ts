@@ -3,6 +3,7 @@ import Model, {
   belongsTo,
   attr,
   type AsyncHasMany,
+  type AsyncBelongsTo,
 } from '@ember-data/model';
 
 import {computed} from '@ember/object';
@@ -65,7 +66,7 @@ export default class RobotModel extends Model {
 
   @hasMany('robot-measurement', { // All the measurements taken of this competitor.
     async: true,
-    inverse: 'robot',
+    inverse: null,
   }) declare measurements: AsyncHasMany<RobotMeasurementModel>;
 
   @belongsTo('competition', {
@@ -130,6 +131,7 @@ export default class RobotModel extends Model {
     'competition.robots.@each.measured',
   )
   get slottedStatus(): string | undefined {
+      let r = this.get('driver1');
       let competition: CompetitionModel = this.get('competition');
       if (competition === undefined) {
           return "unknown";

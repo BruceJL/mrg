@@ -1,5 +1,5 @@
 //import { MinimumAdapterInterface } from '@ember-data/adapter';
-import Adapter from '@ember-data/adapter';
+import MinimumInterfaceAdapter from '@ember-data/adapter';
 //import ModelSchema from '@ember-data/model';
 import type ModelRegistry from 'ember-data/types/registries/model';
 
@@ -16,7 +16,7 @@ import {
   isUnauthorizedResponse
 } from 'ember-fetch/errors';
 
-export default class PostgrestAdapter extends Adapter {
+export default class PostgrestAdapter extends MinimumInterfaceAdapter {
     host = "";
     namespace = "";
 
@@ -48,6 +48,32 @@ export default class PostgrestAdapter extends Adapter {
       });
     }
 
+    private makeQueryString(
+      id: string | undefined,
+      includes: string | undefined,
+    ): string {
+      if(includes === undefined && id === undefined){
+        return "";
+      }
+      let s = "?";
+
+      if(id !== undefined){
+        s = s + "id=eq." + id;
+      }
+
+      if(includes !== undefined){
+        if (s !== "?"){
+          s = s + "&";
+        }
+
+        let a = includes.split(",");
+        s = s + "select=*";
+        a.forEach((element: string) => {
+          s = s + "," + element + "(*)";
+        });
+      }
+      return s;
+    }
 
     //POST /table_name HTTP/1.1
     //{ "col1": "value1", "col2": "value2" }
@@ -75,8 +101,11 @@ export default class PostgrestAdapter extends Adapter {
     findAll<K extends keyof ModelRegistry>(
       store: Store,
       type: ModelRegistry[K], //ModelSchema?
+      sinceToken: any,
+      snapshot: any,
     ): RSVP.Promise<any> {
         let url = this.prefixURL(type.modelName);
+        url = url + this.makeQueryString(undefined, snapshot.include);
         return this._fetch(
             url, {
                 method: 'GET',
@@ -92,11 +121,10 @@ export default class PostgrestAdapter extends Adapter {
     findHasMany ( // [OPTIONAL]
       store: Store,
       snapshot: Snapshot,
-      relatedLink: String,
+      relatedLink: string,
       relationship: any, //FIXME :RelationshipSchema, No way to import this currently.
     ): RSVP.Promise<any> {
-        let s = snapshot.modelName + "?id=eq." + snapshot.id
-          + "&select=*," + relatedLink + "(*)";
+        let s = snapshot.modelName + this.makeQueryString(undefined, relatedLink);
         let url = this.prefixURL(s)
         return this._fetch(url);
     }
@@ -141,16 +169,7 @@ export default class PostgrestAdapter extends Adapter {
       snapshot : any, // FIXME: Snapshot - but I cannot access include because?
     ): RSVP.Promise<any> {
         let includes: 'string' | undefined = snapshot.include;
-        let s = type.modelName + '?id=eq.' + id;
-
-        if(includes !== undefined){
-            let a = includes.split(",");
-            s = s + "&select=*";
-            a.forEach((element: string) => {
-              s = s + "," + element + "(*)";
-            });
-        }
-
+        let s = type.modelName + this.makeQueryString(id, includes);
         let url = this.prefixURL(s);
         return this._fetch(url)
     }

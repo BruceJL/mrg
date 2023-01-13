@@ -1,7 +1,7 @@
 <h2>Robot: "{{this.model.robot.name}}"</h2>
 <hr>
 {{#with (changeset this.model.robot this.RobotValidation) as |c|}}
-  <RobotDetail @changeset={{c}} @competitions={{this.model.competitions}} />
+  <RobotDetail @changeset={{c}} @competitions={{this.model.competition}} />
   <button {{on "click" (fn this.rollback c)}}>Undo</button>
   <button {{on "click" (fn this.save c)}} disabled={{c.isInvalid}}>
     Save Changes

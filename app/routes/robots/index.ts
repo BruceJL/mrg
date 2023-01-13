@@ -9,8 +9,18 @@ export default class RobotsIndexRoute extends Route {
 
   model() {
     return RSVP.hash({
-      competition: this.store.findAll('competition', {reload: true}),
-      robot: this.store.findAll('robot', {reload: true}),
+      competition: this.store.findAll(
+        'competition',
+        {
+          reload: true,
+          include: 'robot',
+        }
+      ),
+      // robot: this.store.findAll(
+      //   'robot',
+      //   {
+      //     reload: true
+      //   }),
     });
   }
 }

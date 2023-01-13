@@ -8,9 +8,9 @@ export default class RobotsEditRoute extends Route {
 
   model(params: any) {
    return RSVP.hash({
-     competitions: this.store.findAll('competition'),
-     robot: this.store.findRecord('robot',
-       params.robot_id, {
+     competition: this.store.findAll('competition'),
+     robot: this.store.findRecord('robot', params.robot_id,
+       {
          include: 'robot-measurement'
        }),
    });

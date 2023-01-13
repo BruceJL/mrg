@@ -11,7 +11,9 @@ export default class CompetitionShowRoute extends Route { //RefreshedRoute
       return this.store.findRecord(
           'competition',
           params.competition_id,
-          { include: 'robot'}
+          {
+            include: 'robot'
+          }
       );
   }
 }

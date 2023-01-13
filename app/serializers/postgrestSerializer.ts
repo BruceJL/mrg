@@ -29,24 +29,27 @@ export default class PostgresSerializer extends MinimumSerializerInterface {
 
     private getIncludedData(
       data: Record<string, any>[],
-      modelClass: string,
+      type: string,
+      parentType: string | number,
       included: Record<string, Record<string, any> | Record<string, unknown>[]>[],
       relationships: Record<string, Record<string, any> | Record<string, unknown>[]>,
     ): void {
       let item: Record<string, any | Record<string, unknown>> = {};
+
       relationships['data'] = [];
+
       data.forEach((entry: Record<string, any>) => {
         // 'item' to be added to the 'included' array.
         item = {};
         item['id'] = entry['id'];
-        item['type'] = modelClass;
+        item['type'] = type;
         item['attributes'] = {};
         if(relationships['data'] === undefined){
           throw new Error("relationships[data] is undefined.");
         }
-        relationships['data'].push({"type": modelClass, "id": entry['id']});
+        relationships['data'].push({"type": type, "id": entry['id']});
         for(const key in entry){
-          if(key !== 'id') {
+          if(key !== 'id' && key !== parentType) {
             item['attributes'][key] = entry[key];
           }
         }
@@ -57,38 +60,54 @@ export default class PostgresSerializer extends MinimumSerializerInterface {
     private reformatPayload(
       primaryModelClass: ModelClass,
       payload: Record<string, Record<string, any> | Record<string, unknown>[]>[],
+      requestType: string,
     ): {} {
-      let newPayload: Record<string, Record<string, any> | Record<string, unknown>[]> = {};
-      newPayload['data'] = [];
+      let newPayload: any = {};
+      let newPayloadData: any = [];
       newPayload['meta'] = [];
       let included: Record<string, Record<string, any> | Record<string, unknown>[]>[] = [];
-      let relationships: Record<string, Record<string, any> | Record<string, unknown>[]> = {};
       if(payload === undefined){
         throw new Error("Payload is undefined.");
       }else{
         payload.forEach((item: Record<string, any>) => {
           let newitem: Record<string, any> = {};
+          let relationships: Record<string, Record<string, any> | Record<string, unknown>[]> = {};
           newitem['id'] = item['id'];
           newitem['type'] = primaryModelClass.modelName;
           newitem['attributes'] = {};
-          //debugger;
+
+
           for(const key in item){
             let data: Record<string, any> | Record<string, unknown>[] = item[key];
             if(Array.isArray(data)){
-              this.getIncludedData(data, key, included, relationships)
+              this.getIncludedData(
+                data,
+                key,
+                primaryModelClass.modelName,
+                included,
+                relationships,
+              )
 
-            } else if(key !== 'id') {
+            } else if(
+              key !== 'id'
+            ) {
               newitem['attributes'][key] = data;
             }
+            if(Object.keys(relationships).length > 0){
+              newitem['relationships'] = {};
+              newitem['relationships'][key] = relationships;
+            }
           }
-          if(Object.keys(relationships).length > 0){
-            newitem['relationships'] = relationships;
-          }
-          newPayload['data']?.push(newitem);
+          newPayloadData.push(newitem);
         });
       }
       if(included.length > 0){
         newPayload['included'] = included;
+      }
+      if(requestType === "findRecord"){
+        newPayload['data'] = newPayloadData[0];
+      }else{
+        newPayload['data'] = newPayloadData;
       }
       return newPayload;
     }
@@ -100,7 +119,7 @@ export default class PostgresSerializer extends MinimumSerializerInterface {
       id: string,
       requestType: string,
     ): Object {
-      return this.reformatPayload(primaryModelClass, payload);
+      return this.reformatPayload(primaryModelClass, payload, requestType);
     }
 
     serialize(
