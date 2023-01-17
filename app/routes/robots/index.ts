@@ -7,13 +7,13 @@ import DS from 'ember-data';
 export default class RobotsIndexRoute extends Route {
   @service declare store: DS.Store;
 
-  model() {
+  async model() {
     return RSVP.hash({
       competition: this.store.findAll(
-        'competition',
+        'robot',
         {
           reload: true,
-          include: 'robot',
+          include: 'competition',
         }
       ),
       // robot: this.store.findAll(
