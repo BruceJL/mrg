@@ -2,14 +2,15 @@ import Model, {
   hasMany,
   belongsTo,
   attr,
-  type AsyncHasMany,
-  type AsyncBelongsTo,
+  //type AsyncHasMany,
+  //type AsyncBelongsTo,
+  type SyncHasMany,
 } from '@ember-data/model';
 
 import {computed} from '@ember/object';
 
 import type CompetitionModel from './competition';
-import type RobotMeasurementModel from './robot-measurement';
+import type RobotMeasurementModel from './measurement';
 
 function formatDollars(
   amount: number
@@ -64,10 +65,10 @@ export default class RobotModel extends Model {
     defaultValue: false,
   }) declare participated?: boolean;
 
-  @hasMany('robot-measurement', { // All the measurements taken of this competitor.
-    async: true,
-    inverse: null,
-  }) declare measurements: AsyncHasMany<RobotMeasurementModel>;
+  @hasMany('measurement', { // All the measurements taken of this competitor.
+    async: false,
+    inverse: 'robot',
+  }) declare measurement: SyncHasMany<RobotMeasurementModel>; //: AsyncBelongsTo<RobotModel>;
 
   @belongsTo('competition', {
     async: false,

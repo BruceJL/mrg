@@ -13,7 +13,6 @@ import {
   inject as service,
 } from '@ember/service';
 
-
 function passedMeasurement(measurements, type, registrationTime) {
   let done = false;
   let result = undefined;
@@ -53,12 +52,20 @@ export default class RobotMeasurementComponent extends Component {
   PopulateRadioBoxes(model) {
     debug("PopulateRadioBoxes fired");
     let registrationTime = model.get('competition').get('registrationTime');
-    let measurements = model.get('measurements');
+    let measurements = model.get('measurement');
     this.Mass = passedMeasurement(measurements, "Mass", registrationTime);
     this.Size = passedMeasurement(measurements, "Size", registrationTime);
     this.Scratch = passedMeasurement(measurements, "Scratch", registrationTime);
     this.Time = passedMeasurement(measurements, "Time", registrationTime);
     this.Deadman = passedMeasurement(measurements, "Deadman", registrationTime);
+  }
+
+  isMeasured(model, measurementName, value){
+    //dubugger;
+    let registrationTime = model.get('competition').get('registrationTime');
+    let measurements = model.get('measurement');
+    let v = passedMeasurement(measurements, measurementName, registrationTime);
+    return v & value;
   }
 
   // Get the measurements required for this entry based upon the competition
@@ -90,19 +97,17 @@ export default class RobotMeasurementComponent extends Component {
   createMeasurement(value, type, model) {
     let robot = model;
     debug("Logging " + type + " measurement of: " + value + " for robot " + robot.id);
-    let date = new Date('1970-01-01T00:00:00Z');
     //this.set(type, value);
-    let measurement = this.store.createRecord('robot-measurement', {
+    let measurement = this.store.createRecord('measurement', {
       robot: robot,
       result: value,
       type: type.toString(),
-      datetime: date,
     });
 
     measurement.save().then(() => {
       measurement.reload();
 
-      let measurements = robot.get('measurements');
+      let measurements = robot.get('measurement');
       let competition = robot.get('competition');
       let registrationTime = competition.get('registrationTime');
       let measured = true;

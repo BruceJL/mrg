@@ -1,22 +1,21 @@
 import Model, {
   belongsTo,
   attr,
-  type AsyncBelongsTo,
 } from '@ember-data/model';
 
 import type CompetitionModel from './competition';
 import type RobotModel from './robot';
 
 export default class RingAssignmentModel extends Model {
-    @belongsTo('competition',  {
+    @belongsTo('competition', {
       inverse: 'competition',
-      async: true,
-    }) declare competition: AsyncBelongsTo<CompetitionModel>;
+      async: false,
+    }) declare competition: CompetitionModel;
 
-    @belongsTo('robot',  {
+    @belongsTo('robot', {
       inverse: 'robot',
       async: false,
-    }) declare robot: AsyncBelongsTo<RobotModel>;
+    }) declare robot: RobotModel;
 
     @attr('number') declare ring?: number;
     @attr('string') declare letter?: string;

@@ -5,12 +5,12 @@ export default class RobotsBulkPaymentRoute extends RefreshedRoute {
   @service store;
   model() {
 
-    this.store.findAll('competition', {
-      reload: true
-    });
+    this.store.findAll('competition',
+    );
 
-    return this.store.findAll('robot', {
-      reload: true
+    return this.store.findAll('robot',
+    {
+      include: 'competition',
     });
   }
 }

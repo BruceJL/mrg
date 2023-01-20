@@ -1,8 +1,7 @@
 import Model, {
-  hasMany,
   belongsTo,
   attr,
-  type AsyncBelongsTo,
+  //type AsyncBelongsTo,
 } from '@ember-data/model';
 
 import {
@@ -13,10 +12,10 @@ import {
 import type RobotModel from './robot';
 
 export default class RobotMeasurementModel extends Model {
-  @belongsTo('robot',  {
-    inverse: 'robot',
-    async: true,
-  }) declare robot: AsyncBelongsTo<RobotModel>;
+  @belongsTo('robot', {
+    async: false,
+    inverse: 'measurement',
+  }) declare robot: RobotModel; //: AsyncBelongsTo<RobotModel>;
 
   @attr('boolean') declare result: boolean;
   @attr('date') declare datetime: string;

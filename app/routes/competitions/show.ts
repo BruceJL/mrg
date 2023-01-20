@@ -12,7 +12,7 @@ export default class CompetitionShowRoute extends Route { //RefreshedRoute
           'competition',
           params.competition_id,
           {
-            include: 'robot'
+            include: 'robot',
           }
       );
   }

@@ -12,15 +12,9 @@ export default class RobotsIndexRoute extends Route {
       competition: this.store.findAll(
         'robot',
         {
-          reload: true,
           include: 'competition',
         }
       ),
-      // robot: this.store.findAll(
-      //   'robot',
-      //   {
-      //     reload: true
-      //   }),
     });
   }
 }

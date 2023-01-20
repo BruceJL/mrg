@@ -2,10 +2,14 @@ import {
   get,
 } from '@ember/object';
 import Controller from '@ember/controller';
-
 import RobotValidation from '../../validations/robot';
+import { service } from '@ember/service';
+
+
+
 
 export default class CompetitionRootController extends Controller {
+  @service router;
 
   //RobotValidation;
   competition = null;
@@ -15,7 +19,7 @@ export default class CompetitionRootController extends Controller {
   done() {
     let model = this.model;
     let competition = get(model, 'competition');
-    this.transitionToRoute('competitions.show', competition);
+    this.router.transitionTo('competitions.show', competition);
     //history.back();
   }
 

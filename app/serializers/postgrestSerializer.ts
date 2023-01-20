@@ -3,7 +3,6 @@ import type ModelRegistry from 'ember-data/types/registries/model';
 import type Model from '@ember-data/model';
 import type Store from '@ember-data/store';
 import { Snapshot } from '@ember-data/store';
-import { isArray } from '@ember/array';
 
 type ModelClass = Model & {
     modelName: keyof ModelRegistry;
@@ -60,7 +59,7 @@ export default class PostgresSerializer extends MinimumSerializerInterface {
       let relationshipData: Record<string, any> = {};
       let data: Record<string, any> = {};
 
-      data['id'] = payload['id'];
+      data['id'] = payload['id'].toString();
       data['type'] = thisType;
       data['attributes'] = {};
       data['relationships'] = {};
@@ -116,7 +115,6 @@ export default class PostgresSerializer extends MinimumSerializerInterface {
         'included': included,
         'relationshipData': relationshipData,
       }
-
       return return_data;
     }
 
@@ -199,12 +197,63 @@ export default class PostgresSerializer extends MinimumSerializerInterface {
 
     serialize(
       snapshot: Snapshot,
-      options: [string],
+      options: Record<string, any>,
     ): Object {
-        let json = {
-          id: snapshot.id
-        };
-        debugger;
-        return JSON.stringify(snapshot);
+      let data: Record<string, any> = {};
+
+      if (options && options['includeId']) {
+        const id = snapshot.id;
+        if (id) {
+          data['id'] = id;
+        }
+      }
+
+      // load up the attributes
+      snapshot.eachAttribute((key, attribute) => {
+        let value = snapshot.attr(key);
+        if(value === null){
+          value = null;
+        }else if(typeof(value) === 'boolean'){
+          if(value) value = 1;
+          else value = 0;
+        }
+
+        if(value !== null){
+          data[key.toString()] = value;
+        }
+      });
+
+      // populate the belongsTo relationships
+        snapshot.eachRelationship((key, relationship) => {
+        if (relationship.kind === 'belongsTo') {
+          let belongsToId = snapshot.belongsTo(key, { id: true });
+          data[key.toString()] = belongsToId;
+
+          // if provided, use the mapping provided by `attrs` in
+          // the serializer
+          //let schema = this.store.modelFor(snapshot.modelName);
+          // let payloadKey = this._getMappedKey(key, schema);
+          // if (payloadKey === key && this.keyForRelationship) {
+          //   payloadKey = this.keyForRelationship(key, 'belongsTo', 'serialize');
+          // }
+
+          // //Need to check whether the id is there for new&async records
+          // if (isNone(belongsToId)) {
+          //   json[payloadKey] = null;
+          // } else {
+          //   json[payloadKey] = belongsToId;
+          // }
+
+          // if (relationship.options.polymorphic) {
+          //   this.serializePolymorphicType(snapshot, json, relationship);
+          // }
+            // } else if (relationship.kind === 'hasMany') {
+            //   //this.serializeHasMany(snapshot, json, relationship);
+            // }
+          }
+        });
+
+      return data;
+
     }
 }

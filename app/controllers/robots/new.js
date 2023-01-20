@@ -8,14 +8,13 @@ import {
   debug,
 } from '@ember/debug';
 
-import {
-  inject as service,
-} from '@ember/service';
+import { service } from '@ember/service';
 
 import Controller from '@ember/controller';
 import RobotValidation from '../../validations/robot';
 
 export default class RobotNewController extends Controller {
+  @service router;
   queryParams = ['competition'];
   RobotValidation = RobotValidation;
 
@@ -45,7 +44,7 @@ export default class RobotNewController extends Controller {
     changeset.save().then(() => {
       let id = changeset.get('id');
       debug("Robot id: " + id);
-      this.transitionToRoute('robots.edit', id);
+      this.router.transitionTo('robots.edit', id);
     });
   }
 }

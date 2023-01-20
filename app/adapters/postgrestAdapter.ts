@@ -82,7 +82,8 @@ export default class PostgrestAdapter extends MinimumInterfaceAdapter {
       type: ModelRegistry[K], //ModelSchema?
       snapshot: Snapshot,
     ): RSVP.Promise<any> {
-        let data = JSON.stringify(snapshot.serialize({ includeId: false }));
+        let data = snapshot.serialize({ includeId: false });
+        let body = JSON.stringify(data);
         let url = this.prefixURL(type.modelName)
         return this._fetch(
           url, {
@@ -91,7 +92,7 @@ export default class PostgrestAdapter extends MinimumInterfaceAdapter {
               "Content-type": "application/json; charset=utf-8",
               "Prefer": "return=representation",
             },
-            body: data,
+            body: body,
           }
         );
     }
@@ -231,15 +232,11 @@ export default class PostgrestAdapter extends MinimumInterfaceAdapter {
       type: ModelRegistry[K],
       snapshot: Snapshot,
     ): RSVP.Promise<any>  {
-    //   const data = serializeIntoHash(store, schema, snapshot, {});
-    //   const type = snapshot.modelName;
-    //   const id = snapshot.id;
-    //   assert(`Attempted to update the ${type} record, but the record has no id`, typeof id === 'string' && id.length > 0);
-    //   let url = this.buildURL(type, id, snapshot, 'updateRecord');
-        let data = JSON.stringify(snapshot.serialize({ includeId: true }));
-        let url = this.prefixURL(type.modelName);
+        let data = JSON.stringify(snapshot.serialize({ includeId: false}));
+        let s = "?id=eq." + snapshot.id;
+        s = this.prefixURL(s);
         return this._fetch(
-          url, {
+          s, {
             method: 'POST',
             headers: {
               "Content-type": "application/json;",

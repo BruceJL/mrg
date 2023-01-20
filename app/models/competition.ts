@@ -6,7 +6,7 @@ import {
 import Model, {
   hasMany,
   attr,
-  type AsyncHasMany,
+  type SyncHasMany,
 } from '@ember-data/model';
 
 import type RobotModel from './robot';
@@ -29,12 +29,12 @@ export default class CompetitionModel extends Model {
     @hasMany('robot', {
       async: false,
       inverse: 'competition',
-    })declare robot: RobotModel;
+    })declare robot: SyncHasMany<RobotModel>;
 
     @hasMany('ring-assignment',{
-      async: true,
+      async: false,
       inverse: 'competition',
-    }) declare ringAssignment: AsyncHasMany<RingAssignmentModel>;
+    }) declare ringAssignment: SyncHasMany<RingAssignmentModel>;
 
     @computed('rings', 'maxRobotsPerRing')
     get maxEntries() {
