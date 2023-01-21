@@ -59,7 +59,6 @@ export default class RobotCheckinController extends Component {
     let store = get(this, 'store');
     let session = get(this, 'session')
     let record = store.createRecord('activity-log', {
-      datetime: new Date('1970-01-01T00:00:00Z'),
       volunteer: session.data.authenticated.fullname,
       entry: model,
       function: "PAYMENT",

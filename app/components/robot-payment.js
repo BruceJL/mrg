@@ -28,53 +28,52 @@ export default class RobotCheckinController extends Component {
   }
 
   @action
-  save(cs) {
-    cs.save();
+  save(model) {
+    model.save();
   }
 
   @action
-  paid(cs, amount) {
-    set(cs, 'paid', amount);
-    cs.save();
+  paid(model, amount) {
+    set(model, 'paid', amount);
+    model.save();
     let store = get(this, 'store');
     this._createLogEntry(
-      cs.get('_internalModel'),
-      "PAID $" + amount + " " + get(cs, 'paymentType'),
+      model,
+      "PAID $" + amount + " " + get(model, 'paymentType'),
     );
   }
 
   @action
-  refund(cs) {
+  refund(model) {
     let store = get(this, 'store');
     this._createLogEntry(
-      cs.get('_internalModel'),
-      "REFUNDED $" + get(cs, 'paid') + " " + get(cs, 'paymentType'),
+      model,
+      "REFUNDED $" + get(model, 'paid') + " " + get(model, 'paymentType'),
     );
-    set(cs, 'paid', 0.00);
-    set(cs, 'paymentType', null);
-    cs.save();
+    set(model, 'paid', 0.00);
+    set(model, 'paymentType', null);
+    model.save();
   }
 
   @action
-  selectPaymentType(cs, value) {
+  selectPaymentType(model, value) {
     debug("selectPaymentType fired.");
     let store = get(this, 'store');
-    if (value === "INVOICED" && get(cs, 'paid') > 0.0) {
+    if (value === "INVOICED" && get(model, 'paid') > 0.0) {
       alert(
         "This entry is marked as PAID. Please refund the money before" +
         " marking the entry as INVOICED."
       );
-      cs.rollback()
     } else if(value === "INVOICED"){
-      cs.set('paymentType', value);
+      model.set('paymentType', value);
       this._createLogEntry(
-        cs.get('_internalModel'),
+        model,
         "MARKED AS INVOICED",
       );
     } else {
       debug("setting paymentType to " + value);
-      cs.set('paymentType', value);
-      cs.save();
+      model.set('paymentType', value);
+      model.save();
     }
   }
 
@@ -82,7 +81,6 @@ export default class RobotCheckinController extends Component {
     let store = get(this, 'store');
     let session = get(this, 'session')
     let record = store.createRecord('activity-log', {
-      datetime: new Date('1970-01-01T00:00:00Z'),
       volunteer: session.data.authenticated.fullname,
       entry: model,
       function: "PAYMENT",

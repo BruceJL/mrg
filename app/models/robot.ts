@@ -13,8 +13,9 @@ import type CompetitionModel from './competition';
 import type RobotMeasurementModel from './measurement';
 
 function formatDollars(
-  amount: number
+  amount: number,
 ): string {
+  amount = Number(amount);
   if (!isNaN(amount) && amount > 0) {
     return '$' + amount.toFixed(2);
   } else {
@@ -55,7 +56,7 @@ export default class RobotModel extends Model {
 
   @attr('string', { // Checked-in / Withdrawn / Unseen
     defaultValue: "UNSEEN",
-  }) declare status: string;
+  }) declare status: ("CHECKED-IN" | "WITHDRAWN" | "UNSEEN" | "UNKNOWN");
 
   @attr('boolean', { // Has the entry successfully completed measurement.
     defaultValue: false,

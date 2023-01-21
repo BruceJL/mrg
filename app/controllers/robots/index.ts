@@ -1,10 +1,13 @@
-import Controller from '@ember/controller';
 
+import RefreshedController from '../RefreshedController';
 import { tracked } from '@glimmer/tracking';
 import { service } from '@ember/service';
 import DS from 'ember-data';
 
+
 import RobotModel from 'mrg-sign-in/models/robot';
+
+//import { _teardownAJAXHooks } from '@ember/test-helpers/settled';
 
 function formatDollars(
   amount: number
@@ -27,7 +30,7 @@ function getTotalDollars(
   return formatDollars(total);
 }
 
-export default class RobotIndexController extends Controller {
+export default class RobotIndexController extends RefreshedController {
   @service declare store: DS.Store;
 
   queryParams = [
@@ -95,19 +98,4 @@ export default class RobotIndexController extends Controller {
     let items = this.get('filteredRobots');
     return getTotalDollars(items, 'paid');
   }
-
-  // @action
-  // selectCompetition(value: string) {
-  //   if (value === 'All') {
-  //     value = "";
-  //   }
-  //   this.set('competition', value);
-  //   if (value) {
-  //     this.transitionToRoute('robots', {
-  //       queryParams: {
-  //         'competition': value
-  //       }
-  //     });
-  //   }
-  // }
 }

@@ -224,7 +224,7 @@ export default class PostgrestAdapter extends MinimumInterfaceAdapter {
           }
         }
         url = this.prefixURL(type.modelName + url);
-        return fetch(url);
+        return this._fetch(url);
     }
 
     updateRecord<K extends keyof ModelRegistry>(
@@ -233,11 +233,11 @@ export default class PostgrestAdapter extends MinimumInterfaceAdapter {
       snapshot: Snapshot,
     ): RSVP.Promise<any>  {
         let data = JSON.stringify(snapshot.serialize({ includeId: false}));
-        let s = "?id=eq." + snapshot.id;
+        let s = type.modelName + "?id=eq." + snapshot.id;
         s = this.prefixURL(s);
         return this._fetch(
           s, {
-            method: 'POST',
+            method: 'PATCH',
             headers: {
               "Content-type": "application/json;",
               "Prefer": "return=representation",

@@ -1,7 +1,6 @@
 import Model, {
   attr,
   belongsTo,
-  AsyncBelongsTo,
 } from '@ember-data/model';
 
 import type RobotModel from './robot';
@@ -13,7 +12,7 @@ export default class ActivityLogModel extends Model {
   @attr('string') declare action: string;
 
   @belongsTo('robot', {
-    async: true,
+    async: false,
     inverse: null
-  }) declare entry: AsyncBelongsTo<RobotModel> ;
+  }) declare entry: RobotModel ;
 }

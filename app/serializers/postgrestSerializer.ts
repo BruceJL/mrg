@@ -210,24 +210,28 @@ export default class PostgresSerializer extends MinimumSerializerInterface {
 
       // load up the attributes
       snapshot.eachAttribute((key, attribute) => {
-        let value = snapshot.attr(key);
-        if(value === null){
-          value = null;
-        }else if(typeof(value) === 'boolean'){
-          if(value) value = 1;
-          else value = 0;
-        }
+        if (snapshot.record.get('isNew') || snapshot.changedAttributes()[key.toString()]) {
+          let value = snapshot.attr(key);
+          if(value === null){
+            value = null;
+          }else if(typeof(value) === 'boolean'){
+            if(value) value = 1;
+            else value = 0;
+          }
 
-        if(value !== null){
-          data[key.toString()] = value;
+          if(value !== null){
+            data[key.toString()] = value;
+          }
         }
       });
 
       // populate the belongsTo relationships
         snapshot.eachRelationship((key, relationship) => {
         if (relationship.kind === 'belongsTo') {
-          let belongsToId = snapshot.belongsTo(key, { id: true });
-          data[key.toString()] = belongsToId;
+          if (snapshot.record.get('isNew') || snapshot.changedAttributes()[key.toString()]) {
+            let belongsToId = snapshot.belongsTo(key, { id: true });
+            data[key.toString()] = belongsToId;
+          }
 
           // if provided, use the mapping provided by `attrs` in
           // the serializer
@@ -252,7 +256,6 @@ export default class PostgresSerializer extends MinimumSerializerInterface {
             // }
           }
         });
-
       return data;
 
     }

@@ -20,7 +20,7 @@ export default class RobotDetailController extends Component {
       const id = event;
       const c = this.competitions.findBy('id', id);
       changeset.set('competition', c);
-      changeset.set('registered', new Date('1970-01-01T00:00:00Z'));
+      changeset.set('registered', null);
     }else{
       changeset.rollback();
     }

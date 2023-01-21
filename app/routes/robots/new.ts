@@ -4,9 +4,10 @@ import {
 
 import Route from '@ember/routing/route';
 import { inject as service } from '@ember/service';
+import DS from 'ember-data';
 
 export default class RobotsNewRoute extends Route {
-  @service store
+  @service declare store: DS.Store;
 
   model() {
     let store = this.store;
@@ -16,8 +17,8 @@ export default class RobotsNewRoute extends Route {
     });
   }
 
-  setupController(controller) {
-     super.setupController(...arguments);
-     controller.setupNewRobot();
-   }
+  // setupController(controller: any) {
+  //    super.setupController(controller);
+  //    controller.setupNewRobot();
+  //  }
 }

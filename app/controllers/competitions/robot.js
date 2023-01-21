@@ -1,14 +1,11 @@
 import {
   get,
 } from '@ember/object';
-import Controller from '@ember/controller';
-import RobotValidation from '../../validations/robot';
+import RefreshedController from '../RefreshedController';
 import { service } from '@ember/service';
 
 
-
-
-export default class CompetitionRootController extends Controller {
+export default class CompetitionRootController extends RefreshedController {
   @service router;
 
   //RobotValidation;
