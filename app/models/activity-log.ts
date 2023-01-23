@@ -14,5 +14,5 @@ export default class ActivityLogModel extends Model {
   @belongsTo('robot', {
     async: false,
     inverse: null
-  }) declare entry: RobotModel ;
+  }) declare robot: RobotModel ;
 }

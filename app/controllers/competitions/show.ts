@@ -1,10 +1,10 @@
-import Controller from '@ember/controller';
 import { tracked } from '@glimmer/tracking';
 import { service } from '@ember/service';
 import DS from 'ember-data';
 import RobotModel from 'mrg-sign-in/models/robot';
+import RefreshedController from '../RefreshedController';
 
-export default class CompetitionShowController extends Controller {
+export default class CompetitionShowController extends RefreshedController {
   @service declare store: DS.Store;
 
   queryParams = [

@@ -19,7 +19,7 @@ export default class CompetitionModel extends Model {
 
     @attr('number') declare maxRobotsPerRing: number;
     @attr('number') declare minRobotsPerRing: number;
-    @attr('date') declare registrationTime: string;
+    @attr('date') declare registrationTime: Date;
     @attr('boolean') declare measureMass: boolean;
     @attr('boolean') declare measureSize: boolean;
     @attr('boolean') declare measureTime: boolean;

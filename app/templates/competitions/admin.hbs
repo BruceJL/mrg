@@ -6,15 +6,27 @@
       <tbody>
         <tr>
           <td><b>Rings:</b></td>
-          <td><Input @value={{changeset.rings}} type="number" title="This is the number of rings that will be used." /></td>
+          <td><Input
+            @value={{changeset.rings}}
+            type="number"
+            title="This is the number of rings that will be used."
+          /></td>
         </tr>
         <tr>
           <td><b>Maximum Entries per ring:</b></td>
-          <td><Input @value={{changeset.maxRobotsPerRing}} type="number" title="This is the maximum allowable number of robots in a given ring" /></td>
+          <td><Input
+            @value={{changeset.maxRobotsPerRing}}
+            type="number"
+            title="This is the maximum allowable number of robots in a given ring"
+          /></td>
         </tr>
         <tr>
           <td><b>Minimum Entries per ring:</b></td>
-          <td><Input @value={{changeset.minRobotsPerRing}} type="number" title="This is the maximum allowable number of robots in a given ring" /></td>
+          <td><Input
+            @value={{changeset.minRobotsPerRing}}
+            type="number"
+            title="This is the maximum allowable number of robots in a given ring"
+          /></td>
         </tr>
         <tr>
           <td><b>Maximum Entries:</b></td>
@@ -22,17 +34,14 @@
         </tr>
       </tbody>
     </table>
-    <button {{action "save" changeset}}>Save</button>
-    <button {{action "rollback" changeset}}>Undo</button>
+    <button {{on "click" (fn this.save changeset)}}>Save</button>
+    <button {{on "click" (fn this.rollback changeset)}}>Undo</button>
   {{/with}}
 </p>
 <hr>
 <h3>Restart Measurements</h3>
 <p>
-  <button title="Clicking this button will cause all robot in this
-competition to be marked as &quot;not measured&quot; and set the competition
-&quot;Measurement Start Time&quot; to right now. This is useful when a reweigh of
-robots is required." {{action "setMeasurementTime" this.model}}>
+  <button {{on "click" (fn this.resetMeasurementTime this.model)}}>
     Set Measurment Time
   </button>
   <b>&nbsp;&nbsp;&nbsp;&nbsp;Current Measurement Time:</b>
@@ -49,31 +58,56 @@ robots is required." {{action "setMeasurementTime" this.model}}>
     <tr>
       <td>Mass:</td>
       <td>
-        <input type="checkbox" name="model.measureMass" checked={{this.model.measureMass}} onchange={{action "toggleProperty" "measureMass"}}>
+        <input
+          type="checkbox"
+          name="model.measureMass"
+          checked={{this.model.measureMass}}
+          {{on "click" (fn this.toggleMeasurement this.model "measureMass")}}
+        >
       </td>
     </tr>
     <tr>
       <td>Size:</td>
       <td>
-        <input type="checkbox" name="model.measureSize" checked={{this.model.measureSize}} onchange={{action "toggleProperty" "measureSize"}}>
+        <input
+          type="checkbox"
+          name="model.measureSize"
+          checked={{this.model.measureSize}}
+          {{on "click" (fn this.toggleMeasurement this.model "measureSize")}}
+        >
       </td>
     </tr>
     <tr>
       <td>Time:</td>
       <td>
-        <input type="checkbox" name="model.measureTime" checked={{this.model.measureTime}} onchange={{action "toggleProperty" "measureTime"}}>
+        <input
+        type="checkbox"
+        name="model.measureTime"
+        checked={{this.model.measureTime}}
+        {{on "click" (fn this.toggleMeasurement this.model "measureTime")}}
+      >
       </td>
     </tr>
     <tr>
       <td>Scratch:</td>
       <td>
-        <input type="checkbox" name="model.measureScratch" checked={{this.model.measureScratch}} onchange={{action "toggleProperty" "measureScratch"}}>
+        <input
+          type="checkbox"
+          name="model.measureScratch"
+          checked={{this.model.measureScratch}}
+          {{on "click" (fn this.toggleMeasurement this.model "measureScratch")}}
+        >
       </td>
     </tr>
     <tr>
       <td>Deadman:</td>
       <td>
-        <input type="checkbox" name="model.measureDeadMan" checked={{this.model.measureDeadman}} onchange={{action "toggleProperty" "measureDeadman"}}>
+        <input
+          type="checkbox"
+          name="model.measureDeadMan"
+          checked={{this.model.measureDeadman}}
+          {{on "click" (fn this.toggleMeasurement this.model "measureDeadman")}}
+        >
       </td>
     </tr>
   </tbody>

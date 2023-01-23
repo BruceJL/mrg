@@ -18,7 +18,7 @@ export default class RobotMeasurementModel extends Model {
   }) declare robot: RobotModel; //: AsyncBelongsTo<RobotModel>;
 
   @attr('boolean') declare result: boolean;
-  @attr('date') declare datetime: string;
+  @attr('date') declare datetime: Date;
   @attr('string') declare type: string;
 
   @computed('result')

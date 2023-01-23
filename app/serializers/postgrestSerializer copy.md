@@ -7,34 +7,22 @@ import { Snapshot } from '@ember-data/store';
 type ModelClass = Model & {
     modelName: keyof ModelRegistry;
 };
+
 // Some of this stuff stolen from:
 // https://github.com/knownasilya/ember-supabase/blob/main/addon/serializers/supabase.ts
 
 export default class PostgresSerializer extends MinimumSerializerInterface {
 
-    //Overrideing the serializeAttibute so that only dirty data is written
-    //Back to the database. snippet stolen from:
-    //https://emberigniter.com/saving-only-dirty-attributes/
-
-    // serializeAttribute(
-    //   snapshot,
-    //   json,
-    //   key,
-    //   attributes
-    // ) {
-    //     if (snapshot.record.get('isNew') || snapshot.changedAttributes()[key]) {
-    //         super.serializeAttribute(...arguments);
-    //     }
-    // }
-
     private parseIncludedRecord(
       data: Record<string, any>,
-      thisType: string,
+      modelClass: ModelClass,
       parentType: string,
       entry: Record<string, any>,
       included: Record<string, any>[],
     ): void {
-      let o = this.parseRecord(entry, thisType, parentType);
+      debugger;
+      let thisType: string = modelClass.modelName.toString();
+      let o = this.parseRecord(entry, modelClass, parentType);
 
       // Since we're not at the top level, any data returned needs
       // to go onto the included array, as it's not the *primary* data.
@@ -51,19 +39,50 @@ export default class PostgresSerializer extends MinimumSerializerInterface {
 
     private parseRecord(
       payload: Record<string, any>,
-      thisType: string,
+      modelClass: any, // ModelSchema used to be ModelClass
       parentType: string,
       //type: string,
     ): Record<string, any> {
       let included: Record<string, any>[] = []
       let relationshipData: Record<string, any> = {};
       let data: Record<string, any> = {};
+      let thisType = modelClass.modelName;
 
       data['id'] = payload['id'].toString();
       data['type'] = thisType;
       data['attributes'] = {};
       data['relationships'] = {};
       relationshipData = {'type': thisType, 'id': payload['id']};
+
+      let modelRelationships: Record<string, any> = {};
+      modelClass.eachRelationship((key:string, meta: any) =>{
+
+        if(meta.kind = "belongsTo"){
+          this.parseIncludedRecord(
+            data,
+            modelRelationships[key].type,
+            thisType,
+            payload[key],
+            included,
+          );
+
+        }else if(meta.kind = "hasMany"){
+          if(Array.isArray(payload[key])){
+            payload[key].forEach((entry: Record<string, any>) =>{
+              this.parseIncludedRecord(
+                data,
+                modelRelationships[key].type,
+                thisType,
+                entry,
+                included,
+              );
+            });
+        }
+      });
+
+      modelClass.eachAttribute((key: string, meta: any) => {
+        data['attributes'][key] = payload[key];
+      });
 
 
       for(const key in payload){
@@ -72,32 +91,45 @@ export default class PostgresSerializer extends MinimumSerializerInterface {
           || typeof payload[key] === 'object')
           && payload[key] !== null
         ){
-          // This is an array of objects.
+          debugger;
+          // This is an array of objects or singular object.
           // It will need to be captured as a 'included' and 'relationships'.
           // information.
           data['relationships'][key] = {};
           data['relationships'][key]['data'] = [];
 
-
+          // Deal with an array of items
           if(Array.isArray(payload[key])){
-            // Deal with an array of items. This will be a hasMany relationship.
             payload[key].forEach((entry: Record<string, any>) =>{
-              this.parseIncludedRecord(data, key, thisType, entry, included);
+              this.parseIncludedRecord(
+                data,
+                modelRelationships[key].type,
+                thisType,
+                entry,
+                included,
+              );
             });
-
           } else if(typeof payload[key] === 'object'){
-            // Deal with a singular item. Will be a belongsTo relationship.
-            this.parseIncludedRecord(data, key, thisType, payload[key], included);
-            // Make it a single Object as this is a belongsTo relationship.
-            data['relationships'][key]['data'] = data['relationships'][key]['data'][0];
+            // Deal with a singular item.
+            this.parseIncludedRecord(
+              data,
+              modelRelationships[key].type,
+              thisType,
+              payload[key],
+              included,
+            );
           }
 
           // Deal with the relationships returned value.
-          if(Array.isArray(data['relationships'][key]['data'])){
-            if(data['relationships'][key]['data'].length === 0){
-              // delete it if there's nothing in there.
-              delete(data['relationships'][key]);
-            }
+          if(data['relationships'][key]['data'].length === 0){
+            // delete it if there's nothing in there.
+            delete(data['relationships'][key]);
+
+          //}else if(data['relationships'][key]['data'].length === 1){
+          } else if(modelRelationships[key].kind === "belongsTo"){
+            // make data['relationships'][key]['data'] a single object if the
+            //array length is 1.
+            data['relationships'][key]['data'] = data['relationships'][key]['data'][0];
           }
 
         } else if(key !== 'id' && key !== thisType && key !== parentType) {
@@ -119,11 +151,13 @@ export default class PostgresSerializer extends MinimumSerializerInterface {
       return return_data;
     }
 
-    private reformatPayload(
-      primaryModelClass: ModelClass,
-      payload: Record<string, Record<string, any> | Record<string, unknown>[]>[],
+    public normalizeResponse(
+      store: Store,
+      primaryModelClass: any, //ModelSchema
+      payload: any,
+      id: string,
       requestType: string,
-    ): Record<string, any> {
+    ): Object { // JsonApiDocument
       //debugger;
       let data: any = [];
       let included: Record<string, Record<string, any> | Record<string, unknown>[]>[] = [];
@@ -134,7 +168,7 @@ export default class PostgresSerializer extends MinimumSerializerInterface {
         let o =
           this.parseRecord(
             item,
-            primaryModelClass.modelName.toString(), // thisType,
+            primaryModelClass, // thisType,
             "", // parentType
           );
         // push the gathered item into the 'data' array.
@@ -186,16 +220,6 @@ export default class PostgresSerializer extends MinimumSerializerInterface {
       return payload_rtn;
     }
 
-    public normalizeResponse(
-      store: Store,
-      primaryModelClass: ModelClass,
-      payload: any,
-      id: string,
-      requestType: string,
-    ): Object {
-      return this.reformatPayload(primaryModelClass, payload, requestType);
-    }
-
     serialize(
       snapshot: Snapshot,
       options: Record<string, any>,
@@ -208,6 +232,10 @@ export default class PostgresSerializer extends MinimumSerializerInterface {
           data['id'] = id;
         }
       }
+
+      //Overrideing the serializeAttibute so that only dirty data is written
+      //Back to the database. snippet stolen from:
+      //https://emberigniter.com/saving-only-dirty-attributes/
 
       // load up the attributes
       snapshot.eachAttribute((key, attribute) => {
@@ -233,31 +261,8 @@ export default class PostgresSerializer extends MinimumSerializerInterface {
             let belongsToId = snapshot.belongsTo(key, { id: true });
             data[key.toString()] = belongsToId;
           }
-
-          // if provided, use the mapping provided by `attrs` in
-          // the serializer
-          //let schema = this.store.modelFor(snapshot.modelName);
-          // let payloadKey = this._getMappedKey(key, schema);
-          // if (payloadKey === key && this.keyForRelationship) {
-          //   payloadKey = this.keyForRelationship(key, 'belongsTo', 'serialize');
-          // }
-
-          // //Need to check whether the id is there for new&async records
-          // if (isNone(belongsToId)) {
-          //   json[payloadKey] = null;
-          // } else {
-          //   json[payloadKey] = belongsToId;
-          // }
-
-          // if (relationship.options.polymorphic) {
-          //   this.serializePolymorphicType(snapshot, json, relationship);
-          // }
-            // } else if (relationship.kind === 'hasMany') {
-            //   //this.serializeHasMany(snapshot, json, relationship);
-            // }
           }
-        });
+      });
       return data;
-
     }
 }

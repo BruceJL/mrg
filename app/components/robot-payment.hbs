@@ -1,50 +1,50 @@
-{{#with (changeset @data) as |changeset|}}
-  <h3>Payment Information</h3>
-  <table class="form">
-    <tbody>
-      <tr>
-        <td>Invoiced:</td>
-        <td colspan="2">{{changeset.formattedInvoicedDollars}}</td>
-      </tr>
-      <tr>
-        <td>Paid:</td>
-        <td>
-          <select {{on "change" (val (fn this.selectPaymentType changeset))}} disabled={{changeset.isPaid}}>
-            <option value="" selected={{eq changeset.paymentType null}} disabled={{true}}>
-              Select payment method
+<h3>Payment Information</h3>
+<table class="form">
+  <tbody>
+    <tr>
+      <td>Invoiced:</td>
+      <td colspan="2">{{@data.formattedInvoicedDollars}}</td>
+    </tr>
+    <tr>
+      <td>Paid:</td>
+      <td>
+        <select {{on "change" (val (fn this.selectPaymentType @data))}} disabled={{@data.isPaid}}>
+          <option value="" selected={{eq @data.paymentType null}} disabled={{true}}>
+            Select payment method
+          </option>
+          {{#each this.PaymentOptions as |o|}}
+            <option value={{o}} selected={{eq @data.paymentType o}}>
+              {{o}}
             </option>
-            {{#each this.PaymentOptions as |o|}}
-              <option value={{o}} selected={{eq changeset.paymentType o}}>
-                {{o}}
-              </option>
-            {{/each}}
-          </select>
-        </td>
-        <td colspan="2">
-          {{#if (eq changeset.paymentType "INVOICED")}}
+          {{/each}}
+        </select>
+      </td>
+      <td colspan="2">
+        {{#if (eq @data.paymentType "INVOICED") }}
             Invoiced
-          {{else if (not-eq changeset.paymentType null)}}
-            {{#if changeset.isPaid}}
-              {{changeset.formattedPaidDollars}}
-              <button {{on "click" (fn this.refund changeset)}}>Refund</button>
-            {{else}}
-              <button {{on "click" (fn this.paid changeset "10")}}>Paid $10.00</button><br>
-              <button {{on "click" (fn this.paid changeset "20")}}>Paid $20.00</button>
-            {{/if}}
-          {{/if}}
-        </td>
-      </tr>
-      <tr>
-        <td>On-time/Late:</td>
-        <td>
-          {{#if changeset.late}}
-            LATE
+        {{else if (eq @data.paymentType "COMPLEMENTARY")}}
+            Complementary
+        {{else if (not-eq @data.paymentType null)}}
+          {{#if @data.isPaid}}
+            {{@data.formattedPaidDollars}}
+            <button {{on "click" (fn this.refund @data)}}>Refund</button>
           {{else}}
-            ON-TIME
+            <button {{on "click" (fn this.paid @data "10")}}>Paid $10.00</button><br>
+            <button {{on "click" (fn this.paid @data "20")}}>Paid $20.00</button>
           {{/if}}
-        </td>
-        <td></td>
-      </tr>
-    </tbody>
-  </table>
-{{/with}}
+        {{/if}}
+      </td>
+    </tr>
+    <tr>
+      <td>On-time/Late:</td>
+      <td>
+        {{#if @data.late}}
+          LATE
+        {{else}}
+          ON-TIME
+        {{/if}}
+      </td>
+      <td></td>
+    </tr>
+  </tbody>
+</table>
