@@ -1,7 +1,6 @@
 import Controller from '@ember/controller';
 import { service } from '@ember/service';
 import { Registry as Services } from '@ember/service';
-import { resource, resourceFactory } from 'ember-resources';
 import Helper from '@ember/component/helper';
 import { registerDestructor } from '@ember/destroyable';
 

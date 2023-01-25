@@ -10,24 +10,28 @@ import {
   validateFormat,
 } from 'ember-changeset-validations/validators';
 
-export default {
-  //	RobotValidation: {
-  robot: [
+export default class RobotValidation extends Object{
+  robot = [
     validateLength({
       min: 1,
       max: 28
     }),
     validatePresence(true)
-  ],
-  school: validateLength({
+  ];
+
+  school =  validateLength({
     max: 150
-  }),
-  driver1: validatePresence(true),
-  coach: validatePresence(true),
-  ph: validateFormat({
+  });
+
+  driver1 = validatePresence(true);
+
+  coach = validatePresence(true);
+
+  ph = validateFormat({
     type: 'phone'
-  }),
-  email: validateFormat({
+  });
+
+  email = validateFormat({
     type: 'email'
-  })
-};
+  });
+}

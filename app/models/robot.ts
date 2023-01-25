@@ -28,11 +28,11 @@ export default class RobotModel extends Model {
   // competitor information
   @attr('string') declare name: string; // Robot Name
   @attr('string') declare driver1: string; // Driver1 name
-  @attr('string') declare driver1Gr: string; // Driver 1 grade
+  @attr('string') declare driver1gr: string; // Driver 1 grade
   @attr('string') declare driver2?: string; // Driver 2 name
-  @attr('string') declare driver2Gr?: string; // Driver 2 grade
+  @attr('string') declare driver2gr?: string; // Driver 2 grade
   @attr('string') declare driver3?: string; // Driver 3 name
-  @attr('string') declare driver3Gr?: string; // Driver 3 grade
+  @attr('string') declare driver3gr?: string; // Driver 3 grade
   @attr('string') declare school: string; // School
   @attr('string') declare coach: string; // Coach's name
   @attr('string') declare email: string; // Coach's email
@@ -52,7 +52,7 @@ export default class RobotModel extends Model {
     defaultValue: "UNPAID",
   }) declare paymentType?: string;
 
-  @attr('date') declare registered?: number; // Time the entry was created.
+  @attr('date') declare registered?: number | "now()"; // Time the entry was created.
 
   @attr('string', { // Checked-in / Withdrawn / Unseen
     defaultValue: "UNSEEN",
@@ -132,9 +132,9 @@ export default class RobotModel extends Model {
     'competition.robots.@each.status',
     'competition.robots.@each.measured',
   )
-  get slottedStatus(): string | undefined {
-      let r = this.get('driver1');
-      let competition: CompetitionModel = this.get('competition');
+  get slottedStatus(): string {
+      let r = this.driver1;
+      let competition: CompetitionModel = this.competition;
       if (competition === undefined) {
           return "unknown";
       } else {
@@ -143,10 +143,10 @@ export default class RobotModel extends Model {
               return "unknown";
           }
           let robotslength = competition.hasMany("robot").ids().length;
-          let maxCompetitors = competition.get('maxEntries');
+          let maxCompetitors = competition.maxEntries;
           let checkedInOrUnknownCount = 0;
           let checkedInCount = 0;
-          let id = this.get('id');
+          let id = this.id;
           let item = null;
           let itemId = "";
           let index = 0;
