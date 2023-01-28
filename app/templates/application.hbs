@@ -3,9 +3,7 @@
     <h1 class="left">
       Manitoba Robot Games Check-in System
     </h1>
-    {{#if (not this.session.isAuthenticated)}}
-      <Login />
-    {{else}}
+    {{#if this.session.isAuthenticated}}
       <div class="menu">
       </div>
       <div class="main">
@@ -84,7 +82,7 @@
           </li>
         </ul>
       </nav>
+      {{/if}}
       {{outlet}}
-    {{/if}}
   </div>
 </div>

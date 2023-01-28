@@ -2,11 +2,13 @@ import EmberRouter from '@ember/routing/router';
 import config from './config/environment';
 
 export default class Router extends EmberRouter {
-  location = 'history';
+  //location = 'history';
   rootURL = config.rootURL;
 }
 
 Router.map(function() {
+  this.route('login');
+
   this.route('robots', function() {
     this.route('edit', {
       path: '/:robot_id'
@@ -27,10 +29,12 @@ Router.map(function() {
   this.route('ring-assignments', {
     path: 'ring-assignments/:competition_id'
   });
+
   this.route('checkin', {
     path: 'checkin/:competition_id'
   });
 
-  this.route('robot', function() {});
+
+  this.route('robot');
   this.route('log');
 });

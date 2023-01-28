@@ -1,17 +1,14 @@
-import Route from '@ember/routing/route';
+import Transition from '@ember/routing/transition';
 import { inject as service } from '@ember/service';
 import DS from 'ember-data';
-//import EmberSimpleAuthSession from 'ember-simple-auth/session';
+import AuthenticatedRoute from './authenticated';
 
 
-export default class Application extends Route {
+export default class Application extends AuthenticatedRoute {
     @service declare store: DS.Store;
-    //@service session!: EmberSimpleAuthSession;
 
-    async beforeModel(transition: any) {
-        // debug("Calling session setup()!");
-        //await this.session.setup();
-        // debug("Returned from session setup()!");
-        return super.beforeModel(transition);
-      }
+    async beforemodel(transition: Transition){
+        super.beforeModel(transition);
+        await this.session.setup();
+    }
 }

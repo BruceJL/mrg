@@ -1,14 +1,7 @@
 import MinimumSerializerInterface from 'ember-data/serializer';
-import type ModelRegistry from 'ember-data/types/registries/model';
-import type Model from '@ember-data/model';
 import type Store from '@ember-data/store';
 import { Snapshot } from '@ember-data/store';
-
-type ModelClass = Model & {
-    modelName: keyof ModelRegistry;
-};
-// Some of this stuff stolen from:
-// https://github.com/knownasilya/ember-supabase/blob/main/addon/serializers/supabase.ts
+import { ModelSchema } from 'ember-data';
 
 export default class PostgresSerializer extends MinimumSerializerInterface {
 
@@ -120,7 +113,7 @@ export default class PostgresSerializer extends MinimumSerializerInterface {
     }
 
     private reformatPayload(
-      primaryModelClass: ModelClass,
+      primaryModelClass: ModelSchema,
       payload: Record<string, Record<string, any> | Record<string, unknown>[]>[],
       requestType: string,
     ): Record<string, any> {
@@ -188,7 +181,7 @@ export default class PostgresSerializer extends MinimumSerializerInterface {
 
     public normalizeResponse(
       store: Store,
-      primaryModelClass: ModelClass,
+      primaryModelClass: ModelSchema,
       payload: any,
       id: string,
       requestType: string,

@@ -24,4 +24,4 @@ export default class CurrentUserService extends Service {
       return resolve();
     }
   }
-}s;
+};

@@ -19,7 +19,7 @@ export default class RobotValidation extends Object{
     validatePresence(true)
   ];
 
-  school =  validateLength({
+  school = validateLength({
     max: 150
   });
 

@@ -1,10 +1,8 @@
-//import RefreshedRoute from '../RefreshedRoute';
-import Route from '@ember/routing/route';
-
 import { service } from '@ember/service';
 import DS from 'ember-data';
+import AuthenticatedRoute from '../authenticated';
 
-export default class CompetitionShowRoute extends Route { //RefreshedRoute
+export default class CompetitionShowRoute extends AuthenticatedRoute { //RefreshedRoute
   @service declare store: DS.Store;
 
   model(params: any) {

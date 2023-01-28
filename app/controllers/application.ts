@@ -3,11 +3,11 @@ import {
 } from '@ember/service';
 import {
   action,
-} from '@ember/object'; 
+} from '@ember/object';
 import Controller from '@ember/controller';
 
 export default class ApplicationController extends Controller {
-  @service session;
+  @service declare session: any; //EmberSimpleAuthSession
 
   @action
   invalidateSession() {

@@ -16,22 +16,25 @@ import DS from 'ember-data';
 import RobotMeasurementModel from 'mrg-sign-in/models/measurement';
 import RobotModel from 'mrg-sign-in/models/robot';
 
-function passedMeasurement(
+function isMeasured(
   measurements: DS.ManyArray<RobotMeasurementModel>,
   type: string,
   registrationTime: Date,
-): boolean {
+  passed: boolean,
+): boolean{
   let done = false;
   let result: boolean = false;
   let itemType = "";
-  let itemDatetime = "";
+  let foundMeasurements = false;
 
   let measurementsArray = measurements.slice().sortBy('datetime').reverse();
+
   measurementsArray.forEach(function(item, index, array) {
     if (!done) {
       let itemDatetime = item.datetime;
       if (itemDatetime < registrationTime) {
         done = true;
+        foundMeasurements = false;
         debug("passedMeasurement: No current measurements found for " + type);
       } else {
         itemType = item.type;
@@ -39,11 +42,16 @@ function passedMeasurement(
           result = Boolean(item.result);
           debug("passedMeasurement: Found: " + result + " for " + type);
           done = true;
+          foundMeasurements = true;
         }
       }
     }
   });
-  return result;
+  if(foundMeasurements){
+    return (passed == result);
+  } else{
+    return false;
+  }
 }
 
 export interface ComponentSignature{
@@ -75,11 +83,11 @@ export default class RobotMeasurementComponent extends Component<ComponentSignat
   PopulateRadioBoxes(model: RobotModel): void {
     debug("PopulateRadioBoxes fired");
     let registrationTime = this.competition.registrationTime;
-    this.Mass = passedMeasurement(this.measurements, "Mass", registrationTime);
-    this.Size = passedMeasurement(this.measurements, "Size", registrationTime);
-    this.Scratch = passedMeasurement(this.measurements, "Scratch", registrationTime);
-    this.Time = passedMeasurement(this.measurements, "Time", registrationTime);
-    this.Deadman = passedMeasurement(this.measurements, "Deadman", registrationTime);
+    this.Mass = isMeasured(this.measurements, "Mass", registrationTime, true);
+    this.Size = isMeasured(this.measurements, "Size", registrationTime, true);
+    this.Scratch = isMeasured(this.measurements, "Scratch", registrationTime, true);
+    this.Time = isMeasured(this.measurements, "Time", registrationTime, true);
+    this.Deadman = isMeasured(this.measurements, "Deadman", registrationTime, true);
   }
 
   isMeasured(
@@ -88,9 +96,7 @@ export default class RobotMeasurementComponent extends Component<ComponentSignat
     value: boolean,
   ): boolean {
     let registrationTime = model.competition.registrationTime;
-    let v: boolean = passedMeasurement(model.measurement, measurementName, registrationTime);
-    let r = (v === value);
-    return r;
+    return isMeasured(model.measurement, measurementName, registrationTime, value);
   }
 
   // Get the measurements required for this entry based upon the competition
@@ -149,7 +155,7 @@ export default class RobotMeasurementComponent extends Component<ComponentSignat
       let measured = true;
 
       this.requiredMeasurementsfn().forEach(function(item) {
-        if (!passedMeasurement(measurements, item, registrationTime)) {
+        if (isMeasured(measurements, item, registrationTime, false)) {
           measured = false;
           debug("failed on " + item);
         }

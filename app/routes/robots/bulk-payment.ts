@@ -1,9 +1,8 @@
-
 import { inject as service } from '@ember/service';
-import Route from '@ember/routing/route';
 import DS from 'ember-data';
+import AuthenticatedRoute from '../authenticated';
 
-export default class RobotsBulkPaymentRoute extends Route {
+export default class RobotsBulkPaymentRoute extends AuthenticatedRoute {
   @service declare store: DS.Store;
 
   model() {
