@@ -86,7 +86,7 @@ def make_odf_certificates(event, winners: 'List[Entry]'):
 
     # Cooper Black font
     cooper_black_font_name = "Cooper Black"
-    s: 'FontFace' = FontFace(
+    s = FontFace(
       name=cooper_black_font_name,
       fontfamily=cooper_black_font_name,
     )
@@ -94,7 +94,7 @@ def make_odf_certificates(event, winners: 'List[Entry]'):
 
     # Big Caslon font
     big_caslon_font_name = "Big Caslon"
-    s: 'FontFace' = FontFace(
+    s = FontFace(
       name=big_caslon_font_name,
       fontfamily=big_caslon_font_name,
     )
@@ -102,7 +102,7 @@ def make_odf_certificates(event, winners: 'List[Entry]'):
 
     # Big Caslon Pro font
     big_caslon_pro_font_name = "Adobe Caslon Pro"
-    s: 'FontFace' = FontFace(
+    s = FontFace(
       name=big_caslon_pro_font_name,
       fontfamily=big_caslon_pro_font_name,
     )
@@ -113,7 +113,7 @@ def make_odf_certificates(event, winners: 'List[Entry]'):
 
     # PARAGRAPH - Big Caslon Pro 12pt
     sponsors_paragraph_style = "sponsorsParagraphStyle"
-    s: 'Style' = Style(
+    s = Style(
       name=sponsors_paragraph_style,
       family="paragraph",
       displayname="Big Caslon Pro 12pt",
@@ -334,7 +334,7 @@ def make_odf_certificates(event, winners: 'List[Entry]'):
         place = i + 1
 
         # Create a page to contain the drawing
-        page: 'Page' = Page(
+        page = Page(
           masterpagename=masterpage,
           name="page-" + str(place),
           stylename=drawing_page,
@@ -342,8 +342,8 @@ def make_odf_certificates(event, winners: 'List[Entry]'):
         document.drawing.addElement(page)
 
         # Replace winner's information
-        competitorname = winners[i][0].driver1
-        robotname = '"' + winners[i][0].robot + '"'
+        competitorname = winners[i].driver1
+        robotname = '"' + winners[i].robotName + '"'
 
         # Add image
         photoframe = Frame(

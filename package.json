@@ -92,8 +92,9 @@
     "typescript": "^4.9.4",
     "webpack": "^5.75.0"
   },
+  "engineStrict": true,
   "engines": {
-    "node": ">= 16.*"
+    "node": "18.*"
   },
   "dependencies": {
     "ember-cli": "^4.10.0",

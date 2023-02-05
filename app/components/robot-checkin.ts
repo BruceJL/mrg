@@ -26,28 +26,28 @@ export default class RobotCheckinController extends Component {
 
   @action
   withdraw(model: RobotModel) {
-    model.status = "WITHDRAWN";
+    model.checkInStatus = "WITHDRAWN";
     model.save();
     this.createLogEntry(model, "WITHDRAWN");
   }
 
   @action
   reinstate(model: RobotModel) {
-    model.status = "UNKNOWN";
+    model.checkInStatus = "UNKNOWN";
     model.save();
     this.createLogEntry(model, "RE-INSTATED");
   }
 
   @action
   checkIn(model: RobotModel) {
-    model.status = "CHECKED-IN";
+    model.checkInStatus = "CHECKED-IN";
     model.save();
     this.createLogEntry(model, "CHECKED-IN");
   }
 
   @action
   cancelCheckin(model: RobotModel) {
-    model.status = "UNKNOWN";
+    model.checkInStatus = "UNKNOWN";
     model.save();
     this.createLogEntry(model, "CHECK-IN CANCELLED");
   }

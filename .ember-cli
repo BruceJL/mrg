@@ -6,5 +6,5 @@
     Setting `disableAnalytics` to true will prevent any data from being sent.
   */
   "disableAnalytics": false,
-  //"proxy": "http://check-in/mrg/api"
+  //"proxy": "http://check-in/api",
 }

@@ -53,12 +53,15 @@ export default class RobotCheckinController extends Component {
       "REFUNDED $" + model.paid + " " + model.paymentType,
     );
     model.paid = 0.00;
-    model.paymentType = undefined;
+    model.paymentType = "UNPAID";
     model.save();
   }
 
   @action
-  selectPaymentType(model: RobotModel, value: string) {
+  selectPaymentType(
+    model: RobotModel,
+    value: ("UNPAID" | "CASH" | "CREDIT CARD" | "CHEQUE" | "INVOICED"),
+  ): void {
     debug("selectPaymentType fired.");
     if (value === "INVOICED" && model.paid > 0.0) {
       alert(

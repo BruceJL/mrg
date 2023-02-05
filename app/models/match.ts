@@ -1,9 +1,7 @@
 import Model, {
-  hasMany,
   belongsTo,
   attr,
   type AsyncBelongsTo,
-  type AsyncHasMany,
 } from '@ember-data/model';
 
 import type CompetitionModel from './competition';

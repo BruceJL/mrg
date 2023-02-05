@@ -11,6 +11,6 @@ class Resource(object):
         self.lengthX = lengthX
         self.lengthY = lengthY
         self.resourceType = resourceType
-        #self.totalTime = datetime.timedelta(seconds=0)
+        # self.totalTime = datetime.timedelta(seconds=0)
 
-    #def booking(self, time, duration):
+    # def booking(self, time, duration):

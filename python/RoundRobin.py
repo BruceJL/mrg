@@ -4,7 +4,7 @@ from Entry import Entry
 from EventEntry import EventEntry
 
 if TYPE_CHECKING:
-    from typing import List, Dict, Any
+    from typing import List
     from Event import Event
 
 byeEntry = EventEntry(
@@ -26,29 +26,29 @@ byeEntry = EventEntry(
 class RoundRobinTournament(object):
     def __init__(
       self,
-      name: 'str',
-      ring: 'int',
-      event: 'Event',
+      name: str,
+      ring: int,
+      event: Event,
     ) -> 'None':
         self.name = name
         self.ring = ring
         self.event = event
 
-        self.event_entries: 'List[EventEntry]' = []
-        self.matches: 'List[RoundRobinMatch]' = []
+        self.event_entries: List[EventEntry] = []
+        self.matches: List[RoundRobinMatch] = []
 
     def add_entry(
       self,
-      entry: 'Entry',
-    ) -> 'EventEntry':
+      entry: Entry,
+    ) -> EventEntry:
         letter = self.get_next_free_letter()
         event_entry = EventEntry(entry, letter)
         self.event_entries.append(event_entry)
         return event_entry
 
     def get_next_free_letter(self) -> 'str':
-        letter: 'str' = ""
-        letters: 'List[str]' = []
+        letter: str = ""
+        letters: List[str] = []
 
         for event_entry in self.event_entries:
             letters.append(event_entry.letter)

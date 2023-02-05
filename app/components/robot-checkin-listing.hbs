@@ -7,18 +7,22 @@
       <th>Checked In</th>
       <th>Measured</th>
       <th>Paid</th>
+      <th>Slotted</th>
+      <th>Ready</th>
     </tr>
   </thead>
 
   <tbody>
     {{#each @robots as |item|}}
       <tr class={{item.slottedStatus}}>
-        <td>{{item.robot}}</td>
+        <td>{{item.name}}</td>
         <td>{{item.school}}</td>
         <td>{{item.driver1}}</td>
-        <td class="centered">{{item.humanFriendlyStatus}}</td>
+        <td class="centered">{{item.checkInStatus}}</td>
         <td class="centered">{{item.formattedMeasured}}</td>
-        <td class="centered">{{item.paid}}</td>
+        <td class="centered">{{item.formattedPaidDollars}}</td>
+        <td class="centered">{{item.slottedStatus}}</td>
+        <td class="centered">{{item.readyToCompete}}</td>
       </tr>
     {{/each}}
   </tbody>

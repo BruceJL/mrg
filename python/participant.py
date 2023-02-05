@@ -4,6 +4,7 @@ from abc import ABCMeta, abstractmethod
 
 from utilities import requiredFieldIsGood, optionalFieldIsGood
 
+
 class Participant(object):
     """Super class to hopefully make organizing things easier later"""
     # __metaclass__ = ABCMeta
@@ -65,8 +66,10 @@ class Participant(object):
     def __str__(self):
         return '{0} {1}'.format(self.first, self.last)
 
+
 class SoloParticipant(Participant):
     """Only here to prevent compile errors"""
+
 
 # leave this for now to prevent compile errors
 class GroupParticipant(Participant):

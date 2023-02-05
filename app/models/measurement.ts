@@ -21,7 +21,6 @@ export default class RobotMeasurementModel extends Model {
   @attr('date') declare datetime: Date;
   @attr('string') declare type: string;
 
-  @computed('result')
   get humanReadableResult() {
     if (get(this, 'result')) {
       return "Pass";

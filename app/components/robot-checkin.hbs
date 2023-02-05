@@ -7,13 +7,13 @@
     </tr>
     <tr>
       <td>Checked in:</td>
-      <td>{{@data.status}}</td>
+      <td>{{@data.checkInStatus}}</td>
       <td>
-        {{#if (eq @data.status "CHECKED-IN")}}
+        {{#if (eq @data.checkInStatus "CHECKED-IN")}}
           <button {{on "click" (fn this.cancelCheckin @data)}}>
             Cancel Check in
           </button>
-        {{else if (eq @data.status "WITHDRAWN")}}
+        {{else if (eq @data.checkInStatus "WITHDRAWN")}}
           <button {{on "click" (fn this.reinstate @data)}}>
             Reinstate
           </button>

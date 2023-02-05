@@ -1,8 +1,3 @@
-import {
-  computed,
-  get,
-} from '@ember/object';
-
 import Model, {
   hasMany,
   attr,
@@ -25,6 +20,9 @@ export default class CompetitionModel extends Model {
     @attr('boolean') declare measureTime: boolean;
     @attr('boolean') declare measureScratch: boolean;
     @attr('boolean') declare measureDeadman: boolean;
+    @attr('number') declare maxEntries: number;
+    @attr('number') declare robotCount: number;
+    @attr('number') declare robotCheckedInCount: number;
 
     @hasMany('robot', {
       async: false,
@@ -36,47 +34,12 @@ export default class CompetitionModel extends Model {
       inverse: 'competition',
     }) declare ringAssignment: SyncHasMany<RingAssignmentModel>;
 
-    @computed('rings', 'maxRobotsPerRing')
-    get maxEntries() {
-      return get(this, 'maxRobotsPerRing') * get(this, 'rings');
-    }
-
-    @computed('robots.@each.signedIn')
-    get robotCountCheckedIn() : number {
-      // The next line is a workaround. See
-      // https://github.com/typed-ember/ember-cli-typescript/issues/1416
-      let inst = this as CompetitionModel;
-      let robots = inst.hasMany("robot").value();
-      if(robots === null){
-        return 0;
-      }else{
-          return robots?.filter(function(item: RobotModel) {
-            if (item.get('status') === "CHECKED-IN") {
-              return item;
-            }
-          }).length;
-      }
-    }
-
-    @computed('robots.@each')
-    get robotCount(): number {
-      // The next line is a workaround. See
-      // https://github.com/typed-ember/ember-cli-typescript/issues/1416
-      let inst = this as CompetitionModel;
-      if (inst.hasMany("robot").value() === null) {
-        return 0;
-      }
-      return inst.hasMany("robot").ids().length;
-    }
-
-    @computed('robotCount')
     get unclaimedSpaces() {
-      return this.get('maxEntries') - this.get('robotCount');
+      return this.maxEntries - this.robotCount;
     }
 
     //Determine the total number of available spaces including all spaces not signed in.
-    @computed('robotCountCheckedIn')
     get uncheckedinSpaces() {
-      return this.get('maxEntries') - this.get('robotCountCheckedIn');
+      return this.maxEntries - this.robotCheckedInCount;
     }
 }

@@ -9,7 +9,6 @@ from odf.text import P, H
 from time import strftime, gmtime
 
 if TYPE_CHECKING:
-    # from typing import List, Dict
     from Event import Event
 
 
@@ -303,18 +302,16 @@ def make_odf_score_sheets(
         )
         document.text.addElement(h)
         document.text.addElement(P(text=""))
-        p=P(
-          text =
-          "Judge:_____________________________________   "
-          + "Timer:_____________________________________",
-          stylename = judge_timer_style_name,
-        )
+        p = P(text="Judge:_____________________________________   "
+              + "Timer:_____________________________________",
+              stylename=judge_timer_style_name,
+              )
         document.text.addElement(p)
         document.text.addElement(P(text=""))
 
-        score_table=Table(
-          name = "Table" + str(tournament.ring),
-          stylename = score_card_table_style_name,
+        score_table = Table(
+          name="Table" + str(tournament.ring),
+          stylename=score_card_table_style_name,
         )
         score_table.addElement(
           TableColumn(stylename=letter_column_style_name))
@@ -596,7 +593,8 @@ def make_odf_score_sheets(
                 P(text=tournament.event_entries[j].letter + " -  "
                   + tournament.event_entries[j].entry.robotName,
                   stylename=robot_summary_name_paragraph_style_name,
-                ))
+                  )
+            )
 
             tc.addElement(
                 P(text=tournament.event_entries[j].entry.driver1,

@@ -2,6 +2,7 @@
 
 import re, datetime
 
+
 def optionalFieldIsGood(mine, theirs):
     """check if optional field theirs matches with mine"""
     if (theirs is None or
@@ -11,6 +12,7 @@ def optionalFieldIsGood(mine, theirs):
     else:
         return False
 
+
 def requiredFieldIsGood(mine, theirs):
     """check if required field theirs matches with mine"""
     if (theirs is not None and
@@ -19,9 +21,11 @@ def requiredFieldIsGood(mine, theirs):
     else:
         return False
 
+
 def sanitize(string):
     """Returns string with unsanitary characters (";) removed"""
     return string.translate(None, '";')
+
 
 def validateName(name):
     """Returns False if name looks potentially incorrect"""
@@ -41,6 +45,7 @@ def validateName(name):
 
     return True
 
+
 def stripPhoneNumber(number):
     """Returns number stripped of any characters other than 0-9, +, and x"""
     newNumber = ''
@@ -50,6 +55,7 @@ def stripPhoneNumber(number):
 
     return newNumber
 
+
 def validEmail(email):
     """Returns False if email isn't in valid format"""
     # match = re.match("^\\w+@[a-zA-Z_]+?\\.[a-zA-Z]{2,3}$", email)
@@ -57,6 +63,7 @@ def validEmail(email):
         r"[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?",
         email)
     return match != None
+
 
 def stripPostal(postal):
     """Returns postal code string stripped of any characters other than A-Z, 0-9"""
@@ -67,10 +74,12 @@ def stripPostal(postal):
 
     return newPostal
 
+
 def convertTimeToSeconds(timeString):
     """convert MM:SS to seconds"""
     tokens = timeString.split(':')
     return int(tokens[0]) * 60 + int(tokens[1])
+
 
 def convertStringToTimedelta(timeString):
     """convert 'M:SS' to timedelta"""
@@ -79,12 +88,14 @@ def convertStringToTimedelta(timeString):
     seconds = int(tokens[1])
     return datetime.timedelta(minutes=minutes, seconds=seconds)
 
+
 def humanPostalCodeFormat(postalString):
     """tries to add a space after 3 characters and returns the string"""
     result = postalString
     if len(postalString) > 3:
         result = postalString[0:3] + " " + postalString[3:]
     return result
+
 
 def humanPhoneNumberFormat(phoneString):
     """tries to add "-" to phoneString, returns result"""
@@ -107,7 +118,7 @@ def humanPhoneNumberFormat(phoneString):
     # Now put it all back together
     if result != "":
         result += "-"
-        
+
     for i in range(len(threeDigit)-1, -1, -1):
         result += (threeDigit[i] + "-")
 

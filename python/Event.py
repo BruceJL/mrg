@@ -77,7 +77,7 @@ class Event(object):
         self.entries.sort()
 
         for entry in self.entries:
-            if entry.status == "CHECKED-IN" and entry.measured == 1:
+            if entry.checkInStatus == "CHECKED-IN" and entry.measured == 1:
                 num_entries = num_entries + 1
                 if num_entries > max_entries:
                     break

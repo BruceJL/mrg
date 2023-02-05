@@ -3,7 +3,7 @@ from odf.table import Table, TableColumn, TableRow, TableCell
 from odf.style import Style, TextProperties, ParagraphProperties, \
   TableCellProperties, TableRowProperties, TableColumnProperties, \
   TableProperties, FontFace, PageLayout, PageLayoutProperties, MasterPage
-from odf.text import P, Span
+from odf.text import P
 from datetime import date
 import math
 
@@ -20,7 +20,7 @@ def make_odf5160_labels(competition, entries):
     competition_column_width = 0.35
     ring_column_width = 0.75
     info_column_width = label_width-competition_column_width \
-      - ring_column_width
+        - ring_column_width
 
     left_right_margin = 0.2
     top_margin = 7/16
@@ -28,7 +28,7 @@ def make_odf5160_labels(competition, entries):
     label_spacing_width = 1/8
 
     table_width = num_label_columns * label_width + (num_label_columns-1) \
-      * label_spacing_width
+        * label_spacing_width
 
     document = OpenDocumentText()
 
@@ -553,7 +553,7 @@ def make_odf5160_labels(competition, entries):
         #     pass
 
         # table_cell.addElement(p)
-        
+
         sub_table_tr.addElement(table_cell)
 
         # Create the ring cell
@@ -566,7 +566,8 @@ def make_odf5160_labels(competition, entries):
           P(
             text="Ring",
             stylename=robot_name_style_name,
-         ))
+          )
+        )
 
         sub_table_tr.addElement(table_cell)
 
@@ -635,7 +636,11 @@ def make_odf5160_labels(competition, entries):
           valuetype="string",
           stylename=label_cell_style_name,
         )
-        tc.addElement(make_label("_______________", "__________________", "___________________"))
+        tc.addElement(make_label(
+            "_______________",
+            "__________________",
+            "___________________")
+        )
         tr.addElement(tc)
 
     file_name = "./ScoreSheets/" + competition + "-labels"
