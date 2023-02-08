@@ -15,10 +15,6 @@ export default class RobotCheckinController extends Component {
   @service declare session: any; //EmberSimpleAuthSession
   @service declare store: DS.Store;
 
-  get PaymentOptions() {
-    return ['CASH', 'INVOICED', 'CHEQUE', 'CREDIT CARD', 'COMPLEMENTARY'];
-  }
-
   @action
   save(model: RobotModel) {
     model.save();
@@ -57,7 +53,7 @@ export default class RobotCheckinController extends Component {
     {
       volunteer: this.session.data.authenticated.fullname,
       robot: model,
-      function: "PAYMENT",
+      function: "CHECK-IN",
       action: action,
     });
     record.save();

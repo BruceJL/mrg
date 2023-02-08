@@ -76,8 +76,7 @@ export default class RobotModel extends Model {
   }) declare competition: CompetitionModel;
 
   get isPaid() {
-    let paid = this.paid;
-    if (paid > 0.0) {
+    if (this.paid > 0.0 || this.paymentType === "INVOICED") {
       return true;
     } else {
       return false;
@@ -103,8 +102,11 @@ export default class RobotModel extends Model {
   }
 
   get formattedPaidDollars(): string {
-    let paid = this.paid;
-    return formatDollars(paid);
+    if(this.paymentType === "INVOICED"){
+      return "INVOICED";
+    } else {
+      return formatDollars(this.paid);
+    }
   }
 
   get formattedInvoicedDollars(): string {

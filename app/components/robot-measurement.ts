@@ -18,9 +18,9 @@ import RobotModel from 'mrg-sign-in/models/robot';
 
 function isMeasured(
   measurements: DS.ManyArray<RobotMeasurementModel>,
-  type: string,
-  registrationTime: Date,
-  passed: boolean,
+  type: string, // Measurement type e.g. Mass, size, etc.
+  registrationTime: Date, // Time where measurements before are invalid.
+  passed: boolean, //are we looking for true or false?
 ): boolean{
   let done = false;
   let result: boolean = false;
@@ -63,18 +63,17 @@ export interface ComponentSignature{
 export default class RobotMeasurementComponent extends Component<ComponentSignature> {
   @service declare store: DS.Store;
 
-
   constructor(owner: unknown, args: ComponentSignature['Args']){
     super(owner, args);
     this.competition = args.data.competition;
     this.measurements = args.data.measurement;
   }
 
-  @tracked Mass = false
-  @tracked Size = false
-  @tracked Scratch = false
-  @tracked Time = false
-  @tracked Deadman = false
+  @tracked Mass = false;
+  @tracked Size = false;
+  @tracked Scratch = false;
+  @tracked Time = false;
+  @tracked Deadman = false;
   @tracked competition = this.args.data.competition;
   @tracked measurements = this.args.data.measurement;
 
@@ -90,6 +89,8 @@ export default class RobotMeasurementComponent extends Component<ComponentSignat
     this.Deadman = isMeasured(this.measurements, "Deadman", registrationTime, true);
   }
 
+  // This function is called by the radio boxes on the page to populate
+  // their values.
   isMeasured(
     model: RobotModel,
     measurementName: string,
@@ -134,9 +135,8 @@ export default class RobotMeasurementComponent extends Component<ComponentSignat
   createMeasurement(
     value: boolean,
     type: string,
-    model: RobotModel,
+    robot: RobotModel,
   ): void {
-    let robot = model;
     debug("Logging " + type + " measurement of: " + value + " for robot " + robot.id);
     //this.set(type, value);
     let measurement: RobotMeasurementModel = this.store.createRecord(
@@ -149,21 +149,7 @@ export default class RobotMeasurementComponent extends Component<ComponentSignat
 
     measurement.save().then(() => {
       measurement.reload();
-
-      let measurements = this.measurements;
-      let registrationTime = this.competition.registrationTime;
-      let measured = true;
-
-      this.requiredMeasurementsfn().forEach(function(item) {
-        if (isMeasured(measurements, item, registrationTime, false)) {
-          measured = false;
-          debug("failed on " + item);
-        }
-      });
-
-      debug("Setting measured to " + measured);
-      robot.set('measured', measured);
-      robot.save();
+      robot.reload();
     });
   }
 }

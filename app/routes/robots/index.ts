@@ -7,13 +7,11 @@ export default class RobotsIndexRoute extends AuthenticatedRoute {
   @service declare store: DS.Store;
 
   async model() {
-    return RSVP.hash({
-      competition: this.store.findAll(
-        'robot',
-        {
-          include: 'competition',
-        }
-      ),
-    });
+    return this.store.findAll(
+      'robot',
+      {
+        include: 'competition',
+      }
+    )
   }
 }

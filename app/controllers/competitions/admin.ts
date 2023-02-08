@@ -35,12 +35,12 @@ export default class CompetitionAdminController extends Controller {
       "a reweigh of robots is required."
     );
 
-    let robots = model.robot;
-    robots.forEach((item) => {
-      debug("setting meausured of " + item.name + " to false");
-      item.set('measured', false);
-      item.save();
-    });
+    // let robots = model.robot;
+    // robots.forEach((item) => {
+    //   debug("setting meausured of " + item.name + " to false");
+    //   item.set('measured', false);
+    //   item.save();
+    // });
 
     model.set('registrationTime', "now()");
     model.save().then(() => {

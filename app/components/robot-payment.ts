@@ -4,8 +4,8 @@ import {
 } from '@ember/object';
 
 import {
-  debug,
-} from '@ember/debug';
+  tracked,
+} from '@glimmer/tracking';
 
 import {
   inject as service
@@ -14,9 +14,24 @@ import DS from 'ember-data';
 
 import RobotModel from 'mrg-sign-in/models/robot';
 
-export default class RobotCheckinController extends Component {
+export interface ComponentSignature{
+  Args:{
+    data: RobotModel,
+  }
+}
+
+export default class RobotCheckinController extends Component<ComponentSignature> {
   @service declare session: any; //EmberSimpleAuthSession
   @service declare store: DS.Store;
+  @tracked robot: RobotModel;
+
+  constructor(
+    owner: unknown,
+    args: ComponentSignature['Args'],
+  ) {
+    super(owner, args);
+    this.robot = this.args.data;
+  }
 
   get PaymentOptions() {
     return [
@@ -28,65 +43,65 @@ export default class RobotCheckinController extends Component {
     ];
   }
 
+  get paymentSelectDisabled(): boolean {
+    let b = ((this.robot.isPaid) && (this.robot.paymentType !== 'INVOICED'));
+    return b;
+  }
+
   @action
-  save(model: RobotModel) {
-    model.save();
+  save() {
+    this.robot.save();
   }
 
   @action
   paid(
-    model: RobotModel,
-    amount: number
+    amount: number,
   ): void {
-    model.paid = amount;
-    model.save();
+    this.robot.paid = amount;
+    this.robot.save();
     this.createLogEntry(
-      model,
-      "PAID $" + amount + " " + model.paymentType,
+      "PAID $" + amount + " " + this.robot.paymentType,
     );
   }
 
   @action
-  refund(model: RobotModel): void {
+  refund(): void {
     this.createLogEntry(
-      model,
-      "REFUNDED $" + model.paid + " " + model.paymentType,
+      "REFUNDED $" + this.robot.paid + " " + this.robot.paymentType,
     );
-    model.paid = 0.00;
-    model.paymentType = "UNPAID";
-    model.save();
+    this.robot.paid = 0.00;
+    this.robot.paymentType = "UNPAID";
+    this.robot.save();
   }
 
   @action
   selectPaymentType(
-    model: RobotModel,
     value: ("UNPAID" | "CASH" | "CREDIT CARD" | "CHEQUE" | "INVOICED"),
   ): void {
-    debug("selectPaymentType fired.");
-    if (value === "INVOICED" && model.paid > 0.0) {
+    if (value === "INVOICED" && this.robot.paid > 0.0) {
       alert(
         "This entry is marked as PAID. Please refund the money before" +
         " marking the entry as INVOICED."
       );
     } else if(value === "INVOICED"){
-      model.paymentType = value;
+      this.robot.paymentType = value;
       this.createLogEntry(
-        model,
         "MARKED AS INVOICED",
       );
     } else {
-      debug("setting paymentType to " + value);
-      model.paymentType = value;
-      model.save();
+      this.robot.paymentType = value;
+      this.robot.save();
     }
   }
 
-  private createLogEntry(model: RobotModel, action: string) {
+  private createLogEntry(
+    action: string,
+  ) {
     let store = this.store;
     let session = this.session;
     let record = store.createRecord('activity-log', {
       volunteer: session.data.authenticated.fullname,
-      robot: model,
+      robot: this.robot,
       function: "PAYMENT",
       action: action,
     });
