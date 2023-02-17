@@ -7,6 +7,7 @@ from odf.style import Style, TextProperties, ParagraphProperties, \
 from odf import style
 from odf.text import P, H
 from time import strftime, gmtime
+import random
 
 if TYPE_CHECKING:
     from Event import Event
@@ -291,12 +292,15 @@ def make_odf_score_sheets(
     s.addElement(t)
     styles.addElement(s)
 
-    for tournament in event.round_robin_tournaments.values():
+    indexes = list(event.round_robin_tournaments.keys())
+    # random.shuffle(indexes)
+    for i in indexes:
+        tournament = event.round_robin_tournaments[i]
 
         print("building sheet for tournament: " + str(tournament.ring))
         h = H(
           outlinelevel=1,
-          text=event.competition + " - Ring " + str(tournament.ring)
+          text=event.id + " - Ring " + str(tournament.ring)
           + " - Score Sheet -  " + strftime("%H:%M", gmtime()),
           stylename=heading_paragraph_style_name,
         )
@@ -624,7 +628,7 @@ def make_odf_score_sheets(
         # TODO add checkboxes for the "Entered on Scoreboard" and
         # "Entered on spreadsheet."
 
-    filename = "./ScoreSheets/" + event.competition
+    filename = "./ScoreSheets/" + event.id
     document.save(filename, True)
 
     return filename

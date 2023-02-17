@@ -44,8 +44,7 @@ export default class RobotCheckinController extends Component<ComponentSignature
   }
 
   get paymentSelectDisabled(): boolean {
-    let b = ((this.robot.isPaid) && (this.robot.paymentType !== 'INVOICED'));
-    return b;
+    return ((this.robot.isPaid) && (this.robot.paymentType !== 'INVOICED'));
   }
 
   @action

@@ -8,7 +8,7 @@ export default class RingAssignmentRoute extends Route {
   model(params: any) {
     return this.store.findRecord(
       'competition', params.competition_id,  {
-        include: 'robot, ring-assignment',
+        include: 'robot, ringAssignment',
       });
   }
 }

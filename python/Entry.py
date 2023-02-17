@@ -1,7 +1,4 @@
-from typing import TYPE_CHECKING
-
-if TYPE_CHECKING:
-    from datetime import datetime
+from datetime import datetime
 
 
 class Entry(object):
@@ -18,9 +15,10 @@ class Entry(object):
       driver2Grade: int = 0,
       driver3: str = "",
       driver3Grade: int = 0,
-      status: str = "",
+      checkInStatus: str = "",
       measured: str = "",
       registered: datetime = datetime.min,
+      paymentType: str = "UNPAID"
     ):
         self.id = id
         self.robotName = robotName
@@ -33,9 +31,10 @@ class Entry(object):
         self.driver1Grade = driver2Grade
         self.driver3 = driver3
         self.driver3Grade = driver3Grade
-        self.checkInStatus = status
+        self.checkInStatus = checkInStatus
         self.measured = measured
         self.registered = registered
+        self.paymentType = paymentType
 
     def __eq__(self, other):
         return self.id == other.id

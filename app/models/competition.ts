@@ -5,7 +5,7 @@ import Model, {
 } from '@ember-data/model';
 
 import type RobotModel from './robot';
-import type RingAssignmentModel from './ring-assignment';
+import type RingAssignmentModel from './ringAssignment';
 
 export default class CompetitionModel extends Model {
     @attr('string') declare name: string;
@@ -29,7 +29,7 @@ export default class CompetitionModel extends Model {
       inverse: 'competition',
     })declare robot: SyncHasMany<RobotModel>;
 
-    @hasMany('ring-assignment',{
+    @hasMany('ringAssignment',{
       async: false,
       inverse: 'competition',
     }) declare ringAssignment: SyncHasMany<RingAssignmentModel>;

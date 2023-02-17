@@ -1,11 +1,13 @@
 from typing import TYPE_CHECKING
 from math import floor
 from Entry import Entry
+
 from EventEntry import EventEntry
 
 if TYPE_CHECKING:
     from typing import List
     from Event import Event
+
 
 byeEntry = EventEntry(
   Entry(
@@ -28,7 +30,7 @@ class RoundRobinTournament(object):
       self,
       name: str,
       ring: int,
-      event: Event,
+      event: 'Event',
     ) -> 'None':
         self.name = name
         self.ring = ring

@@ -6,7 +6,7 @@ module('Unit | Controller | ring assignments', function(hooks) {
 
   // Replace this with your real tests.
   test('it exists', function(assert) {
-    let controller = this.owner.lookup('controller:ring-assignments');
+    let controller = this.owner.lookup('controller:ringAssignment');
     assert.ok(controller);
   });
 });

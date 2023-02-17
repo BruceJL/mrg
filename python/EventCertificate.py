@@ -515,6 +515,6 @@ def make_odf_certificates(event, winners: 'List[Entry]'):
         sponsors_text_box.addElement(p)
 
     # Save document
-    file_name = "./ScoreSheets/" + event.competition + "-certificates"
+    file_name = "./ScoreSheets/" + event.id + "-certificates"
     document.save(file_name, True)
     return file_name
