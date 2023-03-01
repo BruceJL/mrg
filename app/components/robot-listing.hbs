@@ -12,13 +12,12 @@
       <th>Checked In</th>
       <th>Measured</th>
       <th>Status</th>
-      <th>Ready</th>
     </tr>
   </thead>
 
   <tbody>
     {{#each @robots as |item|}}
-      <tr class={{item.slottedStatus}}>
+      <tr class={{item.readyToCompete}}>
         <td>{{item.id}}</td>
         <td><LinkTo @route="robots.edit" @model={{item.id}}>{{item.name}}</LinkTo></td>
         <td>{{item.competition.name}}</td>
@@ -30,7 +29,6 @@
         <td class="centered">{{item.checkInStatus}}</td>
         <td class="centered">{{item.formattedMeasured}}</td>
         <td class="centered">{{item.slottedStatus}}</td>
-        <td class="centered">{{item.readyToCompete}}</td>
       </tr>
     {{/each}}
   </tbody>

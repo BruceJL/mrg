@@ -83,14 +83,20 @@ export default class RobotModel extends Model {
     }
   }
 
-  get readyToCompete(): boolean {
-    if(this.isPaid
-       && this.slottedStatus === "CONFIRMED"
-       && this.measured === true) {
-         return true;
-    } else {
-      return false
-    };
+  get readyToCompete(): ("UNSEEN" | "CONFIRMED" | "STANDBY" | "DECLINED") {
+    if(
+          this.isPaid === true
+       && this.measured === true
+    ){
+      if(this.slottedStatus === "CONFIRMED"){
+        return "CONFIRMED";
+      }else if(this.slottedStatus === "STANDBY"){
+        return "STANDBY";
+      }
+    }else if(this.slottedStatus === "DECLINED"){
+      return "DECLINED";
+    }
+    return "UNSEEN";
   }
 
   get isPayable() : boolean {

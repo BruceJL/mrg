@@ -69,24 +69,30 @@ table.list td.centered {
   text-align: center;
 }
 
-table.list tr.normal {}
-
-table.list tr.confirmed {
+table.list td.OK{
+  text-align: center;
   background-color: #7dff8e;
 }
 
-table.list tr.standby {
+table.list tr.normal {}
+
+table.list tr.CONFIRMED {
+  background-color: #7dff8e;
+}
+
+table.list tr.STANDBY {
   background-color: #f8ff7d;
 }
 
-table.list tr.declined {
+table.list tr.DECLINED {
   background-color: #FF6666;
 }
 
-table.list tr.withdrawn {
+table.list tr.WITHDRAWN {
   text-decoration: line-through;
   background-color: #FF6666;
 }
+
 
 input.full-width {
   width: 100%;
