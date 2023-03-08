@@ -7,6 +7,7 @@ import Model, {
 
 import type CompetitionModel from './competition';
 import type RobotMeasurementModel from './measurement';
+import RingAssignmentModel from './ring-assignment';
 
 function formatDollars(
   amount: number,
@@ -74,6 +75,11 @@ export default class RobotModel extends Model {
     async: false,
     inverse: 'robot',
   }) declare competition: CompetitionModel;
+
+  @belongsTo('ringAssignment', {
+    async: false,
+    inverse: 'robot',
+  }) declare ringAssignment: RingAssignmentModel
 
   get isPaid() {
     if (this.paid > 0.0 || this.paymentType === "INVOICED") {

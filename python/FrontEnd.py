@@ -71,6 +71,7 @@ class Frontend():
           password=self.password,
         ) as conn):
 
+            conn.autocommit = True
             self.cursor = conn.cursor()
             self.events = get_event_list_from_database(cursor=self.cursor)
 
@@ -507,6 +508,8 @@ def update_round_robin_assignments(
         participation_query = participation_query[:-1]
         participation_query += ");"
 
+        print(ring_assignment_query)
+        print(participation_query)
         cursor.execute(ring_assignment_query)
         cursor.execute(participation_query)
 

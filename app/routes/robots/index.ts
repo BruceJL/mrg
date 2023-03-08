@@ -1,5 +1,4 @@
 import { service } from '@ember/service';
-import RSVP from 'rsvp';
 import DS from 'ember-data';
 import AuthenticatedRoute from '../authenticated';
 

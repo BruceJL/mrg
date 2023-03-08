@@ -5,7 +5,7 @@ import Model, {
 } from '@ember-data/model';
 
 import type RobotModel from './robot';
-import type RingAssignmentModel from './ringAssignment';
+import type RingAssignmentModel from './ring-assignment';
 
 export default class CompetitionModel extends Model {
     @attr('string') declare name: string;

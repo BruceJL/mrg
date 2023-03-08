@@ -1,16 +1,7 @@
-import {
-  computed,
-  get,
-  set,
-  action,
-} from '@ember/object';
-import {
-  A,
-} from '@ember/array';
+import { action } from '@ember/object';
 import Controller from '@ember/controller';
-import {
-  debug
-} from '@ember/debug';
+import { debug } from '@ember/debug';
+import RobotsBulkPaymentRoute, { ModelFrom } from '../../routes/robots/bulk-payment';
 
 //Good checkbox model described here:
 //https://codeflip.przepiora.ca/blog/2014/05/22/ember-js-recipes-checkboxable-index-pages-using-itemcontroller/
@@ -19,29 +10,13 @@ import {
 //but both ObjectController and ArrayController are depreciated/superceded by controller
 //so that sucks.
 
-function formatDollars(amount) {
-  if (amount > 0) {
-    let formatted = parseFloat(amount, 10).toFixed(2);
-    return '$' + formatted;
-  } else {
-    return "";
-  }
-}
-
-function getTotalDollars(items, property) {
-  let total = 0.0;
-  items.forEach(function(item) {
-    total += Number(item.get(property));
-  });
-  return formatDollars(total);
-}
 
 export default class RobotBulkPaymentController extends Controller {
+  declare model: ModelFrom<RobotsBulkPaymentRoute>;
 
-  @computed('model.robots.@each.paymentType')
-  get coaches() {
-    let coaches = {};
-    let robots = get(this, 'model');
+  get coaches(): {[Identifier: string]: any}{
+    let coaches: {[Identifier: string]: any} = {};
+    let robots = this.model
     robots.forEach((robot) => {
       if (coaches[robot.email] == null) {
         coaches[robot.email] = {};
@@ -61,16 +36,16 @@ export default class RobotBulkPaymentController extends Controller {
   }
 
   @action
-  invoiceAll(email) {
+  invoiceAll(email: string) {
     debug("Invoicing all robots for " + email);
-    let robots = get(this, 'model');
+    let robots = this.model;
     robots.forEach((robot) => {
       if (robot.email === email) {
-        if (robot.get('paymentType') == null) {
-          robot.set('paymentType', "INVOICED");
+        if (robot.paymentType === "UNPAID") {
+          robot.paymentType = "INVOICED";
+          robot.save();
         }
       }
     });
-    robots.save();
   }
 }

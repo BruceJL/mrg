@@ -1,9 +1,11 @@
 import MinimumSerializerInterface from 'ember-data/serializer';
-import type Store from '@ember-data/store';
+import Store from '@ember-data/store';
 import { Snapshot } from '@ember-data/store';
 import { ModelSchema } from 'ember-data';
+import { service } from '@ember/service';
 
 export default class PostgresSerializer extends MinimumSerializerInterface {
+    @service declare store: Store;
 
     //Overrideing the serializeAttibute so that only dirty data is written
     //Back to the database. snippet stolen from:
@@ -27,7 +29,8 @@ export default class PostgresSerializer extends MinimumSerializerInterface {
       entry: Record<string, any>,
       included: Record<string, any>[],
     ): void {
-      let o = this.parseRecord(entry, thisType, parentType);
+      let model = this.store.modelFor(thisType)
+      let o = this.parseRecord(entry, thisType, parentType, model);
 
       // Since we're not at the top level, any data returned needs
       // to go onto the included array, as it's not the *primary* data.
@@ -46,11 +49,13 @@ export default class PostgresSerializer extends MinimumSerializerInterface {
       payload: Record<string, any>,
       thisType: string,
       parentType: string,
-      //type: string,
+      model: ModelSchema,
     ): Record<string, any> {
-      let included: Record<string, any>[] = []
+      let included: Record<string, any>[] = [];
       let relationshipData: Record<string, any> = {};
       let data: Record<string, any> = {};
+      let resourceHash: Record<string, string> = {};
+      let parentHash: Record<string, ModelSchema> = {};
 
       data['id'] = payload['id'].toString();
       data['type'] = thisType;
@@ -58,6 +63,9 @@ export default class PostgresSerializer extends MinimumSerializerInterface {
       data['relationships'] = {};
       relationshipData = {'type': thisType, 'id': payload['id']};
 
+      model.eachRelationship((name, descriptor) => {
+         resourceHash[name] = descriptor.kind;
+      });
 
       for(const key in payload){
         if (
@@ -71,7 +79,6 @@ export default class PostgresSerializer extends MinimumSerializerInterface {
           data['relationships'][key] = {};
           data['relationships'][key]['data'] = [];
 
-
           if(Array.isArray(payload[key])){
             // Deal with an array of items. This will be a hasMany relationship.
             payload[key].forEach((entry: Record<string, any>) =>{
@@ -83,6 +90,7 @@ export default class PostgresSerializer extends MinimumSerializerInterface {
             this.parseIncludedRecord(data, key, thisType, payload[key], included);
             // Make it a single Object as this is a belongsTo relationship.
             data['relationships'][key]['data'] = data['relationships'][key]['data'][0];
+
           }
 
           // Deal with the relationships returned value.
@@ -94,13 +102,24 @@ export default class PostgresSerializer extends MinimumSerializerInterface {
           }
 
         } else if(key !== 'id' && key !== thisType && key !== parentType) {
-            // Just a regular attribute. Populate the 'attributes' element.
-          data['attributes'][key] = payload[key];
+            if(resourceHash[key] === 'belongsTo'){
+              data['relationships'][key] = {};
+              data['relationships'][key]['data'] = {};
+              data['relationships'][key]['data']['id'] = payload[key]
+              data['relationships'][key]['data']['type'] = key
+            } else if(resourceHash[key] === 'hasMany'){
+               // TODO:
+               // Need to see an example of how postgrest populates this.
+               // Not used so far.
+            } else {
+              // Just a regular attribute. Populate the 'attributes' element.
+              data['attributes'][key] = payload[key];
+            }
         }
       }
 
       // tidy up the relationships array.
-      if( Object.keys(data['relationships']).length === 0){
+      if(Object.keys(data['relationships']).length === 0){
         delete(data['relationships']);
       }
 
@@ -122,14 +141,17 @@ export default class PostgresSerializer extends MinimumSerializerInterface {
       let included: Record<string, Record<string, any> | Record<string, unknown>[]>[] = [];
 
       // this populates the top level of the JSON:API responce, which does
-      // not have a 'relationships' key.
+      // not have a 'relationships' key. 'relationships' only exist as children
+      // of data objects.
       payload.forEach((item: Record<string, any>) => {
         let o =
           this.parseRecord(
             item,
             primaryModelClass.modelName.toString(), // thisType,
-            "", // parentType
+            "", // ParentType
+            primaryModelClass, // Model
           );
+
         // push the gathered item into the 'data' array.
         data.push(o['data']);
 

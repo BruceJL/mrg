@@ -1,13 +1,13 @@
-import { service } from '@ember/service';
-import DS from 'ember-data';
 import Controller from '@ember/controller';
-import RobotModel from 'mrg-sign-in/models/robot';
+import RingAssignmentModel from 'mrg-sign-in/models/ring-assignment';
+import RingAssignmentRoute from 'mrg-sign-in/routes/ring-assignments';
+import { ModelFrom } from '../routes/ring-assignments';
 
 export default class RingAssignmentController extends Controller {
-  @service declare store: DS.Store;
+  declare model: ModelFrom<RingAssignmentRoute>;
 
-  get sortedAssignments(): Array<RobotModel> {
-    return this.store.peekAll('ringAssignment').slice().sortBy('robot.name');
+  get sortedAssignments(): Array<RingAssignmentModel> {
+    return this.model.ringAssignment.slice().sortBy('robot.name');
   }
 }
 

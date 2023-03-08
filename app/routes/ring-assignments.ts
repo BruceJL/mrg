@@ -2,6 +2,9 @@ import Route from '@ember/routing/route';
 import { inject as service } from '@ember/service';
 import DS from 'ember-data';
 
+export type Resolved<P> = P extends Promise<infer T> ? T : P;
+export type ModelFrom<R extends Route> = Resolved<ReturnType<R['model']>>;
+
 export default class RingAssignmentRoute extends Route {
   @service declare store: DS.Store;
 
@@ -9,6 +12,7 @@ export default class RingAssignmentRoute extends Route {
     return this.store.findRecord(
       'competition', params.competition_id,  {
         include: 'robot, ringAssignment',
-      });
+      }
+    );
   }
 }

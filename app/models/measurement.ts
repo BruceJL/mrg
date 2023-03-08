@@ -15,7 +15,7 @@ export default class RobotMeasurementModel extends Model {
   @belongsTo('robot', {
     async: false,
     inverse: 'measurement',
-  }) declare robot: RobotModel; //: AsyncBelongsTo<RobotModel>;
+  }) declare robot: RobotModel;
 
   @attr('boolean') declare result: boolean;
   @attr('date') declare datetime: Date;
