@@ -1,7 +1,7 @@
 import { action } from '@ember/object';
-import Controller from '@ember/controller';
 import { debug } from '@ember/debug';
 import RobotsBulkPaymentRoute, { ModelFrom } from '../../routes/robots/bulk-payment';
+import RefreshedController from '../RefreshedController';
 
 //Good checkbox model described here:
 //https://codeflip.przepiora.ca/blog/2014/05/22/ember-js-recipes-checkboxable-index-pages-using-itemcontroller/
@@ -11,7 +11,7 @@ import RobotsBulkPaymentRoute, { ModelFrom } from '../../routes/robots/bulk-paym
 //so that sucks.
 
 
-export default class RobotBulkPaymentController extends Controller {
+export default class RobotBulkPaymentController extends RefreshedController {
   declare model: ModelFrom<RobotsBulkPaymentRoute>;
 
   get coaches(): {[Identifier: string]: any}{

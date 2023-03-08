@@ -1,9 +1,9 @@
 import { hash } from 'rsvp';
 import { inject as service } from '@ember/service';
 import DS from 'ember-data';
-import AuthenticatedRoute from '../authenticated';
+import Route from '@ember/routing/route';
 
-export default class RobotsNewRoute extends AuthenticatedRoute {
+export default class RobotsNewRoute extends Route {
   @service declare store: DS.Store;
 
   async model(params: any) {

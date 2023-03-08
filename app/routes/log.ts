@@ -1,9 +1,9 @@
+import Route from '@ember/routing/route';
 import { inject as service } from '@ember/service';
 import DS from 'ember-data';
 import RSVP from 'rsvp';
-import AuthenticatedRoute from './authenticated';
 
-export default class LogRoute extends AuthenticatedRoute {
+export default class LogRoute extends Route {
   @service declare store: DS.Store;
 
   async model() {

@@ -1,13 +1,13 @@
+import Route from '@ember/routing/route';
 import { inject as service } from '@ember/service';
 import DS from 'ember-data';
-import AuthenticatedRoute from '../authenticated';
+import CompetitionModel from 'mrg-sign-in/models/competition';
 
-export default class CompetitionAdminRoute extends AuthenticatedRoute {
+export default class CompetitionAdminRoute extends Route {
   @service declare store: DS.Store;
 
-  model(params: any) {
+  model(params: any): DS.PromiseObject<CompetitionModel>{
     let store = this.store;
-    //this.set('params', params);
     return store.findRecord('competition',
       params.competition_id, {
         include: 'robot'

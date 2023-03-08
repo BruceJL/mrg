@@ -1,14 +1,14 @@
+import Route from '@ember/routing/route';
 import Transition from '@ember/routing/transition';
 import { inject as service } from '@ember/service';
-import DS from 'ember-data';
-import AuthenticatedRoute from './authenticated';
 
 
-export default class Application extends AuthenticatedRoute {
-    @service declare store: DS.Store;
+export default class Application extends Route {
+    @service declare session: any; //EmberSimpleAuthSession
 
-    async beforemodel(transition: Transition){
+    beforemodel(transition: Transition){
         super.beforeModel(transition);
-        await this.session.setup();
+        this.session.setup();
+        this.session.requireAuthentication(transition, 'login');
     }
 }

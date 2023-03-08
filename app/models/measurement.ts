@@ -1,11 +1,9 @@
 import Model, {
   belongsTo,
   attr,
-  //type AsyncBelongsTo,
 } from '@ember-data/model';
 
 import {
-  computed,
   get,
 } from '@ember/object';
 
