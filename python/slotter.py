@@ -111,13 +111,6 @@ class Slotter():
                     neededVolunteers = i
                     needy_job = j
 
-            # print(
-            #   f"{needy_job.name} needs " +
-            #   f"{requiredVolunteers[needy_job] - len(slottedVolunteers[needy_job])} " +
-            #   f"more people. {availableVolunteerCount(volunteers, needy_job)} " +
-            #   "are available."
-            # )
-
             # done when all jobs have the minimum allotment.
             if i == 0.0:
                 break
