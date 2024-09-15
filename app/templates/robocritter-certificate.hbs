@@ -1,0 +1,26 @@
+{{!-- To do: Input Validation --}}
+
+<h2> Robocritter Certificate </h2>
+<form {{on "submit" this.preventDefault}}>
+    <h3>Competitor Information</h3>
+    <label for="name">Competitor</label>
+    <input id="name" placeholder="Enter Competitor Name" value={{this.name}}>
+
+    <label for="robotName">Robot Name</label>
+    <input id="robotName" placeholder="Enter Robot Name" value={{this.robotName}}>
+
+    <h3>Competition Time</h3> 
+    <label for="Minues">Minues</label>
+    <input id="minues" placeholder="Enter Minues" value={{this.minues}}>
+    <label for="Seconds">Seconds</label>
+    <input id="seconds" placeholder="Enter Seconds" value={{this.seconds}}>
+
+    <div>
+        <!-- Button for printing the certificate -->
+        <button type="button" style="margin: 20px" {{on "click" this.printCertificate}}>Print Certificate</button>
+
+        <!-- Button for saving the certificate -->
+        <button type="button" style="margin: 20px" {{on "click" this.saveCertificate}}>Save Certificate</button>
+    </div>
+
+</form>
