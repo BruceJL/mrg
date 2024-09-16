@@ -1,7 +1,9 @@
 import PostgrestAdapter from './postgrestAdapter';
+import ENV from '../config/environment';
+
 
 export default class ApplicationAdapter extends PostgrestAdapter{
-    //namespace = "api";
+    namespace = 'api';
     //@ts-ignore
-    //namespace = config.APP['API_NAMESPACE'];
+    //namespace = ENV.APP.API_NAMESPACE;
 }

@@ -1,6 +1,21 @@
 <h2>Robot: "{{this.model.robot.name}}"</h2>
 <hr>
-{{#with (changeset this.model.robot this.RobotValidation) as |c|}}
+
+<p>Competition
+
+  <select id="competition" {{on "change" (val (fn this.updateCompetition this.model.robot))}}>
+    <option value="" selected={{eq @this.model.robot.competition.id ""}} disabled={{true}}>
+      Select competition
+    </option>
+    {{#each this.model.competition as |c|}}
+      <option value={{c.id}} selected={{eq this.model.robot.competition.id c.id}}>
+        {{c.name}}
+      </option>
+    {{/each}}
+  </select>
+</p>
+
+{{#with (changeset this.model.robot ) as |c|}}
   <RobotDetail @changeset={{c}} @competitions={{this.model.competition}} />
   <button {{on "click" (fn this.rollback c)}}>Undo</button>
   <button {{on "click" (fn this.save c)}} disabled={{c.isInvalid}}>

@@ -94,10 +94,13 @@
   },
   "engineStrict": true,
   "engines": {
-    "node": "18.*"
+    "node": "20.*"
   },
   "dependencies": {
-    "ember-cli": "^4.11.0",
+    "@types/ember-changeset-validations": "^4.1.1",
+    "ember": "^1.1.1",
+    "ember-cli": "^5.11.0",
+    "ember-cli-update": "^2.0.1",
     "ember-radio-buttons": "^5.0.0",
     "ember-source": "^4.11.0",
     "moment": "^2.29.4"

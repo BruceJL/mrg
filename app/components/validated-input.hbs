@@ -1,5 +1,5 @@
 <Input
-  @value={{get @changeset @propertyName}}
+  @value={{changeset-get @changeset @propertyName}}
   @update={{action (changeset-set @changeset @propertyName)}}
-  @class={{if (get @changeset.error @propertyName) "full-width-error" "full-width"}}
+  @class={{if (changeset-get @changeset.error @propertyName) "full-width-error" "full-width"}}
 />

@@ -4,28 +4,19 @@
       <tr>
         <td>Robot Name:</td>
         <td>
-          <ValidatedInput @changeset={{@changeset}} @propertyName="name" />
-        </td>
-      </tr>
-      <tr>
-        <td>Competition:</td>
-        <td>
-          <select id="competition" {{on "change" (val (fn this.updateCompetition @changeset))}}>
-            <option value="" selected={{eq @changeset.competition.id ""}} disabled={{true}}>
-              Select competition
-            </option>
-            {{#each @competitions as |c|}}
-              <option value={{c.id}} selected={{eq @changeset.competition.id c.id}}>
-                {{c.name}}
-              </option>
-            {{/each}}
-          </select>
+          <Input
+            class={{if (@changeset.error.name) "full-width-error" "full-width"}}
+            @value={{@changeset.name}}
+          />
         </td>
       </tr>
       <tr>
         <td>Driver 1:</td>
         <td>
-          <ValidatedInput @changeset={{@changeset}} @propertyName="driver1"/>
+          <Input
+            class={{if (@changeset.error.driver1) "full-width-error" "full-width"}}
+            @value={{@changeset.driver1}}
+          />
         </td>
       </tr>
       <tr>
@@ -61,25 +52,37 @@
       <tr>
         <td>School:</td>
         <td>
-          <Input class="full-width" @value={{@changeset.school}} />
+          <Input
+            class={{if @changeset.error.school "full-width-error" "full-width"}}
+            @value={{@changeset.school}}
+          />
         </td>
       </tr>
       <tr>
         <td>Coach:</td>
         <td>
-          <ValidatedInput @changeset={{@changeset}} propertyName="coach"/>
+          <Input
+            class={{if @changeset.error.coach "full-width-error" "full-width"}}
+            @value={{@changeset.coach}}
+          />
         </td>
       </tr>
       <tr>
         <td>Email:</td>
         <td>
-          <ValidatedInput @changeset={{@changeset}} @propertyName="email"/>
+          <Input
+            class={{if @changeset.error.email "full-width-error" "full-width"}}
+            @value={{@changeset.email}}
+          />
         </td>
       </tr>
       <tr>
         <td>Ph:</td>
         <td>
-          <ValidatedInput @changeset={{@changeset}} @propertyName="ph"/>
+          <Input
+            class={{if @changeset.error.ph "full-width-error" "full-width"}}
+            @value={{@changeset.ph}}
+          />
         </td>
       </tr>
     </tbody>

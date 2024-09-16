@@ -31,12 +31,10 @@ def make_ordinal(n: 'int'):
     return suffix
 
 
-def make_odf_certificates(event, winners: 'List[Entry]'):
+def make_odf_participation_certificates(event, competitors: 'List[Entry]'):
 
     now = datetime.datetime.now()
     games_iteration: 'int' = now.year - 1998
-
-    competition_name: 'str' = event.long_name
 
     document = OpenDocumentDrawing()
 
@@ -330,20 +328,26 @@ def make_odf_certificates(event, winners: 'List[Entry]'):
     # Add in the robot logo picture.
     robot_logo_href = document.addPicture('robot.png')
 
-    for i in range(len(winners)):
-        place = i + 1
+    # filter out robots by  who checked in.
+    bots = []
+    for c in competitors:
+        if c.checkInStatus == "CHECKED-IN":
+            bots.append(c)
+
+    for i, c in enumerate(bots):
 
         # Create a page to contain the drawing
         page = Page(
           masterpagename=masterpage,
-          name="page-" + str(place),
+          name="page-" + str(i),
           stylename=drawing_page,
         )
         document.drawing.addElement(page)
 
         # Replace winner's information
-        competitorname = winners[i].driver1
-        robotname = '"' + winners[i].robotName + '"'
+        competitorname = c.driver1
+        robotname = '"' + c.robotName + '"'
+        schoolname = c.school
 
         # Add image
         photoframe = Frame(
@@ -355,9 +359,9 @@ def make_odf_certificates(event, winners: 'List[Entry]'):
         )
 
         winner_frame = Frame(
-          width="5.00in",
-          height="4.50in",
-          x="4.25in",
+          width="6.00in",
+          height="4.00in",
+          x="3.75in",
           y="1.00in",
           stylename=frame_style,
         )
@@ -397,42 +401,37 @@ def make_odf_certificates(event, winners: 'List[Entry]'):
           stylename=winners_paragraph_style,
         )
 
+        # This is to certify that.
         teletype.addTextToElement(p, "This is to certify that\n")
+        # competitor name
         p.addElement(Span(
           stylename=big_caslon_22pt_bold,
           text=competitorname
         ))
         teletype.addTextToElement(p, "\n")
 
+        # from
         p.addElement(Span(
-          stylename=big_caslon_pro_22pt, text="With\n"
+          stylename=big_caslon_pro_22pt, text="From\n"
         ))
         teletype.addTextToElement(p, "\n")
 
+        # School
         p.addElement(Span(
-          text=robotname,
+          text=schoolname,
           stylename=big_caslon_pro_26pt_bold,
         ))
         teletype.addTextToElement(p, "\n")
 
+        # participated in the design and construction of
         p.addElement(Span(
-          text="\ntook " + str(place),
+          text="\nparticipated in the design and construction of\n",
           stylename=big_caslon_pro_22pt,
         ))
 
+        # robot name
         p.addElement(Span(
-          text=make_ordinal(place),
-          stylename=big_caslon_pro_22pt_superscript,
-        ))
-
-        p.addElement(Span(
-          text=" place in",
-          stylename=big_caslon_pro_22pt,
-        ))
-        teletype.addTextToElement(p, "\n")
-
-        p.addElement(Span(
-          text=competition_name,
+          text=robotname,
           stylename=big_caslon_pro_26pt_bold,
         ))
 
@@ -445,36 +444,39 @@ def make_odf_certificates(event, winners: 'List[Entry]'):
         )
 
         p.addElement(Span(
+          text="A Robot(s) which, through his/her ingenuity, gained fame in the",
+          stylename=big_caslon_pro_22pt,
+        ))
+        teletype.addTextToElement(p, "\n")
+
+        # 2xth annual robot games.
+        p.addElement(Span(
           text=games_iteration,
           stylename=big_caslon_pro_22pt_bold,
         ))
-
         p.addElement(Span(
           text=make_ordinal(games_iteration),
           stylename=big_caslon_pro_22pt_bold_superscript,
         ))
-
         p.addElement(Span(
           text=" Annual ",
-          stylename=big_caslon_pro_22pt,
+          stylename=big_caslon_pro_22pt_bold,
         ))
-
         p.addElement(Span(
           text="Manitoba Robot Games",
           stylename=cooper_black_22pt,
         ))
         teletype.addTextToElement(p, "\n")
 
+        # held MArch xx 20xx at Tec Voc High School
         p.addElement(Span(
           text="held " + calendar.month_name[now.month] + " " + str(now.day),
           stylename=big_caslon_pro_18pt,
         ))
-
         p.addElement(Span(
           text=make_ordinal(now.day),
           stylename=big_caslon_pro_18pt_superscript,
         ))
-
         p.addElement(Span(
           text=", " + str(now.year) + " at Tec Voc High School",
           stylename=big_caslon_pro_18pt,
@@ -502,6 +504,11 @@ def make_odf_certificates(event, winners: 'List[Entry]'):
           + "contributions of: CTTAM, EGM, Emergent BioSolutions, IEEE, "
         )
 
+        # p.addElement(Span(
+        #   text="MicroPilot",
+        #   stylename=big_caslon_pro_12pt_bold,
+        # ))
+
         teletype.addTextToElement(
           p,
           ", U of M Faculty of Engineering,\n"
@@ -510,6 +517,6 @@ def make_odf_certificates(event, winners: 'List[Entry]'):
         sponsors_text_box.addElement(p)
 
     # Save document
-    file_name = "./ScoreSheets/" + event.id + "-certificates"
+    file_name = "./ScoreSheets/" + event.id + "-participation"
     document.save(file_name, True)
     return file_name

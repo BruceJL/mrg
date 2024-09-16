@@ -12,6 +12,7 @@ from pgdb import connect, Cursor
 from tkinter import messagebox, simpledialog
 
 from EventCertificate import make_odf_certificates
+from ParticipationCertificate import make_odf_participation_certificates
 from EventLabels import make_odf5160_labels
 from EventScoresheet import make_odf_score_sheets
 
@@ -142,6 +143,14 @@ class Frontend():
               command=lambda: self.gui_make_odf_certificates(self.cursor),
             ).pack()
 
+            # Create participation certificates button
+            tkinter.Button(
+              window,
+              text="Create Participation Certificates",
+              command=lambda: self.gui_make_odf_participation_certificates(self.cursor),
+            ).pack()
+
+
             # Run the window
             window.mainloop()
 
@@ -243,6 +252,21 @@ class Frontend():
         filename = make_odf_certificates(
           event=event,
           winners=winners,
+        )
+        filename = os.path.realpath(filename) + ".odg"
+        open_file(filename)
+
+    # Make participation certificates for the chosen Competition
+    def gui_make_odf_participation_certificates(self, cursor: Cursor) -> None:
+        competition: 'str' = self.selected_competition.get()
+        event = self.events[competition]
+
+        event.entries.clear()
+        get_event_entries_from_database(cursor, event)
+
+        filename = make_odf_participation_certificates(
+          event=event,
+          competitors=event.entries,
         )
         filename = os.path.realpath(filename) + ".odg"
         open_file(filename)
@@ -402,9 +426,7 @@ def update_round_robin_assignments(
     event.entries.sort()
 
     for entry in event.entries:
-        if entry.checkInStatus == "CHECKED-IN" \
-          and entry.measured is True \
-          and entry.paymentType != "UNPAID":
+        if entry.checkInStatus == "CHECKED-IN":
             num_entries = num_entries + 1
             if num_entries > max_entries:
                 break
