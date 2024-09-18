@@ -1,7 +1,7 @@
 <h2>Who's There?</h2>
 <form {{on "submit" this.authenticate }}>
   <label for="identification">Login</label>
-  {{input id="identification" placeholder="Enter Login" value=this.identification}}
+  <Input @id="identification" placeholder="Enter Login" @value={{this.identification}} />
   <button type="submit">Login</button>
   {{#if this.errorMessage}}
     <p>{{this.errorMessage}}</p>
