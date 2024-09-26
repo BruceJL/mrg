@@ -1,9 +1,42 @@
 --
--- PostgreSQL database dump
+-- PostgreSQL database cluster dump
 --
 
--- Dumped from database version 13.9 (Debian 13.9-0+deb11u1)
--- Dumped by pg_dump version 13.9 (Debian 13.9-0+deb11u1)
+SET default_transaction_read_only = off;
+
+SET client_encoding = 'UTF8';
+SET standard_conforming_strings = on;
+
+--
+-- Roles
+--
+
+CREATE ROLE authenticator;
+ALTER ROLE authenticator WITH NOSUPERUSER NOINHERIT NOCREATEROLE NOCREATEDB LOGIN NOREPLICATION NOBYPASSRLS;
+
+CREATE ROLE bruce;
+ALTER ROLE bruce WITH SUPERUSER NOINHERIT NOCREATEROLE NOCREATEDB LOGIN NOREPLICATION NOBYPASSRLS;
+
+CREATE ROLE web_anon;
+ALTER ROLE web_anon WITH NOSUPERUSER NOINHERIT NOCREATEROLE NOCREATEDB LOGIN NOREPLICATION NOBYPASSRLS;
+COMMENT ON ROLE web_anon IS 'web_anon access';
+
+
+--
+-- Role memberships
+--
+
+GRANT web_anon TO authenticator GRANTED BY postgres;
+
+
+--
+-- Database "mrg" dump
+--
+
+-- Name: mrg; Type: DATABASE; Schema: -; Owner: postgres
+--
+
+\connect mrg
 
 SET statement_timeout = 0;
 SET lock_timeout = 0;
@@ -34,8 +67,12 @@ CREATE SCHEMA robots;
 
 ALTER SCHEMA robots OWNER TO postgres;
 
+-- Grant Schema permissions
+GRANT usage ON SCHEMA robots to web_anon GRANTED by postgres;
+GRANT usage ON SCHEMA people to web_anon GRANTED by postgres;
+
 --
--- Name: check_in_status; Type: TYPE; Schema: robots; Owner: bruce
+-- Name: check_in_status; Type: TYPE; Schema: robots; Owner: postgres
 --
 
 CREATE TYPE robots.check_in_status AS ENUM (
@@ -45,10 +82,10 @@ CREATE TYPE robots.check_in_status AS ENUM (
 );
 
 
-ALTER TYPE robots.check_in_status OWNER TO bruce;
+ALTER TYPE robots.check_in_status OWNER TO postgres;
 
 --
--- Name: payment_status; Type: TYPE; Schema: robots; Owner: bruce
+-- Name: payment_status; Type: TYPE; Schema: robots; Owner: postgres
 --
 
 CREATE TYPE robots.payment_status AS ENUM (
@@ -61,10 +98,10 @@ CREATE TYPE robots.payment_status AS ENUM (
 );
 
 
-ALTER TYPE robots.payment_status OWNER TO bruce;
+ALTER TYPE robots.payment_status OWNER TO postgres;
 
 --
--- Name: slotting_status; Type: TYPE; Schema: robots; Owner: bruce
+-- Name: slotting_status; Type: TYPE; Schema: robots; Owner: postgres
 --
 
 CREATE TYPE robots.slotting_status AS ENUM (
@@ -76,221 +113,7 @@ CREATE TYPE robots.slotting_status AS ENUM (
 );
 
 
-ALTER TYPE robots.slotting_status OWNER TO bruce;
-
---
--- Name: count_competition_robots(); Type: FUNCTION; Schema: robots; Owner: bruce
---
-
-CREATE FUNCTION robots.count_competition_robots() RETURNS trigger
-    LANGUAGE plpgsql
-    AS $$
-DECLARE
-   total integer;
-BEGIN
-   IF OLD.competition IS NOT NULL THEN
-      SELECT COUNT(*) into total FROM robot WHERE competition = OLD.competition;
-      UPDATE competition set "robotCount" = total WHERE id = OLD.competition;
-   END IF;
-   IF NEW.competition is NOT NULL THEN
-      SELECT COUNT(*) into total FROM robot WHERE competition = NEW.competition;
-      UPDATE competition set "robotCount" = total WHERE id = NEW.competition;
-   END IF;
-RETURN NULL;
-END;
-$$;
-
-
-ALTER FUNCTION robots.count_competition_robots() OWNER TO bruce;
-
---
--- Name: count_robots(); Type: FUNCTION; Schema: robots; Owner: bruce
---
-
-CREATE FUNCTION robots.count_robots() RETURNS void
-    LANGUAGE plpgsql
-    AS $$
-DECLARE
-   comp text;
-   total integer;
-BEGIN
-   for comp IN SELECT id FROM robots.competition LOOP
-      SELECT COUNT(*) into total FROM robots.robot WHERE competition = comp;
-      UPDATE robots.competition set "robotCount" = total WHERE id = comp;
-      RAISE NOTICE '% = %', comp, total;
-   END LOOP;
-END;
-$$;
-
-
-ALTER FUNCTION robots.count_robots() OWNER TO bruce;
-
---
--- Name: reset_measurement_status(); Type: FUNCTION; Schema: robots; Owner: postgres
---
-
-CREATE FUNCTION robots.reset_measurement_status() RETURNS trigger
-    LANGUAGE plpgsql
-    AS $$
-	BEGIN
-       update robot set "measured" = false where "competition" = new.id;
-       return null;
-	END;
-$$;
-
-
-ALTER FUNCTION robots.reset_measurement_status() OWNER TO postgres;
-
---
--- Name: update_measured_status(); Type: FUNCTION; Schema: robots; Owner: postgres
---
-
-CREATE FUNCTION robots.update_measured_status() RETURNS trigger
-    LANGUAGE plpgsql
-    AS $$
-    DECLARE
-      competition_id text;
-      robot_id integer;
-      count integer;
-      competition_rec RECORD;
-
-      measurement RECORD;
-      measured_ok boolean;
-      passed boolean;
-	begin
-		-- Get the competition_id associated with this robot/measurement.
-		select "competition" into competition_id from robots.robot where id = new.robot;
-
-	    -- Get the competition record associated with this robot;
-	    select * into competition_rec from competition where id = competition_id;
-
-	    measured_ok := true;
-
-	    -- Check to see if all the required measurements are satisfied.
-	    if competition_rec."measureMass" then
-	      select * into measurement from measurement
-	        where robot = new.robot and type = 'Mass' ORDER by datetime DESC limit 1;
-	      if((not found) or (measurement."result" = false) or (measurement."datetime" < competition_rec."registrationTime")) then
-	         measured_ok := false;
-	      end if;
-	    end if;
-
-	    if competition_rec."measureSize" then
-	      select * into measurement from measurement
-	        where robot = new.robot and type = 'Size' ORDER by datetime DESC limit 1;
-	      if((not found) or (measurement."result" = false) or (measurement."datetime" < competition_rec."registrationTime")) then
-	         measured_ok := false;
-	      end if;
-	    end if;
-
-	    if competition_rec."measureScratch" then
-	      select * into measurement from measurement
-	        where robot = new.robot and type = 'Scratch' ORDER by datetime desc limit 1;
-	      if((not found) or (measurement."result" = false) or (measurement."datetime" < competition_rec."registrationTime")) then
-	         measured_ok := false;
-	      end if;
-	    end if;
-
-	    if competition_rec."measureTime" then
-	      select * into measurement from measurement
-	        where robot = new.robot and type = 'Time' ORDER by datetime desc limit 1;
-	      if((not found) or (measurement."result" = false) or (measurement."datetime" < competition_rec."registrationTime")) then
-	         measured_ok := false;
-	      end if;
-	    end if;
-
-	    if competition_rec."measureDeadman" then
-	      select * into measurement from measurement
-	        where robot = new.robot and type = 'Deadman' ORDER by datetime desc limit 1;
-	      if((not found) or (measurement."result" = false) or (measurement."datetime" < competition_rec."registrationTime")) then
-	         measured_ok := false;
-	      end if;
-	    end if;
-
-	   -- Update the robot's measured status.
-	   update robot set measured = measured_ok where id = new.robot;
-       return null;
-	END;
-$$;
-
-
-ALTER FUNCTION robots.update_measured_status() OWNER TO postgres;
-
---
--- Name: update_slotted_status(); Type: FUNCTION; Schema: robots; Owner: bruce
---
-
-CREATE FUNCTION robots.update_slotted_status() RETURNS trigger
-    LANGUAGE plpgsql
-    AS $$
-DECLARE
-   maxEntries integer;
-   checkedInCount integer;
-   rec RECORD;
-   checkedInOrUnknownCount integer;
-   targetStatus robots."slotting_status";
-BEGIN
-   SELECT maxEntries INTO maxEntries
-      FROM robot WHERE competition = NEW.competition;
-
-   checkedInOrUnknownCount := 0;
-   checkedInCount := 0;
-   -- Select all the robots in this competition and order them by regisration time.
-   -- The earliest robot first.
-   FOR rec IN
-      SELECT * FROM robot WHERE
-             competition = NEW.competition
-         ORDER BY registered ASC
-    loop
-      IF rec.id = NEW.id THEN
-         rec := NEW;
-      END IF;
-
-      IF rec."checkInStatus" = 'CHECKED-IN' THEN
-         checkedInOrUnknownCount := checkedInOrUnknownCount + 1;
-         checkedInCount := checkedInCount + 1;
-
-         IF checkedInCount > maxEntries THEN
-            targetStatus := 'DECLINED';
-
-         ELSIF checkedInOrUnknownCount > maxEntries THEN
-            targetStatus := 'STANDBY';
-
-         ELSE
-            targetStatus := 'CONFIRMED';
-         END IF;
-
-      ELSIF rec."checkInStatus" = 'UNKNOWN' THEN
-         checkedInOrUnknownCount = checkedInOrUnknownCount + 1;
-
-         IF checkedInCount >= maxEntries THEN
-            targetStatus := 'DECLINED';
-         ELSE
-            targetStatus := 'UNSEEN';
-         END IF;
-
-      ELSIF rec."checkInStatus" = 'WITHDRAWN' THEN
-            targetStatus := 'WITHDRAWN';
-      END IF;
-
-     --RAISE NOTICE 'robot: % status %', rec.name, targetStatus;
-
-      -- Write the target status to the row or update NEW if this is the same record.
-      IF rec.id = NEW.id THEN
-         NEW."slottedStatus" := targetStatus;
-      ELSIF rec."slottedStatus" != targetStatus THEN
-         UPDATE robot set "slottedStatus" = targetStatus WHERE id = rec.id;
-      END IF;
-   END LOOP;
-
-   UPDATE competition SET "robotCheckedInCount" = checkedInCount WHERE id = NEW.competition;
-
-   RETURN NEW;
-END;
-$$;
-
-
-ALTER FUNCTION robots.update_slotted_status() OWNER TO bruce;
+ALTER TYPE robots.slotting_status OWNER TO postgres;
 
 SET default_tablespace = '';
 
@@ -311,19 +134,6 @@ CREATE TABLE people.coaches (
 
 
 ALTER TABLE people.coaches OWNER TO postgres;
-
---
--- Name: COLUMN coaches.id; Type: COMMENT; Schema: people; Owner: postgres
---
-
-COMMENT ON COLUMN people.coaches.id IS 'Primary Key';
-
-
---
--- Name: COLUMN coaches.phone; Type: COMMENT; Schema: people; Owner: postgres
---
-
-COMMENT ON COLUMN people.coaches.phone IS 'Phone Number';
 
 
 --
@@ -500,7 +310,7 @@ CREATE TABLE robots.robot (
     name character varying(100) NOT NULL,
     competition character varying(50) NOT NULL,
     driver1 character varying(50) NOT NULL,
-    driver1gr character varying(50) NOT NULL,
+    driver1gr character varying(50) DEFAULT 0 NOT NULL,
     driver2 character varying(50),
     driver2gr character varying(50),
     driver3 character varying(50),
@@ -514,7 +324,7 @@ CREATE TABLE robots.robot (
     late integer DEFAULT 0 NOT NULL,
     "checkInStatus" robots.check_in_status DEFAULT 'UNKNOWN'::robots.check_in_status NOT NULL,
     "paymentType" robots.payment_status DEFAULT 'UNPAID'::robots.payment_status NOT NULL,
-    registered timestamp with time zone DEFAULT now() NOT NULL,
+    registered timestamp without time zone DEFAULT now() NOT NULL,
     participated boolean DEFAULT false NOT NULL,
     id integer NOT NULL,
     "slottedStatus" robots.slotting_status DEFAULT 'UNSEEN'::robots.slotting_status NOT NULL,
@@ -550,6 +360,287 @@ ALTER TABLE robots.robot ALTER COLUMN id ADD GENERATED ALWAYS AS IDENTITY (
     NO MAXVALUE
     CACHE 1
 );
+
+
+--
+-- Name: total; Type: TABLE; Schema: robots; Owner: postgres
+--
+
+CREATE TABLE robots.total (
+    count bigint
+);
+
+
+ALTER TABLE robots.total OWNER TO postgres;
+
+--
+-- Name: count_competition_robots(); Type: FUNCTION; Schema: robots; Owner: postgres
+--
+
+CREATE FUNCTION robots.count_competition_robots() RETURNS trigger
+    LANGUAGE plpgsql
+    AS $$
+DECLARE
+   total integer;
+BEGIN
+   IF OLD.competition IS NOT NULL THEN
+      SELECT COUNT(*) into total FROM robot WHERE competition = OLD.competition;
+      UPDATE competition set "robotCount" = total WHERE id = OLD.competition;
+   END IF;
+   IF NEW.competition is NOT NULL THEN
+      SELECT COUNT(*) into total FROM robot WHERE competition = NEW.competition;
+      UPDATE competition set "robotCount" = total WHERE id = NEW.competition;
+   END IF;
+RETURN NULL;
+END;
+$$;
+
+
+ALTER FUNCTION robots.count_competition_robots() OWNER TO postgres;
+
+--
+-- Name: count_robots(); Type: FUNCTION; Schema: robots; Owner: postgres
+--
+
+CREATE FUNCTION robots.count_robots() RETURNS void
+    LANGUAGE plpgsql
+    AS $$
+DECLARE
+   comp text;
+   total integer;
+BEGIN
+   for comp IN SELECT id FROM robots.competition LOOP
+      SELECT COUNT(*) into total FROM robots.robot WHERE competition = comp;
+      UPDATE robots.competition set "robotCount" = total WHERE id = comp;
+      RAISE NOTICE '% = %', comp, total;
+   END LOOP;
+END;
+$$;
+
+
+ALTER FUNCTION robots.count_robots() OWNER TO postgres;
+
+--
+-- Name: reset_measurement_status(); Type: FUNCTION; Schema: robots; Owner: postgres
+--
+
+CREATE FUNCTION robots.reset_measurement_status() RETURNS trigger
+    LANGUAGE plpgsql
+    AS $$
+	BEGIN
+       update robot set "measured" = false where "competition" = new.id;
+       return null;
+	END;
+$$;
+
+
+ALTER FUNCTION robots.reset_measurement_status() OWNER TO postgres;
+
+--
+-- Name: update_measured_status(); Type: FUNCTION; Schema: robots; Owner: postgres
+--
+
+CREATE FUNCTION robots.update_measured_status() RETURNS trigger
+    LANGUAGE plpgsql
+    AS $$
+    DECLARE
+      competition_id text;
+      robot_id integer;
+      count integer;
+      competition_rec RECORD;
+     
+      measurement RECORD;
+      measured_ok boolean;
+      passed boolean;
+	begin
+		-- Get the competition_id associated with this robot/measurement.
+		select "competition" into competition_id from robots.robot where id = new.robot;
+	
+	    -- Get the competition record associated with this robot;
+	    select * into competition_rec from competition where id = competition_id;
+	   
+	    measured_ok := true;
+	   
+	    -- Check to see if all the required measurements are satisfied.
+	    if competition_rec."measureMass" then
+	      select * into measurement from measurement
+	        where robot = new.robot and type = 'Mass' ORDER by datetime DESC limit 1;
+	      if((not found) or (measurement."result" = false) or (measurement."datetime" < competition_rec."registrationTime")) then 
+	         measured_ok := false;
+	      end if;
+	    end if;
+	   
+	    if competition_rec."measureSize" then
+	      select * into measurement from measurement 
+	        where robot = new.robot and type = 'Size' ORDER by datetime DESC limit 1;
+	      if((not found) or (measurement."result" = false) or (measurement."datetime" < competition_rec."registrationTime")) then 
+	         measured_ok := false;
+	      end if;
+	    end if;
+	    
+	    if competition_rec."measureScratch" then
+	      select * into measurement from measurement 
+	        where robot = new.robot and type = 'Scratch' ORDER by datetime desc limit 1;
+	      if((not found) or (measurement."result" = false) or (measurement."datetime" < competition_rec."registrationTime")) then
+	         measured_ok := false;
+	      end if;
+	    end if;
+	   	    
+	    if competition_rec."measureTime" then
+	      select * into measurement from measurement  
+	        where robot = new.robot and type = 'Time' ORDER by datetime desc limit 1;
+	      if((not found) or (measurement."result" = false) or (measurement."datetime" < competition_rec."registrationTime")) then 
+	         measured_ok := false;
+	      end if;
+	    end if;
+	   
+	    if competition_rec."measureDeadman" then
+	      select * into measurement from measurement 
+	        where robot = new.robot and type = 'Deadman' ORDER by datetime desc limit 1;
+	      if((not found) or (measurement."result" = false) or (measurement."datetime" < competition_rec."registrationTime")) then 
+	         measured_ok := false;
+	      end if;
+	    end if;
+	   
+	   -- Update the robot's measured status.
+	   update robot set measured = measured_ok where id = new.robot;
+       return null;
+	END;
+$$;
+
+
+ALTER FUNCTION robots.update_measured_status() OWNER TO postgres;
+
+--
+-- Name: update_slotted_status(); Type: FUNCTION; Schema: robots; Owner: postgres
+--
+
+CREATE FUNCTION robots.update_slotted_status() RETURNS trigger
+    LANGUAGE plpgsql
+    AS $$
+DECLARE
+   maxEntries integer;
+   checkedInCount integer;
+   rec RECORD;
+   checkedInOrUnknownCount integer;
+   targetStatus robots."slotting_status";
+BEGIN
+   SELECT maxEntries INTO maxEntries
+      FROM robot WHERE competition = NEW.competition;
+
+   checkedInOrUnknownCount := 0;
+   checkedInCount := 0;
+   -- Select all the robots in this competition and order them by regisration time.
+   -- The earliest robot first.
+   FOR rec IN
+      SELECT * FROM robot WHERE
+             competition = NEW.competition
+         ORDER BY registered ASC
+    loop
+      IF rec.id = NEW.id THEN
+         rec := NEW;
+      END IF;
+      
+      IF rec."checkInStatus" = 'CHECKED-IN' THEN
+         checkedInOrUnknownCount := checkedInOrUnknownCount + 1;
+         checkedInCount := checkedInCount + 1;
+
+         IF checkedInCount > maxEntries THEN
+            targetStatus := 'DECLINED';
+
+         ELSIF checkedInOrUnknownCount > maxEntries THEN
+            targetStatus := 'STANDBY';
+
+         ELSE 
+            targetStatus := 'CONFIRMED';
+         END IF;
+
+      ELSIF rec."checkInStatus" = 'UNKNOWN' THEN
+         checkedInOrUnknownCount = checkedInOrUnknownCount + 1;
+
+         IF checkedInCount >= maxEntries THEN
+            targetStatus := 'DECLINED'; 
+         ELSE
+            targetStatus := 'UNSEEN';
+         END IF;
+
+      ELSIF rec."checkInStatus" = 'WITHDRAWN' THEN
+            targetStatus := 'WITHDRAWN';
+      END IF;
+      
+     --RAISE NOTICE 'robot: % status %', rec.name, targetStatus; 
+
+      -- Write the target status to the row or update NEW if this is the same record.
+      IF rec.id = NEW.id THEN
+         NEW."slottedStatus" := targetStatus;
+      ELSIF rec."slottedStatus" != targetStatus THEN
+         UPDATE robot set "slottedStatus" = targetStatus WHERE id = rec.id;
+      END IF;
+   END LOOP;
+  
+   UPDATE competition SET "robotCheckedInCount" = checkedInCount WHERE id = NEW.competition;
+
+   RETURN NEW;
+END;
+$$;
+
+
+ALTER FUNCTION robots.update_slotted_status() OWNER TO postgres;
+
+
+--
+-- Data for Name: competition; Type: TABLE DATA; Schema: robots; Owner: postgres
+--
+
+COPY robots.competition (id, name, "longName", rings, "minRobotsPerRing", "maxRobotsPerRing", checkstring, "registrationTime", "measureMass", "measureSize", "measureTime", "measureScratch", "measureDeadman", "robotCount", "robotCheckedInCount") FROM stdin;
+SSL	SSL	Super Scramble Light	2	4	8	i	2023-02-06 11:36:42.201776-06	t	t	f	f	f	19	0
+DRA	DRA	Drag Race Autonomous	1	2	2	i	2023-02-06 11:36:42.201776-06	f	t	f	t	f	5	3
+LFK	LFK	Line Follower - Kit	1	1	1	i	2023-02-06 11:36:42.201776-06	f	t	f	f	f	0	0
+LMA	LMA	Line Maze Autonomous	1	1	1	i	2023-02-06 11:36:42.201776-06	f	t	f	t	f	2	0
+MSR	MSR	Mini Sumo Rookie	4	4	8	i	2023-02-06 11:36:42.201776-06	t	f	f	t	f	15	13
+PST	PST	Prarie Sumo Tethered	4	4	8	i	2023-02-06 11:36:42.201776-06	t	t	f	t	f	18	7
+PSA	PSA	Prarie Sumo Autonomous	4	4	8	i	2023-02-06 11:36:42.201776-06	t	t	t	t	f	6	5
+SSH	SSH	Super Scramble Heavy	1	4	8	i	2023-02-06 11:36:42.201776-06	t	t	f	t	f	3	1
+MS2	MS2	Mini Sumo 2	4	4	8	i	2023-02-06 11:36:42.201776-06	t	f	f	t	f	9	9
+MS1	MS1	Mini Sumo 1	8	4	8	i	2023-02-06 12:16:13.069706-06	t	f	f	t	f	10	9
+TPM	TPM	Tractor Pull	1	4	10	i	2023-02-06 11:36:42.201776-06	t	t	t	f	t	7	1
+MSA	MSA	Mini Sumo Autonomous	8	4	8	i	2023-02-06 11:36:42.201776-06	t	f	t	t	f	16	14
+JC1	JC1	Judges' Choice	4	4	8	i	2023-02-06 11:36:42.201776-06	f	f	f	f	f	2	1
+RC1	RC1	Robo Critter	1	1	1	i	2023-02-06 11:36:42.201776-06	f	f	f	f	f	8	2
+MS3	MS3	Mini Sumo 3	8	4	8	i	2023-02-06 11:36:42.201776-06	t	f	f	t	f	18	10
+SSR	SSR	Super Scramble Rookie	5	2	2	i	2023-02-06 11:36:42.201776-06	t	t	f	f	f	5	5
+LFS	LFS	Line Follower - Scratch	4	4	8	i	2023-02-06 11:36:42.201776-06	f	t	f	f	f	46	6
+NXT	NXT	Lego Challenge	4	4	8	i	2023-02-06 11:36:42.201776-06	f	f	f	f	f	6	12
+\.
+
+
+
+--
+-- Name: activity-log_id_seq; Type: SEQUENCE SET; Schema: robots; Owner: postgres
+--
+
+SELECT pg_catalog.setval('robots."activity-log_id_seq"', 257, true);
+
+
+--
+-- Name: measurement_id_seq; Type: SEQUENCE SET; Schema: robots; Owner: postgres
+--
+
+SELECT pg_catalog.setval('robots.measurement_id_seq', 190, true);
+
+
+--
+-- Name: ring-assignment_id_seq; Type: SEQUENCE SET; Schema: robots; Owner: postgres
+--
+
+SELECT pg_catalog.setval('robots."ring-assignment_id_seq"', 119, true);
+
+
+--
+-- Name: robot_id_seq; Type: SEQUENCE SET; Schema: robots; Owner: postgres
+--
+
+SELECT pg_catalog.setval('robots.robot_id_seq', 476, true);
 
 
 --
@@ -743,4 +834,3 @@ GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE robots.robot TO web_anon;
 --
 -- PostgreSQL database dump complete
 --
-
