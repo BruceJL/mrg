@@ -28,3 +28,7 @@
 **.pyc
 python/ScoreSheets/*
 python/*.csv
+
+# Unnecessary file
+/pods/passwords.txt
+/pods/postgresql/01_mrg_data.sql

@@ -384,12 +384,12 @@ DECLARE
    total integer;
 BEGIN
    IF OLD.competition IS NOT NULL THEN
-      SELECT COUNT(*) into total FROM robot WHERE competition = OLD.competition;
-      UPDATE competition set "robotCount" = total WHERE id = OLD.competition;
+      SELECT COUNT(*) into total FROM robots.robot WHERE competition = OLD.competition;
+      UPDATE robots.competition set "robotCount" = total WHERE id = OLD.competition;
    END IF;
    IF NEW.competition is NOT NULL THEN
-      SELECT COUNT(*) into total FROM robot WHERE competition = NEW.competition;
-      UPDATE competition set "robotCount" = total WHERE id = NEW.competition;
+      SELECT COUNT(*) into total FROM robots.robot WHERE competition = NEW.competition;
+      UPDATE robots.competition set "robotCount" = total WHERE id = NEW.competition;
    END IF;
 RETURN NULL;
 END;
@@ -428,7 +428,7 @@ CREATE FUNCTION robots.reset_measurement_status() RETURNS trigger
     LANGUAGE plpgsql
     AS $$
 	BEGIN
-       update robot set "measured" = false where "competition" = new.id;
+       update robots.robot set "measured" = false where "competition" = new.id;
        return null;
 	END;
 $$;
@@ -448,62 +448,62 @@ CREATE FUNCTION robots.update_measured_status() RETURNS trigger
       robot_id integer;
       count integer;
       competition_rec RECORD;
-     
+
       measurement RECORD;
       measured_ok boolean;
       passed boolean;
 	begin
 		-- Get the competition_id associated with this robot/measurement.
 		select "competition" into competition_id from robots.robot where id = new.robot;
-	
+
 	    -- Get the competition record associated with this robot;
 	    select * into competition_rec from competition where id = competition_id;
-	   
+
 	    measured_ok := true;
-	   
+
 	    -- Check to see if all the required measurements are satisfied.
 	    if competition_rec."measureMass" then
 	      select * into measurement from measurement
 	        where robot = new.robot and type = 'Mass' ORDER by datetime DESC limit 1;
-	      if((not found) or (measurement."result" = false) or (measurement."datetime" < competition_rec."registrationTime")) then 
+	      if((not found) or (measurement."result" = false) or (measurement."datetime" < competition_rec."registrationTime")) then
 	         measured_ok := false;
 	      end if;
 	    end if;
-	   
+
 	    if competition_rec."measureSize" then
-	      select * into measurement from measurement 
+	      select * into measurement from measurement
 	        where robot = new.robot and type = 'Size' ORDER by datetime DESC limit 1;
-	      if((not found) or (measurement."result" = false) or (measurement."datetime" < competition_rec."registrationTime")) then 
+	      if((not found) or (measurement."result" = false) or (measurement."datetime" < competition_rec."registrationTime")) then
 	         measured_ok := false;
 	      end if;
 	    end if;
-	    
+
 	    if competition_rec."measureScratch" then
-	      select * into measurement from measurement 
+	      select * into measurement from measurement
 	        where robot = new.robot and type = 'Scratch' ORDER by datetime desc limit 1;
 	      if((not found) or (measurement."result" = false) or (measurement."datetime" < competition_rec."registrationTime")) then
 	         measured_ok := false;
 	      end if;
 	    end if;
-	   	    
+
 	    if competition_rec."measureTime" then
-	      select * into measurement from measurement  
+	      select * into measurement from measurement
 	        where robot = new.robot and type = 'Time' ORDER by datetime desc limit 1;
-	      if((not found) or (measurement."result" = false) or (measurement."datetime" < competition_rec."registrationTime")) then 
+	      if((not found) or (measurement."result" = false) or (measurement."datetime" < competition_rec."registrationTime")) then
 	         measured_ok := false;
 	      end if;
 	    end if;
-	   
+
 	    if competition_rec."measureDeadman" then
-	      select * into measurement from measurement 
+	      select * into measurement from measurement
 	        where robot = new.robot and type = 'Deadman' ORDER by datetime desc limit 1;
-	      if((not found) or (measurement."result" = false) or (measurement."datetime" < competition_rec."registrationTime")) then 
+	      if((not found) or (measurement."result" = false) or (measurement."datetime" < competition_rec."registrationTime")) then
 	         measured_ok := false;
 	      end if;
 	    end if;
-	   
+
 	   -- Update the robot's measured status.
-	   update robot set measured = measured_ok where id = new.robot;
+	   update rotobs.robot set measured = measured_ok where id = new.robot;
        return null;
 	END;
 $$;
@@ -540,7 +540,7 @@ BEGIN
       IF rec.id = NEW.id THEN
          rec := NEW;
       END IF;
-      
+
       IF rec."checkInStatus" = 'CHECKED-IN' THEN
          checkedInOrUnknownCount := checkedInOrUnknownCount + 1;
          checkedInCount := checkedInCount + 1;
@@ -551,7 +551,7 @@ BEGIN
          ELSIF checkedInOrUnknownCount > maxEntries THEN
             targetStatus := 'STANDBY';
 
-         ELSE 
+         ELSE
             targetStatus := 'CONFIRMED';
          END IF;
 
@@ -559,7 +559,7 @@ BEGIN
          checkedInOrUnknownCount = checkedInOrUnknownCount + 1;
 
          IF checkedInCount >= maxEntries THEN
-            targetStatus := 'DECLINED'; 
+            targetStatus := 'DECLINED';
          ELSE
             targetStatus := 'UNSEEN';
          END IF;
@@ -567,8 +567,8 @@ BEGIN
       ELSIF rec."checkInStatus" = 'WITHDRAWN' THEN
             targetStatus := 'WITHDRAWN';
       END IF;
-      
-     --RAISE NOTICE 'robot: % status %', rec.name, targetStatus; 
+
+     --RAISE NOTICE 'robot: % status %', rec.name, targetStatus;
 
       -- Write the target status to the row or update NEW if this is the same record.
       IF rec.id = NEW.id THEN
@@ -577,7 +577,7 @@ BEGIN
          UPDATE robot set "slottedStatus" = targetStatus WHERE id = rec.id;
       END IF;
    END LOOP;
-  
+
    UPDATE competition SET "robotCheckedInCount" = checkedInCount WHERE id = NEW.competition;
 
    RETURN NEW;

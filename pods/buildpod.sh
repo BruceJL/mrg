@@ -2,11 +2,13 @@
 
 # Make sure that we've got the required packages installed.
 # Debian is the assumed OS.
-apt install -y  podman pwgen
+#apt install -y  podman pwgen
 
 # Create some passwords
 export POSTGRESPWD=`pwgen -s 25`
 export POSTGRESTPWD=`pwgen -s 25`
+
+# Setup some static naming of things.
 export DB_NAME=mrg
 export PODNAME=mrg-check-in
 export POSTGRES_CONTAINER_NAME=postgres
@@ -20,9 +22,15 @@ podman pod rm $PODNAME
 podman volume prune -f
 
 # Create the new pod
+# Note that the JSON interface (port 3000) can be dropped for production.
+# the postgresql port can be remapped to 5432 after the local postgresql is removed.
+# or removed entirely if you are super confident that you don't neeed direct access.
 podman pod create --name $PODNAME \
   --hostname mrg-check-in \
-  -p 80:80 -p 443:443 -p 5431:5432 -p 3000:3000
+  -p 80:80 \
+  -p 443:443 \
+  -p 5431:5432 \
+  -p 3000:3000
 
 # Setup PostgreSQL, note the 1 volume for data, and the password generated earlier.
 podman container create --replace --pod $PODNAME \
@@ -42,14 +50,16 @@ podman container create --replace --pod $PODNAME \
   --requires=$POSTGRES_CONTAINER_NAME \
   -e PGRST_DB_SCHEMAS="robots,people" \
   -e PGRST_DB_ANON_ROLE="web_anon" \
+  -e PGRST_SERVER_HOST="*" \
   -e PGRST_DB_URI="postgres://authenticator:$POSTGRESTPWD@localhost:5432/$DB_NAME" \
   docker.io/postgrest/postgrest
 
-# Setup Nginx. Note that it creates two volumes, one for config and another for data.
+# Setup Nginx. www volume is mapped to a local directory until I can figure out how
+# to SCP directly into a volume remotely.
 podman container create --replace --pod $PODNAME \
   --name nginx \
   --requires=postgrest \
-  -v nginx_data:/var/www/ \
+  -v ./www/:/var/www/:Z \
   docker.io/library/nginx
 
 # Copy the nginx setup into the configuration volume.

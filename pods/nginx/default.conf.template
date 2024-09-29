@@ -13,9 +13,17 @@ server {
     location / {
         root /var/www/;
     }
-    
+
+    # Note that using localhost below instead of 127.0.0.1 will cause nginx
+    # to attempt to contact postgres on ::1 (ipv6), which apparently
+    # postgrest doesn't bind to, despite explcitly declaring PGRST_SERVER_HOST
+    # See bug: https://github.com/PostgREST/postgrest/issues/3203
+
+    # Perhaps this should be transistioned to unix sockets in the future:
+    # https://dev.to/vearutop/using-nginx-as-a-proxy-to-multiple-unix-sockets-3c7a
+
      location /api/ {
-         proxy_pass http://localhost:3000;
+         proxy_pass http://127.0.0.1:3000/;
          proxy_http_version 1.1;
          proxy_set_header Connection "";
          proxy_set_header Host $host;
@@ -26,7 +34,7 @@ server {
      }
 
      location /flask/ {
-         proxy_pass http://localhost:3001;
+         proxy_pass http://localhost:3001/;
          proxy_http_version 1.1;
          proxy_set_header Connection "";
          proxy_set_header Host $host;
