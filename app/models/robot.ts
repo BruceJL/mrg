@@ -76,7 +76,7 @@ export default class RobotModel extends Model {
     inverse: 'robot',
   }) declare competition: CompetitionModel;
 
-  @belongsTo('ringAssignment', {
+  @belongsTo('ring-assignment', {
     async: false,
     inverse: 'robot',
   }) declare ringAssignment: RingAssignmentModel

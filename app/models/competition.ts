@@ -29,7 +29,7 @@ export default class CompetitionModel extends Model {
       inverse: 'competition',
     })declare robot: SyncHasMany<RobotModel>;
 
-    @hasMany('ringAssignment',{
+    @hasMany('ring-assignment',{
       async: false,
       inverse: 'competition',
     }) declare ringAssignment: SyncHasMany<RingAssignmentModel>;

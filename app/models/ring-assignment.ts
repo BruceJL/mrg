@@ -9,12 +9,12 @@ import type RobotModel from './robot';
 export default class RingAssignmentModel extends Model {
     @belongsTo('competition', {
       async: false,
-      inverse: 'ringAssignment',
+      inverse: 'ring-assignment',
     }) declare competition: CompetitionModel;
 
     @belongsTo('robot', {
       async: false,
-      inverse: 'ringAssignment',
+      inverse: 'ring-assignment',
     }) declare robot: RobotModel;
 
     @attr('number') declare ring?: number;
