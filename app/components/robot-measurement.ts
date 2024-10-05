@@ -27,7 +27,10 @@ function isMeasured(
   let itemType = "";
   let foundMeasurements = false;
 
-  let measurementsArray = measurements.slice().sortBy('datetime').reverse();
+  let measurementsArray = measurements.slice();
+  [...measurementsArray].sort((a, b) => {
+    return Number(a.datetime) - Number(b.datetime);
+  }).reverse();
 
   measurementsArray.forEach(function(item, index, array) {
     if (!done) {
