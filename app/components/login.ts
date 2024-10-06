@@ -1,16 +1,12 @@
-import {
-  inject as service
-} from '@ember/service';
-import {
-  action,
-} from '@ember/object';
+import { inject as service } from '@ember/service';
+import { action } from '@ember/object';
 
 import Component from '@glimmer/component';
 
 export default class loginComponent extends Component {
   @service declare session: any; //EmberSimpleAuthSession
 
-  identification: string = "";
+  identification: string = '';
 
   @action
   async authenticate() {
@@ -22,7 +18,6 @@ export default class loginComponent extends Component {
     // } catch (error) {
     //   this.set('errorMessage', error.error || error);
     // }
-
     // if (this.session.isAuthenticated) {
     //   // What to do with all this success?
     // }
@@ -32,5 +27,4 @@ export default class loginComponent extends Component {
   invalidateSession() {
     this.session.invalidate();
   }
-
 }

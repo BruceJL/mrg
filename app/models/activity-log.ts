@@ -1,7 +1,4 @@
-import Model, {
-  attr,
-  belongsTo,
-} from '@ember-data/model';
+import Model, { attr, belongsTo } from '@ember-data/model';
 
 import type RobotModel from './robot';
 
@@ -13,6 +10,7 @@ export default class ActivityLogModel extends Model {
 
   @belongsTo('robot', {
     async: false,
-    inverse: null
-  }) declare robot: RobotModel ;
+    inverse: null,
+  })
+  declare robot: RobotModel;
 }

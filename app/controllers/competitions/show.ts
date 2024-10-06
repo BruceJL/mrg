@@ -1,32 +1,34 @@
 import { tracked } from '@glimmer/tracking';
 import { service } from '@ember/service';
-import DS from 'ember-data';
 import RobotModel from 'mrg-sign-in/models/robot';
+import CompetitionModel from 'mrg-sign-in/models/competition';
 import RefreshedController from '../RefreshedController';
+import type { Registry as Services } from '@ember/service';
 
 export default class CompetitionShowController extends RefreshedController {
-  @service declare store: DS.Store;
+  @service declare store: Services['store'];
 
-  queryParams = [
-    'robotFilter',
-  ];
+  queryParams = ['robotFilter'];
 
-  @tracked robotFilter = "";
-  @tracked model: any;
+  @tracked robotFilter = '';
+  @tracked model: CompetitionModel;
 
   get filteredRobotsByName(): Array<RobotModel> {
-    let robots: Array<RobotModel> = this.store.peekAll('robot').slice();;
-    let robotFilter = this.robotFilter;
-    let returnRobots = robots.sortBy('registered');
-    let competitionId = this.model.id;
+    const robots: Array<RobotModel> = this.store.peekAll('robot').slice();
+    const robotFilter = this.robotFilter;
+    let returnRobots = robots.sort((a, b) =>
+      a.registered > b.registered ? 1 : b.registered > a.registered ? -1 : 0,
+    );
 
-    returnRobots = returnRobots.filter((robot: RobotModel)=>{
-      return (robot.competition.name === competitionId);
+    const competitionId = this.model.id;
+
+    returnRobots = returnRobots.filter((robot: RobotModel) => {
+      return robot.competition.name === competitionId;
     });
 
     if (robotFilter && robotFilter.length > 1) {
-      let regex = new RegExp(robotFilter, "i");
-      return returnRobots.filter((robot) => {
+      const regex = new RegExp(robotFilter, 'i');
+      return returnRobots.filter((robot: RobotModel) => {
         return regex.test(robot.name);
       });
     } else {

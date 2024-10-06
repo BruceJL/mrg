@@ -15,13 +15,13 @@
   </select>
 </p>
 
-{{#with (changeset this.model.robot ) as |c|}}
+{{#let (changeset this.model.robot ) as |c|}}
   <RobotDetail @changeset={{c}} @competitions={{this.model.competition}} />
-  <button {{on "click" (fn this.rollback c)}}>Undo</button>
-  <button {{on "click" (fn this.save c)}} disabled={{c.isInvalid}}>
+  <button type="button" {{on "click" (fn this.rollback c)}}>Undo</button>
+  <button disabled={{c.isInvalid}} type="button" {{on "click" (fn this.save c)}}>
     Save Changes
   </button>
-{{/with}}
+{{/let}}
 <hr>
 <RobotCheckin @data={{this.model.robot}} />
 <hr>
@@ -29,4 +29,4 @@
 <hr>
 <RobotMeasurement @data={{this.model.robot}} />
 <hr>
-<button {{on "click" (fn this.done this.model.robot.competition)}}>Done</button>
+<button type="button" {{on "click" (fn this.done this.model.robot.competition)}}>Done</button>

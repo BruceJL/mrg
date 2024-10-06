@@ -1,10 +1,10 @@
 import { hash } from 'rsvp';
-import { inject as service } from '@ember/service';
-import DS from 'ember-data';
+import { service } from '@ember/service';
 import Route from '@ember/routing/route';
+import type { Registry as Services } from '@ember/service';
 
 export default class RobotsNewRoute extends Route {
-  @service declare store: DS.Store;
+  @service declare store: Services['store'];
 
   async model(params: any) {
     let store = this.store;

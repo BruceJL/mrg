@@ -1,21 +1,16 @@
-
 import RefreshedController from '../RefreshedController';
 import { tracked } from '@glimmer/tracking';
 import { service } from '@ember/service';
-import DS from 'ember-data';
-
-
 import RobotModel from 'mrg-sign-in/models/robot';
+import type { Registry as Services } from '@ember/service';
 
 //import { _teardownAJAXHooks } from '@ember/test-helpers/settled';
 
-function formatDollars(
-  amount: number
-): string {
+function formatDollars(amount: number): string {
   if (!isNaN(amount) && amount > 0) {
     return '$' + amount.toFixed(2);
   } else {
-    return "";
+    return '';
   }
 }
 
@@ -24,34 +19,30 @@ function getTotalDollars(
   property: keyof RobotModel,
 ): string {
   let total = 0.0;
-  items.forEach(function(item) {
+  items.forEach(function (item) {
     total += Number(item.get(property));
   });
   return formatDollars(total);
 }
 
 export default class RobotIndexController extends RefreshedController {
-  @service declare store: DS.Store;
+  @service declare store: Services['store'];
 
-  queryParams = [
-    'schoolFilter',
-    'robotFilter',
-    'robotIDFilter',
-  ];
+  queryParams = ['schoolFilter', 'robotFilter', 'robotIDFilter'];
 
-  @tracked schoolFilter = "";
-  @tracked robotFilter = "";
-  @tracked robotIDFilter = "";
+  @tracked schoolFilter = '';
+  @tracked robotFilter = '';
+  @tracked robotIDFilter = '';
 
-  get filteredRobots(): Array<any> {
+  get filteredRobots(): Array<RobotModel> {
     let returnRobots = this.store.peekAll('robot').slice();
-    let robotFilter = this.get('robotFilter');
-    let schoolFilter = this.get('schoolFilter');
-    let robotIDFilter = this.get('robotIDFilter');
+    const robotFilter = this.robotFilter;
+    const schoolFilter = this.schoolFilter;
+    const robotIDFilter = this.robotIDFilter;
     let regex: RegExp;
 
     if (robotIDFilter && robotIDFilter.length > 2) {
-      returnRobots = returnRobots.filter(function(i) {
+      returnRobots = returnRobots.filter(function (i) {
         if (i.get('id') === robotIDFilter) {
           return true;
         } else {
@@ -59,27 +50,26 @@ export default class RobotIndexController extends RefreshedController {
         }
       });
     } else {
-
       if (schoolFilter && schoolFilter.length > 1) {
-        regex = new RegExp(schoolFilter, "i");
-        returnRobots = returnRobots.filter(function(i) {
-          let data = i.get('school');
-          if(data === undefined){
-              return false;
-          }else{
-              return regex.test(data);
+        regex = new RegExp(schoolFilter, 'i');
+        returnRobots = returnRobots.filter(function (i) {
+          const data = i.get('school');
+          if (data === undefined) {
+            return false;
+          } else {
+            return regex.test(data);
           }
         });
       }
 
       if (robotFilter && robotFilter.length > 1) {
-        regex = new RegExp(robotFilter, "i");
-        returnRobots = returnRobots.filter(function(i) {
-          let data = i.get('name');
-          if(data === undefined){
+        regex = new RegExp(robotFilter, 'i');
+        returnRobots = returnRobots.filter(function (i) {
+          const data = i.get('name');
+          if (data === undefined) {
             return false;
-          }else{
-              return regex.test(data);
+          } else {
+            return regex.test(data);
           }
         });
       }
@@ -89,13 +79,13 @@ export default class RobotIndexController extends RefreshedController {
     return returnRobots;
   }
 
-  get invoicedTotal() : string {
-    let items = this.get('filteredRobots');
+  get invoicedTotal(): string {
+    const items = this.filteredRobots;
     return getTotalDollars(items, 'invoiced');
   }
 
-  get paidTotal() : string {
-    let items = this.get('filteredRobots');
+  get paidTotal(): string {
+    const items = this.filteredRobots;
     return getTotalDollars(items, 'paid');
   }
 }

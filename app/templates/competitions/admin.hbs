@@ -1,30 +1,30 @@
 <h2>{{this.model.longName}}</h2>
 <h3>Competition Capacity</h3>
 <p>
-  {{#with (changeset this.model) as |changeset|}}
+  {{#let (changeset this.model) as |changeset|}}
     <table class="form">
       <tbody>
         <tr>
           <td><b>Rings:</b></td>
-          <td><Input
+          <td><Input id="Ring Count"
             @value={{changeset.rings}}
-            type="number"
+            @type="number"
             title="This is the number of rings that will be used."
           /></td>
         </tr>
         <tr>
           <td><b>Maximum Entries per ring:</b></td>
-          <td><Input
+          <td><Input id="Max Entries"
             @value={{changeset.maxRobotsPerRing}}
-            type="number"
+            @type="number"
             title="This is the maximum allowable number of robots in a given ring"
           /></td>
         </tr>
         <tr>
           <td><b>Minimum Entries per ring:</b></td>
-          <td><Input
+          <td><Input id="Min Entries"
             @value={{changeset.minRobotsPerRing}}
-            type="number"
+            @type="number"
             title="This is the maximum allowable number of robots in a given ring"
           /></td>
         </tr>
@@ -34,14 +34,14 @@
         </tr>
       </tbody>
     </table>
-    <button {{on "click" (fn this.save changeset)}}>Save</button>
-    <button {{on "click" (fn this.rollback changeset)}}>Undo</button>
-  {{/with}}
+    <button type="button" {{on "click" (fn this.save changeset)}}>Save</button>
+    <button type="button" {{on "click" (fn this.rollback changeset)}}>Undo</button>
+  {{/let}}
 </p>
 <hr>
 <h3>Restart Measurements</h3>
 <p>
-  <button {{on "click" (fn this.resetMeasurementTime this.model)}}>
+  <button type="button" {{on "click" (fn this.resetMeasurementTime this.model)}}>
     Set Measurment Time
   </button>
   <b>&nbsp;&nbsp;&nbsp;&nbsp;Current Measurement Time:</b>
@@ -58,56 +58,61 @@
     <tr>
       <td>Mass:</td>
       <td>
-        <input
-          type="checkbox"
+        <Input
+          id="Mass"
+          @type="checkbox"
           name="model.measureMass"
-          checked={{this.model.measureMass}}
+          @checked={{this.model.measureMass}}
           {{on "click" (fn this.toggleMeasurement this.model "measureMass")}}
-        >
+        />
       </td>
     </tr>
     <tr>
       <td>Size:</td>
       <td>
-        <input
-          type="checkbox"
+        <Input
+          id="Size"
+          @type="checkbox"
           name="model.measureSize"
-          checked={{this.model.measureSize}}
+          @checked={{this.model.measureSize}}
           {{on "click" (fn this.toggleMeasurement this.model "measureSize")}}
-        >
+        />
       </td>
     </tr>
     <tr>
       <td>Time:</td>
       <td>
-        <input
-        type="checkbox"
-        name="model.measureTime"
-        checked={{this.model.measureTime}}
-        {{on "click" (fn this.toggleMeasurement this.model "measureTime")}}
-      >
+        <Input
+          id="Time"
+          @type="checkbox"
+          name="model.measureTime"
+          @checked={{this.model.measureTime}}
+          {{on "click" (fn this.toggleMeasurement this.model "measureTime")}}
+        />
       </td>
     </tr>
     <tr>
       <td>Scratch:</td>
       <td>
-        <input
-          type="checkbox"
+        <Input
+          id = "Scratch"
+          @type="checkbox"
           name="model.measureScratch"
-          checked={{this.model.measureScratch}}
+          @checked={{this.model.measureScratch}}
           {{on "click" (fn this.toggleMeasurement this.model "measureScratch")}}
-        >
+        />
       </td>
     </tr>
     <tr>
       <td>Deadman:</td>
       <td>
-        <input
-          type="checkbox"
+        <Input
+          id="deadman"
+          @type="checkbox"
           name="model.measureDeadMan"
-          checked={{this.model.measureDeadman}}
+          @checked={{this.model.measureDeadman}}
           {{on "click" (fn this.toggleMeasurement this.model "measureDeadman")}}
-        >
+        />
       </td>
     </tr>
   </tbody>

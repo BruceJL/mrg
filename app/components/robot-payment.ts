@@ -1,23 +1,17 @@
 import Component from '@glimmer/component';
-import {
-  action,
-} from '@ember/object';
+import { action } from '@ember/object';
 
-import {
-  tracked,
-} from '@glimmer/tracking';
+import { tracked } from '@glimmer/tracking';
 
-import {
-  inject as service
-} from '@ember/service';
+import { inject as service } from '@ember/service';
 import DS from 'ember-data';
 
 import RobotModel from 'mrg-sign-in/models/robot';
 
-export interface ComponentSignature{
-  Args:{
-    data: RobotModel,
-  }
+export interface ComponentSignature {
+  Args: {
+    data: RobotModel;
+  };
 }
 
 export default class RobotCheckinController extends Component<ComponentSignature> {
@@ -25,26 +19,17 @@ export default class RobotCheckinController extends Component<ComponentSignature
   @service declare store: DS.Store;
   @tracked robot: RobotModel;
 
-  constructor(
-    owner: unknown,
-    args: ComponentSignature['Args'],
-  ) {
+  constructor(owner: unknown, args: ComponentSignature['Args']) {
     super(owner, args);
     this.robot = this.args.data;
   }
 
   get PaymentOptions() {
-    return [
-      'CASH',
-      'INVOICED',
-      'CHEQUE',
-      'CREDIT CARD',
-      'COMPLEMENTARY'
-    ];
+    return ['CASH', 'INVOICED', 'CHEQUE', 'CREDIT CARD', 'COMPLEMENTARY'];
   }
 
   get paymentSelectDisabled(): boolean {
-    return ((this.robot.isPaid) && (this.robot.paymentType !== 'INVOICED'));
+    return this.robot.isPaid && this.robot.paymentType !== 'INVOICED';
   }
 
   @action
@@ -53,55 +38,47 @@ export default class RobotCheckinController extends Component<ComponentSignature
   }
 
   @action
-  paid(
-    amount: number,
-  ): void {
+  paid(amount: number): void {
     this.robot.paid = amount;
     this.robot.save();
-    this.createLogEntry(
-      "PAID $" + amount + " " + this.robot.paymentType,
-    );
+    this.createLogEntry('PAID $' + amount + ' ' + this.robot.paymentType);
   }
 
   @action
   refund(): void {
     this.createLogEntry(
-      "REFUNDED $" + this.robot.paid + " " + this.robot.paymentType,
+      'REFUNDED $' + this.robot.paid + ' ' + this.robot.paymentType,
     );
-    this.robot.paid = 0.00;
-    this.robot.paymentType = "UNPAID";
+    this.robot.paid = 0.0;
+    this.robot.paymentType = 'UNPAID';
     this.robot.save();
   }
 
   @action
   selectPaymentType(
-    value: ("UNPAID" | "CASH" | "CREDIT CARD" | "CHEQUE" | "INVOICED"),
+    value: 'UNPAID' | 'CASH' | 'CREDIT CARD' | 'CHEQUE' | 'INVOICED',
   ): void {
-    if (value === "INVOICED" && this.robot.paid > 0.0) {
+    if (value === 'INVOICED' && this.robot.paid > 0.0) {
       alert(
-        "This entry is marked as PAID. Please refund the money before" +
-        " marking the entry as INVOICED."
+        'This entry is marked as PAID. Please refund the money before' +
+          ' marking the entry as INVOICED.',
       );
-    } else if(value === "INVOICED"){
+    } else if (value === 'INVOICED') {
       this.robot.paymentType = value;
-      this.createLogEntry(
-        "MARKED AS INVOICED",
-      );
+      this.createLogEntry('MARKED AS INVOICED');
     } else {
       this.robot.paymentType = value;
       this.robot.save();
     }
   }
 
-  private createLogEntry(
-    action: string,
-  ) {
-    let store = this.store;
-    let session = this.session;
-    let record = store.createRecord('activity-log', {
+  private createLogEntry(action: string) {
+    const store = this.store;
+    const session = this.session;
+    const record = store.createRecord('activity-log', {
       volunteer: session.data.authenticated.fullname,
       robot: this.robot,
-      function: "PAYMENT",
+      function: 'PAYMENT',
       action: action,
     });
     record.save();

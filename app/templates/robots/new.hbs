@@ -1,8 +1,8 @@
 &nbsp;
 <p>Adding a new Entry!</p>
-{{#with (changeset this.model.robot this.RobotValidation) as |c|}}
+{{#let (changeset this.model.robot this.RobotValidation) as |c|}}
   <RobotDetail @changeset={{c}} @competitions={{this.model.competitions}} />
-  <button {{on "click" (fn this.save c)}} disabled={{c.isInvalid}}>
+  <button disabled={{c.isInvalid}} type="button" {{on "click" (fn this.save c)}}>
     Save Changes
   </button>
-{{/with}}
+{{/let}}

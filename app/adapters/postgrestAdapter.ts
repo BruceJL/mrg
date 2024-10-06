@@ -18,8 +18,8 @@ import {
 } from 'ember-fetch/errors';
 
 export default class PostgrestAdapter extends MinimumInterfaceAdapter {
-  namespace = ENV.APP.API_NAMESPACE;
-  host = ENV.APP.API_HOST;
+  namespace = ENV.APP['API_NAMESPACE'];
+  host = ENV.APP['API_HOST'];
 
   _fetch(
     input: URL | RequestInfo,
@@ -184,10 +184,10 @@ export default class PostgrestAdapter extends MinimumInterfaceAdapter {
   // Run a query on a given table.
   // url looks like this: people?age=gte.18&student=is.true
   query<K extends keyof ModelRegistry>(
-    store: Store,
+    _store: Store,
     type: ModelRegistry[K],
     query: { [key: string]: Object },
-    recordArray: any, //: Collection,
+    _recordArray: any, //: Collection,
     // options: Object, Spec'd in MinimumInterfaceAdapter, but not Adapter?
   ): RSVP.Promise<any> {
     let url = '';

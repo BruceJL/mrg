@@ -1,16 +1,14 @@
 import Route from '@ember/routing/route';
-import { inject as service } from '@ember/service';
-import DS from 'ember-data';
+import { service } from '@ember/service';
 import CompetitionModel from 'mrg-sign-in/models/competition';
+import type { Registry as Services } from '@ember/service';
 
 export default class CompetitionAdminRoute extends Route {
-  @service declare store: DS.Store;
+  @service declare store: Services['store'];
 
-  model(params: any): DS.PromiseObject<CompetitionModel>{
-    let store = this.store;
-    return store.findRecord('competition',
-      params.competition_id, {
-        include: 'robot'
-      });
+  model(params: any): Promise<CompetitionModel> {
+    return this.store.findRecord('competition', params.competition_id, {
+      include: 'robot',
+    });
   }
 }

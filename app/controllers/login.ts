@@ -1,23 +1,24 @@
-import {
-  inject as service
-} from '@ember/service';
-import {
-  action,
-} from '@ember/object';
+import { inject as service } from '@ember/service';
+import { action } from '@ember/object';
 
 import Controller from '@ember/controller';
+import type { Registry as Services } from '@ember/service';
+
 
 export default class loginComponent extends Controller {
-  @service declare session: any; //EmberSimpleAuthSession
+  @service declare session: Services['session']; //EmberSimpleAuthSession
 
-  identification: string = "";
+  identification: string = '';
 
   @action
   async authenticate() {
     try {
-      await this.session.authenticate('authenticator:simple', this.identification);
+      await this.session.authenticate(
+        'authenticator:simple',
+        this.identification,
+      );
     } catch (error) {
-      let errorMessage = error;
+      const errorMessage = error;
     }
 
     // if (this.session.isAuthenticated) {
@@ -29,5 +30,4 @@ export default class loginComponent extends Controller {
   invalidateSession() {
     this.session.invalidate();
   }
-
 }

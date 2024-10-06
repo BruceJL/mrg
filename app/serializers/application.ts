@@ -1,4 +1,3 @@
-import PostgresSerializer from "./postgrestSerializer";
+import PostgresSerializer from './postgrestSerializer';
 
-export default class Serializer extends PostgresSerializer {
-}
+export default class Serializer extends PostgresSerializer {}

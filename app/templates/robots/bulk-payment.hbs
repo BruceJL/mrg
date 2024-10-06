@@ -5,7 +5,7 @@
        <tr>
          <td colspan="5">
            <h4>{{data.name}} - {{data.school}}
-             <button title="Clicking this button will cause all entries for this coach to be marked as &quot;INVOICED&quot; - unless they've already paid." {{on "click" (fn this.invoiceAll data.email)}}>
+             <button title="Clicking this button will cause all entries for this coach to be marked as &quot;INVOICED&quot; - unless they've already paid." type="button" {{on "click" (fn this.invoiceAll data.email)}}>
                Invoice All Entries
              </button>
            </h4>

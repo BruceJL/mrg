@@ -1,17 +1,14 @@
 import Route from '@ember/routing/route';
 import { service } from '@ember/service';
-import DS from 'ember-data';
 import RobotModel from 'mrg-sign-in/models/robot';
+import type { Registry as Services } from '@ember/service';
 
 export default class RobotsIndexRoute extends Route {
-  @service declare store: DS.Store;
+  @service declare store: Services['store'];
 
-  model(): DS.PromiseArray<RobotModel> {
-    return this.store.findAll(
-      'robot',
-      {
-        include: 'competition',
-      }
-    )
+  model(): Promise<Array<RobotModel>> {
+    return this.store.findAll('robot', {
+      include: 'competition',
+    });
   }
 }

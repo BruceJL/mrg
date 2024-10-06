@@ -1,23 +1,23 @@
 import Controller from '@ember/controller';
 import { service } from '@ember/service';
-import { Registry as Services } from '@ember/service';
+import type { Registry as Services } from '@ember/service';
 import Helper from '@ember/component/helper';
 import { registerDestructor } from '@ember/destroyable';
 
 class Poll extends Helper {
-    compute([fn, interval]: [(...args: unknown[]) => unknown, number]) {
-       let x = setInterval(fn, interval);
-       registerDestructor(this, () => clearInterval(x));
-    }
- }
+  compute([fn, interval]: [(...args: unknown[]) => unknown, number]) {
+    const x = setInterval(fn, interval);
+    registerDestructor(this, () => clearInterval(x));
+  }
+}
 
 export default class RefreshedController extends Controller {
-    @service router!: Services['router'];
+  @service router!: Services['router'];
 
-    poll = Poll;
+  poll = Poll;
 
-    refreshData = () => {
-        console.log('Fetching data.');
-        this.router.refresh();
-    }
+  refreshData = () => {
+    console.log('Fetching data.');
+    this.router.refresh();
+  };
 }
