@@ -1,0 +1,1 @@
+{"version":3,"file":"is-object.js","sourceRoot":"","sources":["../../../src/utils/is-object.ts"],"names":[],"mappings":"AAAA,MAAM,CAAC,OAAO,UAAU,QAAQ,CAAI,GAAM;IACxC,OAAO,CACL,GAAG,KAAK,IAAI;QACZ,OAAO,GAAG,KAAK,QAAQ;QACvB,CAAC,CAAC,GAAG,YAAY,IAAI,IAAI,GAAG,YAAY,MAAM,CAAC;QAC/C,CAAC,KAAK,CAAC,OAAO,CAAC,GAAG,CAAC,CACpB,CAAC;AACJ,CAAC"}

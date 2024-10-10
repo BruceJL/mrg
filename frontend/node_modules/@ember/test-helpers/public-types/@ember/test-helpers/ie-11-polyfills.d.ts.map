@@ -1,0 +1,1 @@
+{"version":3,"file":"ie-11-polyfills.d.ts","sourceRoot":"","sources":["../../../addon-test-support/@ember/test-helpers/ie-11-polyfills.ts"],"names":[],"mappings":"AACA;;;;;GAKG;AACH,wBAAgB,IAAI,CAAC,CAAC,EAAE,KAAK,EAAE,KAAK,CAAC,CAAC,CAAC,EAAE,SAAS,EAAE,QAAQ,iBAI3D;AAED;;;;GAIG;AACH,wBAAgB,OAAO,CAAC,CAAC,SAAS,IAAI,EAAE,QAAQ,EAAE,UAAU,CAAC,CAAC,CAAC,GAAG,CAAC,EAAE,CAEpE"}

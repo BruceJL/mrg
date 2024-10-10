@@ -1,0 +1,1 @@
+{"version":3,"file":"change.d.ts","sourceRoot":"","sources":["../../src/-private/change.ts"],"names":[],"mappings":"AAGA,eAAO,MAAM,KAAK,eAAsB,CAAC;AAEzC,MAAM,CAAC,OAAO,OAAO,MAAM;IACzB,CAAC,KAAK,CAAC,EAAE,OAAO,CAAC;gBAEL,KAAK,EAAE,OAAO;CAG3B;AAGD,eAAO,MAAM,QAAQ,gBAAiB,OAAO,0BACW,CAAC;AAEzD,wBAAgB,cAAc,CAAC,WAAW,EAAE,MAAM,GAAG,OAAO,GAAG,GAAG,CAIjE"}

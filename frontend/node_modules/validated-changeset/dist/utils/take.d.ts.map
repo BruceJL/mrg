@@ -1,0 +1,1 @@
+{"version":3,"file":"take.d.ts","sourceRoot":"","sources":["../../src/utils/take.ts"],"names":[],"mappings":"AAAA,MAAM,CAAC,OAAO,UAAU,IAAI,CAC1B,WAAW,GAAE;IAAE,CAAC,GAAG,EAAE,MAAM,GAAG,GAAG,CAAA;CAAO,EACxC,UAAU,GAAE,MAAM,EAAO,GACxB;IAAE,CAAC,GAAG,EAAE,MAAM,GAAG,GAAG,CAAA;CAAE,CAUxB"}

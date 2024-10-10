@@ -29,3 +29,6 @@
 **.pyc
 python/ScoreSheets/*
 python/*.csv
+
+# odf
+*.odg

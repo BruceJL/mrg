@@ -1,0 +1,1 @@
+{"version":3,"file":"wrap.js","sourceRoot":"","sources":["../../../src/utils/wrap.ts"],"names":[],"mappings":"AAAA;;;;;GAKG;AACH,MAAM,CAAC,OAAO,UAAU,WAAW,CAAI,KAAc;IACnD,IAAI,KAAK,CAAC,OAAO,CAAC,KAAK,CAAC,EAAE;QACxB,OAAO,KAAK,CAAC;KACd;IAED,OAAO,CAAC,KAAU,CAAC,CAAC;AACtB,CAAC"}
