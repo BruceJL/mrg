@@ -115,12 +115,6 @@
     "edition": "octane"
   },
   "dependencies": {
-    "@types/ember-data__adapter": "^4.0.6",
-    "@types/ember-data__model": "^4.0.5",
-    "@types/ember-data__store": "^4.0.7",
-    "@types/qunit": "^2.19.10",
-    "@types/rsvp": "^4.0.9",
-    "ember-changeset-validations": "^4.1.1",
     "ember-simple-auth": "^6.1.0",
     "typescript-eslint": "^8.8.0"
   }
