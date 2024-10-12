@@ -1,6 +1,5 @@
 //import { MinimumAdapterInterface } from '@ember-data/adapter';
 import MinimumInterfaceAdapter from '@ember-data/adapter';
-//import ModelSchema from '@ember-data/model';
 import type ModelRegistry from 'ember-data/types/registries/model';
 
 //import { inject as service } from '@ember/service';

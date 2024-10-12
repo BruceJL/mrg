@@ -88,7 +88,7 @@ export default class RobotModel extends Model {
     async: false,
     inverse: 'robot',
   })
-  declare measurement: SyncHasMany<RobotMeasurementModel>; //: AsyncBelongsTo<RobotModel>;
+  declare measurement: SyncHasMany<RobotMeasurementModel>;
 
   @belongsTo('competition', {
     async: false,

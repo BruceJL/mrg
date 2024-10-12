@@ -1,12 +1,9 @@
 import Component from '@glimmer/component';
 import { action } from '@ember/object';
-
 import { tracked } from '@glimmer/tracking';
-
-import { inject as service } from '@ember/service';
-import DS from 'ember-data';
-
+import { service } from '@ember/service';
 import RobotModel from 'mrg-sign-in/models/robot';
+import type { Registry as Services } from '@ember/service';
 
 export interface ComponentSignature {
   Args: {
@@ -15,8 +12,9 @@ export interface ComponentSignature {
 }
 
 export default class RobotCheckinController extends Component<ComponentSignature> {
-  @service declare session: any; //EmberSimpleAuthSession
-  @service declare store: DS.Store;
+  // See https://github.com/mainmatter/ember-simple-auth/pull/2514 for below.
+  @service declare session; //EmberSimpleAuthSession
+  @service declare store: Services['store'];
   @tracked robot: RobotModel;
 
   constructor(owner: unknown, args: ComponentSignature['Args']) {

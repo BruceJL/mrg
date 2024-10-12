@@ -13,16 +13,20 @@
       <tr>
         <td>{{measurement}}:</td>
         <td>
-         <input type="radio"
+         <input
+            aria-label="Mark Passed"
+            type="radio"
             {{on "click" (fn this.createMeasurement true measurement @data)}}
             checked={{this.isMeasured @data measurement true}}
-          >
+          />
         </td>
         <td>
-          <input type="radio"
+          <input
+            aria-label="Mark Failed"
+            type="radio"
             {{on "click" (fn this.createMeasurement false measurement @data)}}
             checked={{this.isMeasured @data measurement false}}
-          >
+          />
         </td>
       </tr>
     {{/each}}

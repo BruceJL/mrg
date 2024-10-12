@@ -1,11 +1,16 @@
 import Component from '@glimmer/component';
+import { EmberChangeset } from 'ember-changeset';
+import { action } from '@ember/object';
 
-import DS from 'ember-data';
+export interface ComponentSignature {
+  Args: {
+    changeset: EmberChangeset;
+  };
+}
 
-import {
-  inject as service
-} from '@ember/service';
-
-export default class RobotDetailController extends Component {
-  @service declare store: DS.Store;
+export default class RobotDetailController extends Component<ComponentSignature> {
+  @action
+  handleChange(changeset: EmberChangeset, name: string, value: string) {
+    changeset[name] = value;
+  }
 }

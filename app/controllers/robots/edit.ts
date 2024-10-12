@@ -21,12 +21,12 @@ export default class RobotEditController extends Controller {
 
   @action
   save(changeset: EmberChangeset) {
-    changeset.save();
+    return changeset.save();
   }
 
   @action
   rollback(changeset: EmberChangeset) {
-    changeset.rollback();
+    return changeset.rollback();
   }
 
   @action
@@ -37,10 +37,11 @@ export default class RobotEditController extends Controller {
         ' the end of the stand-by queue. Are you Sure?',
     );
     if (ok) {
-      const c: CompetitionModel = this.store.peekRecord('competition', event);
-      r.registered = 'now()';
-      r.competition = c;
-      r.save();
+      this.store.findRecord('competition', event).then((c) => {
+        r.registered = 'now()';
+        r.competition = c;
+        r.save();
+      });
     }
   }
 }

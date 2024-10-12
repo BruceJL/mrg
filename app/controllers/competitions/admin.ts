@@ -1,7 +1,5 @@
 import { action } from '@ember/object';
-
 import { debug } from '@ember/debug';
-
 import Controller from '@ember/controller';
 import CompetitionModel from 'mrg-sign-in/models/competition';
 import { EmberChangeset } from 'ember-changeset';
@@ -33,17 +31,14 @@ export default class CompetitionAdminController extends Controller {
         'a reweigh of robots is required.',
     );
 
-    // let robots = model.robot;
-    // robots.forEach((item) => {
-    //   debug("setting meausured of " + item.name + " to false");
-    //   item.set('measured', false);
-    //   item.save();
-    // });
-
-    model.set('registrationTime', 'now()');
-    model.save().then(() => {
-      model.reload();
-    });
+    if (ok) {
+      // Note that the database will reset all the robots registrations times
+      // with the "RESET_MEASUREMENT_STATUS" function.
+      model.set('registrationTime', 'now()');
+      model.save().then(() => {
+        model.reload();
+      });
+    }
   }
 
   @action

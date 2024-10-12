@@ -1,11 +1,12 @@
 import MinimumSerializerInterface from '@ember-data/serializer';
 import Store from '@ember-data/store';
 import { Snapshot } from '@ember-data/store';
-import { ModelSchema } from '@ember-data';
+import Model from '@ember-data/model';
 import { service } from '@ember/service';
+import type { Registry as Services } from '@ember/service';
 
 export default class PostgresSerializer extends MinimumSerializerInterface {
-  @service declare store: Store;
+  @service declare store: Services['store'];
 
   //Overrideing the serializeAttibute so that only dirty data is written
   //Back to the database. snippet stolen from:
@@ -49,19 +50,18 @@ export default class PostgresSerializer extends MinimumSerializerInterface {
     payload: Record<string, any>,
     thisType: string,
     parentType: string,
-    model: ModelSchema,
+    model: Model,
   ): Record<string, any> {
     const included: Record<string, any>[] = [];
     let relationshipData: Record<string, any> = {};
     const data: Record<string, any> = {};
     const resourceHash: Record<string, string> = {};
-    const parentHash: Record<string, ModelSchema> = {};
 
     data['id'] = payload['id'].toString();
     data['type'] = thisType;
     data['attributes'] = {};
     data['relationships'] = {};
-    relationshipData = { type: thisType, id: payload['id'] };
+    relationshipData = { type: thisType, id: payload['id'].toString() };
 
     model.eachRelationship((name, descriptor) => {
       resourceHash[name] = descriptor.kind;
@@ -129,7 +129,7 @@ export default class PostgresSerializer extends MinimumSerializerInterface {
   }
 
   private reformatPayload(
-    primaryModelClass: ModelSchema,
+    primaryModelClass: Model,
     payload: Record<string, Record<string, any> | Record<string, unknown>[]>[],
     requestType: string,
   ): Record<string, any> {
@@ -202,76 +202,63 @@ export default class PostgresSerializer extends MinimumSerializerInterface {
 
   public normalizeResponse(
     store: Store,
-    primaryModelClass: ModelSchema,
+    primaryModelClass: Model,
     payload: any,
     id: string,
     requestType: string,
-  ): Object {
+  ): object {
     return this.reformatPayload(primaryModelClass, payload, requestType);
   }
 
-  serialize(snapshot: Snapshot, options: Record<string, any>): Object {
-    const data: Record<string, any> = {};
+  serialize(
+    snapshot: Snapshot,
+    options: Record<string, object>,
+  ): Record<string, string> {
+    const data: Record<string, string> = {};
 
+    // Deal with the id field if required.
     if (options && options['includeId']) {
       const id = snapshot.id;
       if (id) {
-        data['id'] = id;
+        data['id'] = id.toString();
       }
     }
 
-    // load up the attributes
-    snapshot.eachAttribute((key, attribute) => {
-      if (
-        snapshot.record.get('isNew') ||
-        snapshot.changedAttributes()[key.toString()]
-      ) {
-        let value = snapshot.attr(key);
-        if (value === null) {
-          value = null;
-        } else if (typeof value === 'boolean') {
-          if (value) value = 1;
-          else value = 0;
-        }
-
-        if (value !== null) {
-          data[key.toString()] = value;
-        }
+    // Deal with the object attributes.
+    let o: object = {};
+    if (snapshot.record.get('isNew')) {
+      o = snapshot.attributes();
+    } else {
+      const x = snapshot.changedAttributes();
+      for (const [key, value] of Object.entries(x)) {
+        // ChangedAttributes returns a POJO with {name: [oldValue, newValue]},
+        // change it to {name: newValue}
+        o[key] = value[1];
       }
-    });
+    }
+
+    for (const [key, value] of Object.entries(o)) {
+      let v = value;
+      if (v === null) {
+        v = null;
+      } else if (typeof value === 'boolean') {
+        if (v) v = 1;
+        else v = 0;
+      }
+      data[key.toString()] = v;
+    }
 
     // populate the belongsTo relationships
     snapshot.eachRelationship((key, relationship) => {
       if (relationship.kind === 'belongsTo') {
-        if (
-          snapshot.record.get('isNew') ||
-          snapshot.changedAttributes()[key.toString()]
-        ) {
-          const belongsToId = snapshot.belongsTo(key, { id: true });
+        // if (
+        //   snapshot.record.get('isNew') ||
+        //   snapshot.changedAttributes()[key.toString()]
+        // ) {
+        const belongsToId = snapshot.belongsTo(key, { id: true });
+        if (typeof belongsToId === 'string') {
           data[key.toString()] = belongsToId;
         }
-
-        // if provided, use the mapping provided by `attrs` in
-        // the serializer
-        //let schema = this.store.modelFor(snapshot.modelName);
-        // let payloadKey = this._getMappedKey(key, schema);
-        // if (payloadKey === key && this.keyForRelationship) {
-        //   payloadKey = this.keyForRelationship(key, 'belongsTo', 'serialize');
-        // }
-
-        // //Need to check whether the id is there for new&async records
-        // if (isNone(belongsToId)) {
-        //   json[payloadKey] = null;
-        // } else {
-        //   json[payloadKey] = belongsToId;
-        // }
-
-        // if (relationship.options.polymorphic) {
-        //   this.serializePolymorphicType(snapshot, json, relationship);
-        // }
-        // } else if (relationship.kind === 'hasMany') {
-        //   //this.serializeHasMany(snapshot, json, relationship);
-        // }
       }
     });
     return data;

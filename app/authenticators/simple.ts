@@ -1,10 +1,6 @@
 import { Promise } from 'rsvp';
-
 //@ts-expect-error ember-simple-auth types aren't a thing yet.
 import BaseAuthenticator from 'ember-simple-auth/authenticators/base';
-
-import { debug } from '@ember/debug';
-
 import { inject as service } from '@ember/service';
 
 export default class SimpleAuthenticator extends BaseAuthenticator {
@@ -19,7 +15,7 @@ export default class SimpleAuthenticator extends BaseAuthenticator {
 
   authenticate(data: string) {
     const fullname = data;
-    debug('authenticating ' + fullname);
+    console.log('authenticating ' + fullname);
     if (fullname !== undefined) {
       return Promise.resolve({
         fullname,

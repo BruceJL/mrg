@@ -4,7 +4,9 @@ import { action } from '@ember/object';
 import Component from '@glimmer/component';
 
 export default class loginComponent extends Component {
-  @service declare session: any; //EmberSimpleAuthSession
+  // Ember-Simple-Auth Session Typescript support info at:
+  // https://github.com/mainmatter/ember-simple-auth/pull/2514
+  @service declare session; //EmberSimpleAuthSession
 
   identification: string = '';
 

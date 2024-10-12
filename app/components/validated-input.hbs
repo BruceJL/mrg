@@ -1,5 +1,6 @@
-<Input
-  @value={{changeset-get @changeset @propertyName}}
-  @update={{action (changeset-set @changeset @propertyName)}}
-  @class={{if (changeset-get @changeset.error @propertyName) "full-width-error" "full-width"}}
+<input
+  aria-label="Change Property"
+  value={{changeset-get @changeset @propertyName}}
+  update={{fn (changeset-set @changeset @propertyName)}}
+  class={{if (changeset-get @changeset.error @propertyName) "full-width-error" "full-width"}}
 />

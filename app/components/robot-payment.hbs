@@ -8,7 +8,11 @@
     <tr>
       <td>Paid:</td>
       <td>
-        <select {{on "change" (val (fn this.selectPaymentType))}} disabled={{this.paymentSelectDisabled}}>
+        <select
+          aria-label="Select Payment Type"
+          {{on "change" (val @fn this.selectPaymentType)}}
+           disabled={{this.paymentSelectDisabled}}
+        >
           <option value="" selected={{eq @data.paymentType null}} disabled={{true}}>
             Select payment method
           </option>
@@ -27,10 +31,10 @@
         {{else if (not-eq @data.paymentType null)}}
           {{#if @data.isPaid}}
             {{@data.formattedPaidDollars}}
-            <button {{on "click" (fn this.refund)}}>Refund</button>
+            <button type="button" {{on "click" this.refund}}>Refund</button>
           {{else}}
-            <button {{on "click" (fn this.paid "10")}}>Paid $10.00</button><br>
-            <button {{on "click" (fn this.paid "20")}}>Paid $20.00</button>
+            <button type="button" {{on "click" (fn this.paid "10")}}>Paid $10.00</button><br>
+            <button type="button" {{on "click" (fn this.paid "20")}}>Paid $20.00</button>
           {{/if}}
         {{/if}}
       </td>

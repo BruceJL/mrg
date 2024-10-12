@@ -4,84 +4,121 @@
       <tr>
         <td>Robot Name:</td>
         <td>
-          <Input
+          <input
+            aria-label="Robot Name"
             class={{if (@changeset.error.name) "full-width-error" "full-width"}}
-            @value={{@changeset.name}}
+            value={{@changeset.name}}
+            {{on "change" (val (fn this.handleChange @changeset "name"))}}
           />
         </td>
       </tr>
       <tr>
         <td>Driver 1:</td>
         <td>
-          <Input
+          <input
+            aria-label="Driver 1 Name"
             class={{if (@changeset.error.driver1) "full-width-error" "full-width"}}
-            @value={{@changeset.driver1}}
+            value={{@changeset.driver1}}
+            {{on "change" (val (fn this.handleChange @changeset "driver1"))}}
           />
         </td>
       </tr>
       <tr>
         <td>Driver 1 Grade:</td>
         <td>
-          <Input class="full-width" @value={{@changeset.driver1gr}} />
+          <input
+            aria-label="Driver 1 Grade"
+            class="full-width"
+            value={{@changeset.driver1gr}}
+            {{on "change" (val (fn this.handleChange @changeset "driver1gr"))}}
+          />
         </td>
       </tr>
       <tr>
         <td>Driver 2:</td>
         <td>
-          <Input class="full-width" @value={{@changeset.driver2}} />
+          <input
+            aria-label="Driver 2 Name"
+            class="full-width"
+            value={{@changeset.driver2}}
+            {{on "change" (val (fn this.handleChange @changeset "driver2"))}}
+          />
         </td>
       </tr>
       <tr>
         <td>Driver 2 Grade:</td>
         <td>
-          <Input class="full-width" @value={{@changeset.driver2gr}} />
+          <input
+            aria-label="Driver 2 Grade"
+            class="full-width"
+            value={{@changeset.driver2gr}}
+            {{on "change" (val (fn this.handleChange @changeset "driver2gr"))}}
+          />
         </td>
       </tr>
       <tr>
         <td>Driver 3:</td>
         <td>
-          <Input class="full-width" @value={{@changeset.driver3}} />
+          <input
+            aria-label="Driver 3 Name"
+            class="full-width"
+            value={{@changeset.driver3}}
+            {{on "change" (val (fn this.handleChange @changeset "driver3"))}}
+          />
         </td>
       </tr>
       <tr>
         <td>Driver 3 Grade:</td>
         <td>
-          <Input class="full-width" @value={{@changeset.driver3gr}} />
+          <input
+            aria-label="Driver 3 Grade"
+            class="full-width"
+            value={{@changeset.driver3gr}}
+            {{on "change" (val (fn this.handleChange @changeset "driver3"))}}
+          />
         </td>
       </tr>
       <tr>
         <td>School:</td>
         <td>
-          <Input
+          <input
+            aria-label="Driver School"
             class={{if @changeset.error.school "full-width-error" "full-width"}}
-            @value={{@changeset.school}}
+            value={{@changeset.school}}
+            {{on "change" (val (fn this.handleChange @changeset "school"))}}
           />
         </td>
       </tr>
       <tr>
         <td>Coach:</td>
         <td>
-          <Input
+          <input
+            aria-label="Coach"
             class={{if @changeset.error.coach "full-width-error" "full-width"}}
-            @value={{@changeset.coach}}
+            value={{@changeset.coach}}
+            {{on "change" (val (fn this.handleChange @changeset "coach"))}}
           />
         </td>
       </tr>
       <tr>
         <td>Email:</td>
         <td>
-          <Input
+          <input
+            aria-label="Coach Email"
             class={{if @changeset.error.email "full-width-error" "full-width"}}
-            @value={{@changeset.email}}
+            value={{@changeset.email}}
+            {{on "change" (val (fn this.handleChange @changeset "email"))}}
           />
         </td>
       </tr>
       <tr>
         <td>Ph:</td>
         <td>
-          <Input
+          <input
+            aria-label="Coach Phone Number"
             class={{if @changeset.error.ph "full-width-error" "full-width"}}
-            @value={{@changeset.ph}}
+            value={{@changeset.ph}}
+            {{on "change" (val (fn this.handleChange @changeset "ph"))}}
           />
         </td>
       </tr>

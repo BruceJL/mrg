@@ -2,13 +2,15 @@ import Component from '@glimmer/component';
 import { action } from '@ember/object';
 import { tracked } from '@glimmer/tracking';
 import { debug } from '@ember/debug';
-import { inject as service } from '@ember/service';
+import { service } from '@ember/service';
+import type { Registry as Services } from '@ember/service';
+import { type SyncHasMany } from '@ember-data/model';
 
 import RobotMeasurementModel from 'mrg-sign-in/models/measurement';
 import RobotModel from 'mrg-sign-in/models/robot';
 
 function isMeasured(
-  measurements: Array<RobotMeasurementModel>,
+  measurements: SyncHasMany<RobotMeasurementModel>,
   type: string, // Measurement type e.g. Mass, size, etc.
   registrationTime: Date, // Time where measurements before are invalid.
   passed: boolean, //are we looking for true or false?
@@ -25,7 +27,7 @@ function isMeasured(
 
   measurementsArray.forEach(function (
     item: RobotMeasurementModel,
-    _index: number,
+    _index,
     _array,
   ) {
     if (!done) {
@@ -59,12 +61,12 @@ export interface ComponentSignature {
 }
 
 export default class RobotMeasurementComponent extends Component<ComponentSignature> {
-  @service declare store: DS.Store;
+  @service declare store: Services['store'];
 
   constructor(owner: unknown, args: ComponentSignature['Args']) {
     super(owner, args);
     this.competition = args.data.competition;
-    this.measurements = args.data.measurement;
+    this.measurement = args.data.measurement;
   }
 
   @tracked Mass = false;
@@ -72,24 +74,24 @@ export default class RobotMeasurementComponent extends Component<ComponentSignat
   @tracked Scratch = false;
   @tracked Time = false;
   @tracked Deadman = false;
-  @tracked competition = this.args.data.competition;
-  @tracked measurements = this.args.data.measurement;
+  @tracked competition;
+  @tracked measurement;
 
   @action
   PopulateRadioBoxes(model: RobotModel): void {
     debug('PopulateRadioBoxes fired');
     const registrationTime = this.competition.registrationTime;
-    this.Mass = isMeasured(this.measurements, 'Mass', registrationTime, true);
-    this.Size = isMeasured(this.measurements, 'Size', registrationTime, true);
+    this.Mass = isMeasured(model.measurement, 'Mass', registrationTime, true);
+    this.Size = isMeasured(model.measurement, 'Size', registrationTime, true);
     this.Scratch = isMeasured(
-      this.measurements,
+      model.measurement,
       'Scratch',
       registrationTime,
       true,
     );
-    this.Time = isMeasured(this.measurements, 'Time', registrationTime, true);
+    this.Time = isMeasured(model.measurement, 'Time', registrationTime, true);
     this.Deadman = isMeasured(
-      this.measurements,
+      model.measurement,
       'Deadman',
       registrationTime,
       true,

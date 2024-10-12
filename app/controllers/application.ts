@@ -20,7 +20,9 @@ export default class ApplicationController extends Controller {
         this.identification,
       );
     } catch (error) {
-      const errorMessage = error;
+      if (typeof error == 'string') {
+        confirm(error);
+      }
     }
 
     // if (this.session.isAuthenticated) {

@@ -9,7 +9,7 @@
 
   Measurment Start Time: {{moment-format this.model.registrationTime "LTS"}}<br>
   <LinkTo @route="robots.new" @query={{hash competition=this.model.name}}>New Entry</LinkTo><br><br>
-  Filter by robot name:<Input id="Name Filter" @value={{this.robotFilter}} /><br>
+  Filter by robot name:<input id="Name Filter" value={{this.robotFilter}} /><br>
 </p>
 
 <RobotListing

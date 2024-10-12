@@ -503,7 +503,7 @@ CREATE FUNCTION robots.update_measured_status() RETURNS trigger
 	    end if;
 
 	   -- Update the robot's measured status.
-	   update rotobs.robot set measured = measured_ok where id = new.robot;
+	   update robots.robot set measured = measured_ok where id = new.robot;
        return null;
 	END;
 $$;

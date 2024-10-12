@@ -2,7 +2,6 @@
 <hr>
 
 <p>Competition
-
   <select id="competition" {{on "change" (val (fn this.updateCompetition this.model.robot))}}>
     <option value="" selected={{eq @this.model.robot.competition.id ""}} disabled={{true}}>
       Select competition
@@ -15,10 +14,10 @@
   </select>
 </p>
 
-{{#let (changeset this.model.robot ) as |c|}}
-  <RobotDetail @changeset={{c}} @competitions={{this.model.competition}} />
-  <button type="button" {{on "click" (fn this.rollback c)}}>Undo</button>
-  <button disabled={{c.isInvalid}} type="button" {{on "click" (fn this.save c)}}>
+{{#let (changeset this.model.robot this.robotValidation) as |c|}}
+  <RobotDetail @changeset={{c}}/>
+   <button type="button" {{on "click" (fn this.rollback c)}}>Undo</button>
+    <button disabled={{@c.isInvalid}} type="button" {{on "click" (fn this.save c)}}>
     Save Changes
   </button>
 {{/let}}
