@@ -28,8 +28,7 @@ export default class PostgrestAdapter extends MinimumInterfaceAdapter {
       input,
       init,
       // The following stolen from: https://github.com/ember-cli/ember-fetch
-    )
-      .then(function (response: Response) {
+      ).then(function(response) {
         if (response.ok) {
           return response.json();
         } else if (isUnauthorizedResponse(response)) {
@@ -40,7 +39,7 @@ export default class PostgrestAdapter extends MinimumInterfaceAdapter {
           reject(response);
         }
       })
-      .catch(function (error: Error) {
+      .catch(function(error) {
         if (isAbortError(error)) {
           // handle aborted network error
           reject(error);
@@ -142,22 +141,22 @@ export default class PostgrestAdapter extends MinimumInterfaceAdapter {
     return this._fetch(url);
   }
 
-  // Finds entries from a given table for a given list of IDs.
-  // URL looks like: http://site/robots?or=(id.eq.1191,id.eq.1192)
-  findMany<K extends keyof ModelRegistry>( // [OPTIONAL]
-    store: Store,
-    type: ModelRegistry[K],
-    ids: Array<string>,
-    snapshots: Array<Snapshot>,
-  ): RSVP.Promise<any> {
-    const s = [];
-    for (const id of ids) {
-      s.push('id.eq.' + id);
+    // Finds entries from a given table for a given list of IDs.
+    //URL looks like: http://site/robots?or=(id.eq.1191,id.eq.1192)
+    findMany<K extends keyof ModelRegistry> ( // [OPTIONAL]
+      store: Store,
+      type: ModelRegistry[K],
+      ids: Array<String>,
+      snapshots: Array<Snapshot>
+    ): RSVP.Promise<any> {
+      let s = [];
+      for (const id of ids) {
+          s.push("id.eq." + id);
+      }
+      let q: string = s.join(",");
+      let url = this.prefixURL(type.modelName + '?or=(' + q + ')');
+      return this._fetch(url);
     }
-    const q: string = s.join(',');
-    const url = this.prefixURL(type.modelName + '?or=(' + q + ')');
-    return this._fetch(url);
-  }
 
   // Find a specific record
   // URL looks like this: https://site/robots?id=eq.1234)
@@ -243,27 +242,28 @@ export default class PostgrestAdapter extends MinimumInterfaceAdapter {
     });
   }
 
-  prefixURL(modelName: string) {
-    const url: Array<string> = [];
-    const host = this.host;
-
-    const prefix = this._urlPrefix();
-    if (prefix) {
-      url.push(...prefix);
+    prefixURL(modelName: string){
+        let url = [];
+        let { host } = this;
+        let prefix = this._urlPrefix();
+        url.push(modelName);
+        if (prefix) {
+            url.unshift(prefix);
+        }
+        let urlString = url.join('/');
+        if (!host && urlString && urlString.charAt(0) !== '/') {
+            urlString = '/' + urlString;
+        }
+        return urlString;
     }
-    url.push(modelName);
-    let urlString = url.join('/');
-    if (!host && urlString && urlString.charAt(0) !== '/') {
-      urlString = '/' + urlString;
-    }
-    return urlString;
-  }
 
-  // stolen from packages/adapter/addon/-private/build-url-mixin.ts
-  _urlPrefix(path?: string | null, parentURL?: string): Array<string> {
-    let host = this.host;
-    const namespace = this.namespace;
-    const url: Array<string> = [];
+    // stolen from packages/adapter/addon/-private/build-url-mixin.ts
+    _urlPrefix(
+      path?: string | null,
+      parentURL?: string,
+    ): Array<string> {
+        let { host, namespace } = this;
+        let url: Array<string> = [];
 
     if (!host || host === '/') {
       host = '';
