@@ -1,9 +1,12 @@
 from flask import Flask, request, send_file
 from flask_restx import Resource, Api, Namespace, fields
 from RobocritterCertificate import make_odf_certificate
+from flask_cors import CORS
+
 import os
 
 app = Flask(__name__)
+CORS(app)
 api = Api(app)
 
 ns = Namespace("robocritters", description="Robocritters related operations")
@@ -41,7 +44,6 @@ class RobotCritterCertificate(Resource):
         os.remove(file_name)
         
         return response
-
 
 if __name__ == "__main__":
     app.run(debug=True)

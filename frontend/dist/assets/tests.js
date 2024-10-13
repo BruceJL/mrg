@@ -88,9 +88,9 @@ define("mrg-sign-in/tests/integration/components/login-test", ["@ember/template-
         <Login />
       */
       {
-        "id": "Mc1vLFiE",
+        "id": "Ob7faW1z",
         "block": "[[[8,[39,0],null,null,null]],[],false,[\"login\"]]",
-        "moduleName": "/Users/tracyhuang/Dev/mrg/mrg-sign-in/tests/integration/components/login-test.js",
+        "moduleName": "/Users/tracyhuang/Dev/mrg/frontend/mrg-sign-in/tests/integration/components/login-test.js",
         "isStrictMode": false
       }));
       assert.equal(this.element.textContent.trim(), '');
@@ -105,9 +105,9 @@ define("mrg-sign-in/tests/integration/components/login-test", ["@ember/template-
           
       */
       {
-        "id": "il4zg1aG",
+        "id": "4PtHbB3/",
         "block": "[[[1,\"\\n      \"],[8,[39,0],null,null,[[\"default\"],[[[[1,\"\\n        template block text\\n      \"]],[]]]]],[1,\"\\n    \"]],[],false,[\"login\"]]",
-        "moduleName": "/Users/tracyhuang/Dev/mrg/mrg-sign-in/tests/integration/components/login-test.js",
+        "moduleName": "/Users/tracyhuang/Dev/mrg/frontend/mrg-sign-in/tests/integration/components/login-test.js",
         "isStrictMode": false
       }));
       assert.equal(this.element.textContent.trim(), 'template block text');
@@ -129,9 +129,9 @@ define("mrg-sign-in/tests/integration/components/robot-checkin-listing-test", ["
         <RobotCheckinListing />
       */
       {
-        "id": "1VcG2QPU",
+        "id": "tNn9gduj",
         "block": "[[[8,[39,0],null,null,null]],[],false,[\"robot-checkin-listing\"]]",
-        "moduleName": "/Users/tracyhuang/Dev/mrg/mrg-sign-in/tests/integration/components/robot-checkin-listing-test.js",
+        "moduleName": "/Users/tracyhuang/Dev/mrg/frontend/mrg-sign-in/tests/integration/components/robot-checkin-listing-test.js",
         "isStrictMode": false
       }));
       assert.equal(this.element.textContent.trim(), '');
@@ -146,9 +146,9 @@ define("mrg-sign-in/tests/integration/components/robot-checkin-listing-test", ["
           
       */
       {
-        "id": "Qup6KpwB",
+        "id": "0F8fZ0/a",
         "block": "[[[1,\"\\n      \"],[8,[39,0],null,null,[[\"default\"],[[[[1,\"\\n        template block text\\n      \"]],[]]]]],[1,\"\\n    \"]],[],false,[\"robot-checkin-listing\"]]",
-        "moduleName": "/Users/tracyhuang/Dev/mrg/mrg-sign-in/tests/integration/components/robot-checkin-listing-test.js",
+        "moduleName": "/Users/tracyhuang/Dev/mrg/frontend/mrg-sign-in/tests/integration/components/robot-checkin-listing-test.js",
         "isStrictMode": false
       }));
       assert.equal(this.element.textContent.trim(), 'template block text');
@@ -170,9 +170,9 @@ define("mrg-sign-in/tests/integration/components/robot-checkin-test", ["@ember/t
         <RobotCheckin />
       */
       {
-        "id": "B4COl2td",
+        "id": "exAbkRLt",
         "block": "[[[8,[39,0],null,null,null]],[],false,[\"robot-checkin\"]]",
-        "moduleName": "/Users/tracyhuang/Dev/mrg/mrg-sign-in/tests/integration/components/robot-checkin-test.js",
+        "moduleName": "/Users/tracyhuang/Dev/mrg/frontend/mrg-sign-in/tests/integration/components/robot-checkin-test.js",
         "isStrictMode": false
       }));
       assert.equal(this.element.textContent.trim(), '');
@@ -187,9 +187,9 @@ define("mrg-sign-in/tests/integration/components/robot-checkin-test", ["@ember/t
           
       */
       {
-        "id": "017mHM1l",
+        "id": "JaJAOSRp",
         "block": "[[[1,\"\\n      \"],[8,[39,0],null,null,[[\"default\"],[[[[1,\"\\n        template block text\\n      \"]],[]]]]],[1,\"\\n    \"]],[],false,[\"robot-checkin\"]]",
-        "moduleName": "/Users/tracyhuang/Dev/mrg/mrg-sign-in/tests/integration/components/robot-checkin-test.js",
+        "moduleName": "/Users/tracyhuang/Dev/mrg/frontend/mrg-sign-in/tests/integration/components/robot-checkin-test.js",
         "isStrictMode": false
       }));
       assert.equal(this.element.textContent.trim(), 'template block text');
@@ -211,9 +211,9 @@ define("mrg-sign-in/tests/integration/components/robot-detail-test", ["@ember/te
         {{robot-detail}}
       */
       {
-        "id": "h5t3W5T1",
+        "id": "54B2q6as",
         "block": "[[[1,[34,0]]],[],false,[\"robot-detail\"]]",
-        "moduleName": "/Users/tracyhuang/Dev/mrg/mrg-sign-in/tests/integration/components/robot-detail-test.js",
+        "moduleName": "/Users/tracyhuang/Dev/mrg/frontend/mrg-sign-in/tests/integration/components/robot-detail-test.js",
         "isStrictMode": false
       }));
       assert.dom('*').hasText('');
@@ -228,9 +228,9 @@ define("mrg-sign-in/tests/integration/components/robot-detail-test", ["@ember/te
           
       */
       {
-        "id": "nLoAEeCV",
+        "id": "NuvfylCL",
         "block": "[[[1,\"\\n\"],[6,[39,0],null,null,[[\"default\"],[[[[1,\"        template block text\\n\"]],[]]]]],[1,\"    \"]],[],false,[\"robot-detail\"]]",
-        "moduleName": "/Users/tracyhuang/Dev/mrg/mrg-sign-in/tests/integration/components/robot-detail-test.js",
+        "moduleName": "/Users/tracyhuang/Dev/mrg/frontend/mrg-sign-in/tests/integration/components/robot-detail-test.js",
         "isStrictMode": false
       }));
       assert.dom('*').hasText('template block text');
@@ -252,9 +252,9 @@ define("mrg-sign-in/tests/integration/components/robot-edit-test", ["@ember/temp
         {{robot-edit}}
       */
       {
-        "id": "ZYqBIdet",
+        "id": "5DJVCYj6",
         "block": "[[[1,[34,0]]],[],false,[\"robot-edit\"]]",
-        "moduleName": "/Users/tracyhuang/Dev/mrg/mrg-sign-in/tests/integration/components/robot-edit-test.js",
+        "moduleName": "/Users/tracyhuang/Dev/mrg/frontend/mrg-sign-in/tests/integration/components/robot-edit-test.js",
         "isStrictMode": false
       }));
       assert.dom('*').hasText('');
@@ -269,9 +269,9 @@ define("mrg-sign-in/tests/integration/components/robot-edit-test", ["@ember/temp
           
       */
       {
-        "id": "t2p2fRRs",
+        "id": "oS0NELlf",
         "block": "[[[1,\"\\n\"],[6,[39,0],null,null,[[\"default\"],[[[[1,\"        template block text\\n\"]],[]]]]],[1,\"    \"]],[],false,[\"robot-edit\"]]",
-        "moduleName": "/Users/tracyhuang/Dev/mrg/mrg-sign-in/tests/integration/components/robot-edit-test.js",
+        "moduleName": "/Users/tracyhuang/Dev/mrg/frontend/mrg-sign-in/tests/integration/components/robot-edit-test.js",
         "isStrictMode": false
       }));
       assert.dom('*').hasText('template block text');
@@ -293,9 +293,9 @@ define("mrg-sign-in/tests/integration/components/robot-listing-test", ["@ember/t
         {{robot-listing}}
       */
       {
-        "id": "MHhUVT7L",
+        "id": "hohWd1qL",
         "block": "[[[1,[34,0]]],[],false,[\"robot-listing\"]]",
-        "moduleName": "/Users/tracyhuang/Dev/mrg/mrg-sign-in/tests/integration/components/robot-listing-test.js",
+        "moduleName": "/Users/tracyhuang/Dev/mrg/frontend/mrg-sign-in/tests/integration/components/robot-listing-test.js",
         "isStrictMode": false
       }));
       assert.dom('*').hasText('');
@@ -310,9 +310,9 @@ define("mrg-sign-in/tests/integration/components/robot-listing-test", ["@ember/t
           
       */
       {
-        "id": "754II8L/",
+        "id": "ory4jDeS",
         "block": "[[[1,\"\\n\"],[6,[39,0],null,null,[[\"default\"],[[[[1,\"        template block text\\n\"]],[]]]]],[1,\"    \"]],[],false,[\"robot-listing\"]]",
-        "moduleName": "/Users/tracyhuang/Dev/mrg/mrg-sign-in/tests/integration/components/robot-listing-test.js",
+        "moduleName": "/Users/tracyhuang/Dev/mrg/frontend/mrg-sign-in/tests/integration/components/robot-listing-test.js",
         "isStrictMode": false
       }));
       assert.dom('*').hasText('template block text');
@@ -334,9 +334,9 @@ define("mrg-sign-in/tests/integration/components/robot-measurement-test", ["@emb
         <RobotMeasurement />
       */
       {
-        "id": "vuHzQVkD",
+        "id": "tQzQuLlF",
         "block": "[[[8,[39,0],null,null,null]],[],false,[\"robot-measurement\"]]",
-        "moduleName": "/Users/tracyhuang/Dev/mrg/mrg-sign-in/tests/integration/components/robot-measurement-test.js",
+        "moduleName": "/Users/tracyhuang/Dev/mrg/frontend/mrg-sign-in/tests/integration/components/robot-measurement-test.js",
         "isStrictMode": false
       }));
       assert.equal(this.element.textContent.trim(), '');
@@ -351,9 +351,9 @@ define("mrg-sign-in/tests/integration/components/robot-measurement-test", ["@emb
           
       */
       {
-        "id": "wUFwUs7E",
+        "id": "C30H8Bh5",
         "block": "[[[1,\"\\n      \"],[8,[39,0],null,null,[[\"default\"],[[[[1,\"\\n        template block text\\n      \"]],[]]]]],[1,\"\\n    \"]],[],false,[\"robot-measurement\"]]",
-        "moduleName": "/Users/tracyhuang/Dev/mrg/mrg-sign-in/tests/integration/components/robot-measurement-test.js",
+        "moduleName": "/Users/tracyhuang/Dev/mrg/frontend/mrg-sign-in/tests/integration/components/robot-measurement-test.js",
         "isStrictMode": false
       }));
       assert.equal(this.element.textContent.trim(), 'template block text');
@@ -375,9 +375,9 @@ define("mrg-sign-in/tests/integration/components/robot-payment-test", ["@ember/t
         <RobotPayment />
       */
       {
-        "id": "5RvtDv/D",
+        "id": "aJBW7TmY",
         "block": "[[[8,[39,0],null,null,null]],[],false,[\"robot-payment\"]]",
-        "moduleName": "/Users/tracyhuang/Dev/mrg/mrg-sign-in/tests/integration/components/robot-payment-test.js",
+        "moduleName": "/Users/tracyhuang/Dev/mrg/frontend/mrg-sign-in/tests/integration/components/robot-payment-test.js",
         "isStrictMode": false
       }));
       assert.equal(this.element.textContent.trim(), '');
@@ -392,9 +392,9 @@ define("mrg-sign-in/tests/integration/components/robot-payment-test", ["@ember/t
           
       */
       {
-        "id": "61PyD59a",
+        "id": "wgjp1ofw",
         "block": "[[[1,\"\\n      \"],[8,[39,0],null,null,[[\"default\"],[[[[1,\"\\n        template block text\\n      \"]],[]]]]],[1,\"\\n    \"]],[],false,[\"robot-payment\"]]",
-        "moduleName": "/Users/tracyhuang/Dev/mrg/mrg-sign-in/tests/integration/components/robot-payment-test.js",
+        "moduleName": "/Users/tracyhuang/Dev/mrg/frontend/mrg-sign-in/tests/integration/components/robot-payment-test.js",
         "isStrictMode": false
       }));
       assert.equal(this.element.textContent.trim(), 'template block text');
@@ -416,9 +416,9 @@ define("mrg-sign-in/tests/integration/components/validated-input-test", ["@ember
         {{validated-input}}
       */
       {
-        "id": "4kaFSIOK",
+        "id": "GS2zlS3b",
         "block": "[[[1,[34,0]]],[],false,[\"validated-input\"]]",
-        "moduleName": "/Users/tracyhuang/Dev/mrg/mrg-sign-in/tests/integration/components/validated-input-test.js",
+        "moduleName": "/Users/tracyhuang/Dev/mrg/frontend/mrg-sign-in/tests/integration/components/validated-input-test.js",
         "isStrictMode": false
       }));
       assert.dom('*').hasText('');
@@ -433,9 +433,9 @@ define("mrg-sign-in/tests/integration/components/validated-input-test", ["@ember
           
       */
       {
-        "id": "AXTMxMag",
+        "id": "qqIIiX8k",
         "block": "[[[1,\"\\n\"],[6,[39,0],null,null,[[\"default\"],[[[[1,\"        template block text\\n\"]],[]]]]],[1,\"    \"]],[],false,[\"validated-input\"]]",
-        "moduleName": "/Users/tracyhuang/Dev/mrg/mrg-sign-in/tests/integration/components/validated-input-test.js",
+        "moduleName": "/Users/tracyhuang/Dev/mrg/frontend/mrg-sign-in/tests/integration/components/validated-input-test.js",
         "isStrictMode": false
       }));
       assert.dom('*').hasText('template block text');
@@ -478,6 +478,20 @@ define("mrg-sign-in/tests/unit/controllers/ring-assignments-test", ["qunit", "em
     // Replace this with your real tests.
     (0, _qunit.test)('it exists', function (assert) {
       let controller = this.owner.lookup('controller:ringAssignment');
+      assert.ok(controller);
+    });
+  });
+});
+define("mrg-sign-in/tests/unit/controllers/robocritter-certificate-test", ["qunit", "mrg-sign-in/tests/helpers"], function (_qunit, _helpers) {
+  "use strict";
+
+  0; //eaimeta@70e063a35619d71f0,"qunit",0,"mrg-sign-in/tests/helpers"eaimeta@70e063a35619d71f
+  (0, _qunit.module)('Unit | Controller | robocritter-certificate', function (hooks) {
+    (0, _helpers.setupTest)(hooks);
+
+    // TODO: Replace this with your real tests.
+    (0, _qunit.test)('it exists', function (assert) {
+      let controller = this.owner.lookup('controller:robocritter-certificate');
       assert.ok(controller);
     });
   });

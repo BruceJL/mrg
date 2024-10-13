@@ -1497,6 +1497,87 @@
   }
   _exports.default = RingAssignmentController;
 });
+;define("mrg-sign-in/controllers/robocritter-certificate", ["exports", "@ember/controller", "@ember/object", "@glimmer/tracking"], function (_exports, _controller, _object, _tracking) {
+  "use strict";
+
+  Object.defineProperty(_exports, "__esModule", {
+    value: true
+  });
+  _exports.default = void 0;
+  var _class, _descriptor, _descriptor2, _descriptor3, _descriptor4;
+  0; //eaimeta@70e063a35619d71f0,"@ember/controller",0,"@ember/object",0,"@glimmer/tracking"eaimeta@70e063a35619d71f
+  function _initializerDefineProperty(target, property, descriptor, context) { if (!descriptor) return; Object.defineProperty(target, property, { enumerable: descriptor.enumerable, configurable: descriptor.configurable, writable: descriptor.writable, value: descriptor.initializer ? descriptor.initializer.call(context) : void 0 }); }
+  function _defineProperty(obj, key, value) { key = _toPropertyKey(key); if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
+  function _toPropertyKey(arg) { var key = _toPrimitive(arg, "string"); return typeof key === "symbol" ? key : String(key); }
+  function _toPrimitive(input, hint) { if (typeof input !== "object" || input === null) return input; var prim = input[Symbol.toPrimitive]; if (prim !== undefined) { var res = prim.call(input, hint || "default"); if (typeof res !== "object") return res; throw new TypeError("@@toPrimitive must return a primitive value."); } return (hint === "string" ? String : Number)(input); }
+  function _applyDecoratedDescriptor(target, property, decorators, descriptor, context) { var desc = {}; Object.keys(descriptor).forEach(function (key) { desc[key] = descriptor[key]; }); desc.enumerable = !!desc.enumerable; desc.configurable = !!desc.configurable; if ('value' in desc || desc.initializer) { desc.writable = true; } desc = decorators.slice().reverse().reduce(function (desc, decorator) { return decorator(target, property, desc) || desc; }, desc); if (context && desc.initializer !== void 0) { desc.value = desc.initializer ? desc.initializer.call(context) : void 0; desc.initializer = undefined; } if (desc.initializer === void 0) { Object.defineProperty(target, property, desc); desc = null; } return desc; }
+  function _initializerWarningHelper(descriptor, context) { throw new Error('Decorating class property failed. Please ensure that ' + 'proposal-class-properties is enabled and runs after the decorators transform.'); }
+  let RobocritterCertificateController = (_class = class RobocritterCertificateController extends _controller.default {
+    constructor() {
+      super(...arguments);
+      _initializerDefineProperty(this, "minutes", _descriptor, this);
+      _initializerDefineProperty(this, "seconds", _descriptor2, this);
+      _initializerDefineProperty(this, "player", _descriptor3, this);
+      _initializerDefineProperty(this, "robot", _descriptor4, this);
+    }
+    async downloadCertificate() {
+      const response = await fetch('http://127.0.0.1:5000/api/generate-certificate', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          player: this.player,
+          robot: this.robot,
+          minutes: this.minutes,
+          seconds: this.seconds
+        })
+      });
+      if (response.ok) {
+        const blob = await response.blob();
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = 'certificate.odg';
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
+        window.URL.revokeObjectURL(url);
+      } else {
+        alert('Failed to generate the certificate');
+      }
+    }
+  }, _descriptor = _applyDecoratedDescriptor(_class.prototype, "minutes", [_tracking.tracked], {
+    configurable: true,
+    enumerable: true,
+    writable: true,
+    initializer: function () {
+      return 0;
+    }
+  }), _descriptor2 = _applyDecoratedDescriptor(_class.prototype, "seconds", [_tracking.tracked], {
+    configurable: true,
+    enumerable: true,
+    writable: true,
+    initializer: function () {
+      return 0;
+    }
+  }), _descriptor3 = _applyDecoratedDescriptor(_class.prototype, "player", [_tracking.tracked], {
+    configurable: true,
+    enumerable: true,
+    writable: true,
+    initializer: function () {
+      return "";
+    }
+  }), _descriptor4 = _applyDecoratedDescriptor(_class.prototype, "robot", [_tracking.tracked], {
+    configurable: true,
+    enumerable: true,
+    writable: true,
+    initializer: function () {
+      return "";
+    }
+  }), _applyDecoratedDescriptor(_class.prototype, "downloadCertificate", [_object.action], Object.getOwnPropertyDescriptor(_class.prototype, "downloadCertificate"), _class.prototype), _class);
+  _exports.default = RobocritterCertificateController;
+});
 ;define("mrg-sign-in/controllers/robots/bulk-payment", ["exports", "@ember/object", "@ember/debug", "mrg-sign-in/controllers/RefreshedController"], function (_exports, _object, _debug, _RefreshedController) {
   "use strict";
 
@@ -4566,35 +4647,34 @@
   0; //eaimeta@70e063a35619d71f0,"ember-cli-htmlbars"eaimeta@70e063a35619d71f
   var _default = (0, _templateFactory.createTemplateFactory)(
   /*
-    <h2> Robocritter Certificate </h2>
-  <form {{on "submit" this.preventDefault}}>
-      <h3>Competitor Information</h3>
-      <label for="name">Competitor</label>
-      <input id="name" placeholder="Enter Competitor Name" value={{this.name}}>
+    <!-- app/templates/robocritter-certificate.hbs -->
+  <div>
+      <label for="player">Player Name:</label>
+      <input type="text" id="player" value={{this.player}} oninput={{action (mut this.player) value="target.value"}} autocomplete="off" required>
+  </div>
   
-      <label for="robotName">Robot Name</label>
-      <input id="robotName" placeholder="Enter Robot Name" value={{this.robotName}}>
+  <div>
+      <label for="robot">Robot Name:</label>
+      <input type="text" id="robot" value={{this.robot}} oninput={{action (mut this.robot) value="target.value"}} autocomplete="off" required>
+  </div>
   
-      <h3>Competition Time</h3> 
-      <label for="Minues">Minues</label>
-      <input id="minues" placeholder="Enter Minues" value={{this.minues}}>
-      <label for="Seconds">Seconds</label>
-      <input id="seconds" placeholder="Enter Seconds" value={{this.seconds}}>
+  <div>
+      <label for="minutes">Minutes:</label>
+      <input type="number" id="minutes" value={{this.minutes}} oninput={{action (mut this.minutes) value="target.value"}} autocomplete="off" required>
+  </div>
   
-      <div>
-          <!-- Button for printing the certificate -->
-          <button type="button" style="margin: 20px" {{on "click" this.printCertificate}}>Print Certificate</button>
+  <div>
+      <label for="seconds">Seconds:</label>
+      <input type="number" id="seconds" value={{this.seconds}} oninput={{action (mut this.seconds) value="target.value"}} autocomplete="off" required>
+  </div>
   
-          <!-- Button for saving the certificate -->
-          <button type="button" style="margin: 20px" {{on "click" this.saveCertificate}}>Save Certificate</button>
-      </div>
+  <div><button {{on "click" this.downloadCertificate}}>Download Certificate</button></div>
   
-  </form>
   
   */
   {
-    "id": "A1i87b/6",
-    "block": "[[[10,\"h2\"],[12],[1,\" Robocritter Certificate \"],[13],[1,\"\\n\"],[11,\"form\"],[4,[38,0],[\"submit\",[30,0,[\"preventDefault\"]]],null],[12],[1,\"\\n    \"],[10,\"h3\"],[12],[1,\"Competitor Information\"],[13],[1,\"\\n    \"],[10,\"label\"],[14,\"for\",\"name\"],[12],[1,\"Competitor\"],[13],[1,\"\\n    \"],[10,\"input\"],[14,1,\"name\"],[14,\"placeholder\",\"Enter Competitor Name\"],[15,2,[30,0,[\"name\"]]],[12],[13],[1,\"\\n\\n    \"],[10,\"label\"],[14,\"for\",\"robotName\"],[12],[1,\"Robot Name\"],[13],[1,\"\\n    \"],[10,\"input\"],[14,1,\"robotName\"],[14,\"placeholder\",\"Enter Robot Name\"],[15,2,[30,0,[\"robotName\"]]],[12],[13],[1,\"\\n\\n    \"],[10,\"h3\"],[12],[1,\"Competition Time\"],[13],[1,\" \\n    \"],[10,\"label\"],[14,\"for\",\"Minues\"],[12],[1,\"Minues\"],[13],[1,\"\\n    \"],[10,\"input\"],[14,1,\"minues\"],[14,\"placeholder\",\"Enter Minues\"],[15,2,[30,0,[\"minues\"]]],[12],[13],[1,\"\\n    \"],[10,\"label\"],[14,\"for\",\"Seconds\"],[12],[1,\"Seconds\"],[13],[1,\"\\n    \"],[10,\"input\"],[14,1,\"seconds\"],[14,\"placeholder\",\"Enter Seconds\"],[15,2,[30,0,[\"seconds\"]]],[12],[13],[1,\"\\n\\n    \"],[10,0],[12],[1,\"\\n        \"],[3,\" Button for printing the certificate \"],[1,\"\\n        \"],[11,\"button\"],[24,5,\"margin: 20px\"],[24,4,\"button\"],[4,[38,0],[\"click\",[30,0,[\"printCertificate\"]]],null],[12],[1,\"Print Certificate\"],[13],[1,\"\\n\\n        \"],[3,\" Button for saving the certificate \"],[1,\"\\n        \"],[11,\"button\"],[24,5,\"margin: 20px\"],[24,4,\"button\"],[4,[38,0],[\"click\",[30,0,[\"saveCertificate\"]]],null],[12],[1,\"Save Certificate\"],[13],[1,\"\\n    \"],[13],[1,\"\\n\\n\"],[13],[1,\"\\n\"]],[],false,[\"on\"]]",
+    "id": "8unyR3SX",
+    "block": "[[[3,\" app/templates/robocritter-certificate.hbs \"],[1,\"\\n\"],[10,0],[12],[1,\"\\n    \"],[10,\"label\"],[14,\"for\",\"player\"],[12],[1,\"Player Name:\"],[13],[1,\"\\n    \"],[10,\"input\"],[14,1,\"player\"],[15,2,[30,0,[\"player\"]]],[15,\"oninput\",[28,[37,0],[[30,0],[28,[37,1],[[30,0,[\"player\"]]],null]],[[\"value\"],[\"target.value\"]]]],[14,\"autocomplete\",\"off\"],[14,\"required\",\"\"],[14,4,\"text\"],[12],[13],[1,\"\\n\"],[13],[1,\"\\n\\n\"],[10,0],[12],[1,\"\\n    \"],[10,\"label\"],[14,\"for\",\"robot\"],[12],[1,\"Robot Name:\"],[13],[1,\"\\n    \"],[10,\"input\"],[14,1,\"robot\"],[15,2,[30,0,[\"robot\"]]],[15,\"oninput\",[28,[37,0],[[30,0],[28,[37,1],[[30,0,[\"robot\"]]],null]],[[\"value\"],[\"target.value\"]]]],[14,\"autocomplete\",\"off\"],[14,\"required\",\"\"],[14,4,\"text\"],[12],[13],[1,\"\\n\"],[13],[1,\"\\n\\n\"],[10,0],[12],[1,\"\\n    \"],[10,\"label\"],[14,\"for\",\"minutes\"],[12],[1,\"Minutes:\"],[13],[1,\"\\n    \"],[10,\"input\"],[14,1,\"minutes\"],[15,2,[30,0,[\"minutes\"]]],[15,\"oninput\",[28,[37,0],[[30,0],[28,[37,1],[[30,0,[\"minutes\"]]],null]],[[\"value\"],[\"target.value\"]]]],[14,\"autocomplete\",\"off\"],[14,\"required\",\"\"],[14,4,\"number\"],[12],[13],[1,\"\\n\"],[13],[1,\"\\n\\n\"],[10,0],[12],[1,\"\\n    \"],[10,\"label\"],[14,\"for\",\"seconds\"],[12],[1,\"Seconds:\"],[13],[1,\"\\n    \"],[10,\"input\"],[14,1,\"seconds\"],[15,2,[30,0,[\"seconds\"]]],[15,\"oninput\",[28,[37,0],[[30,0],[28,[37,1],[[30,0,[\"seconds\"]]],null]],[[\"value\"],[\"target.value\"]]]],[14,\"autocomplete\",\"off\"],[14,\"required\",\"\"],[14,4,\"number\"],[12],[13],[1,\"\\n\"],[13],[1,\"\\n\\n\"],[10,0],[12],[11,\"button\"],[4,[38,2],[\"click\",[30,0,[\"downloadCertificate\"]]],null],[12],[1,\"Download Certificate\"],[13],[13],[1,\"\\n\\n\"]],[],false,[\"action\",\"mut\",\"on\"]]",
     "moduleName": "mrg-sign-in/templates/robocritter-certificate.hbs",
     "isStrictMode": false
   });
@@ -5014,7 +5094,7 @@ catch(err) {
 
 ;
           if (!runningTests) {
-            require("mrg-sign-in/app")["default"].create({"name":"mrg-sign-in","version":"0.0.0+84945a08"});
+            require("mrg-sign-in/app")["default"].create({"name":"mrg-sign-in","version":"0.0.0+2bbe1a2e"});
           }
         
 //# sourceMappingURL=mrg-sign-in.map

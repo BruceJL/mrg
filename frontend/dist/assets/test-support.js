@@ -6696,9 +6696,9 @@ define("@ember/test-helpers/setup-rendering-context", ["exports", "@embroider/ma
     {{outlet}}
   */
   {
-    "id": "wIUlaXCa",
+    "id": "HaGaYdTt",
     "block": "[[[46,[28,[37,1],null,null],null,null,null]],[],false,[\"component\",\"-outlet\"]]",
-    "moduleName": "/Users/tracyhuang/Dev/mrg/@ember/test-helpers/setup-rendering-context.js",
+    "moduleName": "/Users/tracyhuang/Dev/mrg/frontend/@ember/test-helpers/setup-rendering-context.js",
     "isStrictMode": false
   });
   const EMPTY_TEMPLATE = (0, _templateFactory.createTemplateFactory)(
@@ -6706,9 +6706,9 @@ define("@ember/test-helpers/setup-rendering-context", ["exports", "@embroider/ma
     
   */
   {
-    "id": "9MEiFgu1",
+    "id": "BOKUeAwQ",
     "block": "[[],[],false,[]]",
-    "moduleName": "/Users/tracyhuang/Dev/mrg/@ember/test-helpers/setup-rendering-context.js",
+    "moduleName": "/Users/tracyhuang/Dev/mrg/frontend/@ember/test-helpers/setup-rendering-context.js",
     "isStrictMode": false
   });
   const INVOKE_PROVIDED_COMPONENT = (0, _templateFactory.createTemplateFactory)(
@@ -6716,9 +6716,9 @@ define("@ember/test-helpers/setup-rendering-context", ["exports", "@embroider/ma
     <this.ProvidedComponent />
   */
   {
-    "id": "VEDixspk",
+    "id": "qmVsTanJ",
     "block": "[[[8,[30,0,[\"ProvidedComponent\"]],null,null,null]],[],false,[]]",
-    "moduleName": "/Users/tracyhuang/Dev/mrg/@ember/test-helpers/setup-rendering-context.js",
+    "moduleName": "/Users/tracyhuang/Dev/mrg/frontend/@ember/test-helpers/setup-rendering-context.js",
     "isStrictMode": false
   });
   // eslint-disable-next-line require-jsdoc
