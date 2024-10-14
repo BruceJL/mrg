@@ -31,5 +31,5 @@ pods/flask/python/ScoreSheets/*
 pods/flask/python/*.csv
 
 # Unnecessary files
-./pods/passwords.txt
-./pods/postgresql/01_mrg_data.sql
+pods/passwords.txt
+pods/postgresql/01_mrg_data.sql
