@@ -1,4 +1,4 @@
-# compiled output
+.# compiled output
 /dist/
 /declarations/
 
@@ -30,6 +30,6 @@
 pods/flask/python/ScoreSheets/*
 pods/flask/python/*.csv
 
-# Unnecessary file
-/pods/passwords.txt
-/pods/postgresql/01_mrg_data.sql
+# Unnecessary files
+./pods/passwords.txt
+./pods/postgresql/01_mrg_data.sql

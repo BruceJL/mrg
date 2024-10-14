@@ -33,8 +33,9 @@ server {
          expires off;
      }
 
-     location /flask/ {
-         proxy_pass http://localhost:3001/;
+     # This proxy is used for development purposes to be compatible with ember server --proxy http://check-in/api
+     location /api/flask/ {
+         proxy_pass http://127.0.0.1:5000/;
          proxy_http_version 1.1;
          proxy_set_header Connection "";
          proxy_set_header Host $host;
@@ -42,5 +43,17 @@ server {
          proxy_set_header X-Real-IP $remote_addr;
          add_header 'Cache-Control' 'no-store, no-cache, must-revalidate, proxy-revalidate, max-age=0';
          expires off;
-    }
+     }
+
+     # This proxy is used for production purposes, where the client will just go back to the localhost.
+     location /flask/ {
+         proxy_pass http://127.0.0.1:5000/;
+         proxy_http_version 1.1;
+         proxy_set_header Connection "";
+         proxy_set_header Host $host;
+         proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+         proxy_set_header X-Real-IP $remote_addr;
+         add_header 'Cache-Control' 'no-store, no-cache, must-revalidate, proxy-revalidate, max-age=0';
+         expires off;
+     }
 }

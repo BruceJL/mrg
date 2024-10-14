@@ -363,7 +363,7 @@ def make_odf_certificate(minutes: "int", seconds: "int", player: "str", robot: "
     styles.addElement(s)
 
     # Add in the robot logo picture.
-    picture_path = Path(__file__).parent / "statics/robocritters_logo.png"
+    picture_path = Path(__file__).parent / "logos/robocritters_logo.png"
     robot_logo_href = document.addPicture(picture_path)
 
     # Create a page to contain the drawing
