@@ -31,11 +31,12 @@ export default class RobocritterCertificateController extends Controller {
             const url = window.URL.createObjectURL(blob);
             const a = document.createElement('a');
             a.href = url;
-            a.download = 'certificate.odg';
+            a.download = this.player + '_' + this.robot + '_certificate.odg';
             document.body.appendChild(a);
             a.click();
             a.remove();
             window.URL.revokeObjectURL(url);
+
         } else {
             alert('Failed to generate the certificate');
         }
