@@ -10,21 +10,18 @@ export default class RobocritterCertificateController extends Controller {
 
   @action
   async downloadCertificate() {
-    const response = await fetch(
-      'http://127.0.0.1:5000/api/generate-certificate',
-      {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          player: this.player,
-          robot: this.robot,
-          minutes: this.minutes,
-          seconds: this.seconds,
-        }),
+    const response = await fetch('/flask/api/generate-certificate', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
       },
-    );
+      body: JSON.stringify({
+        player: this.player,
+        robot: this.robot,
+        minutes: this.minutes,
+        seconds: this.seconds,
+      }),
+    });
 
     if (response.ok) {
       const blob = await response.blob();
