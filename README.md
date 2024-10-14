@@ -40,7 +40,6 @@ You will need the following things properly installed on your computer.
 - `npm run build` (production)
 
 ### Deploying
-
 The application is best hosted on dedicated hardware for the purposes of managing information at the Manitoba Robot Games. It's reccomended that a standalone computer be purposed as the check-in server (unless you really know what you're doing). Instructions on how to do so are listed below.
 
 #### Server hardware
@@ -57,7 +56,7 @@ The application is best deployed on a debian stable (or occasionally testing) en
 Which can be installed using apt: `apt install sshd podman pwgen git dnsmasq`.
 
 #### Creation of the Pod
-The application is deployed as a Podman pod. After cloning the repo, change to the `pods` directory and run `sudo ./buildpod.sh`. This will download and configure the 4 containers in the pod to run the application.
+The application is deployed as a Podman pod. After cloning the repo, change to the `pod` directory and run `sudo ./buildpod.sh`. This will download and configure the 4 containers in the pod to run the application.
 
 The containers created are:
 * **PostgreSQL** - Hosts the database containing all the competition information. It also includes a number of scripts to run business logic on the database. A default database schema is automatically installed.
@@ -68,12 +67,18 @@ The containers created are:
 #### Configuration of the Network Interfaces
 TODO - Add stuff to do with DHCP and DNS (dnsmasq) functionality and network setup.
 
+#### Importing of data from GravityForms into the PostgreSQL database.
+Before the games, it is necessary to competitor registration data from the data collected by Gravityforms into the database. This is most easily accomplished with the Dbeaver tool.
+
+TODO - flesh out how to import the data.
+
 ## Further Reading / Useful Links
 
 - [podman](https://podman.io/)
 - [nginx](https://nginx.org/en/)
 - [Postgrest](https://postgrest.org)
 - [PostgreSQL](https://www.postgresql.org/)
+- [Dbeaver](https://dbeaver.io/)
 - [ember.js](https://emberjs.com/)
 - [ember-cli](https://cli.emberjs.com/release/)
 - Development Browser Extensions

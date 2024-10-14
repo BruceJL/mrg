@@ -12,7 +12,7 @@ export default class RobotEditController extends Controller {
   @service router!: Services['router'];
   @service declare store: Services['store'];
 
-  RobotValidation = RobotValidation;
+  RobotValidation = new RobotValidation();
 
   @action
   done(competition: CompetitionModel) {

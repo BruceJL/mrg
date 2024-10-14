@@ -1,8 +1,9 @@
-Fix adapter to not send the competition update every time. - Need help.
+Fix adapter to not send the competition update every time. - Need help. Need to make a Cache object somehow.
 Get the authemticator working properly. - DONE.
-Get the changeset validations working.
+Get the changeset validations working. - DONE.
 Measurements need to fail or be purged when a competition is changed? Maybe add a competition field to the measurements table?
-Triggers are not visible in dbeaver. Is this a permissions issue?
+Triggers are not visible in dbeaver. Is this a permissions issue? Commented on closed ticket https://github.com/dbeaver/dbeaver/issues/18760
+Sanitize the competitor data for publishing.
 Still getting key errors from the adapter when:
   - Creating a pass fail measurement.
 Pass/fail radio buttons not working.

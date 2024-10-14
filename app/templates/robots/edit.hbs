@@ -14,10 +14,10 @@
   </select>
 </p>
 
-{{#let (changeset this.model.robot this.robotValidation) as |c|}}
+{{#let (changeset this.model.robot this.RobotValidation) as |c|}}
   <RobotDetail @changeset={{c}}/>
-   <button type="button" {{on "click" (fn this.rollback c)}}>Undo</button>
-    <button disabled={{@c.isInvalid}} type="button" {{on "click" (fn this.save c)}}>
+  <button type="button" {{on "click" (fn this.rollback c)}}>Undo</button>
+  <button disabled={{c.isInvalid}} type="button" {{on "click" (fn this.save c)}}>
     Save Changes
   </button>
 {{/let}}
