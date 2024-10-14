@@ -1,0 +1,23 @@
+<!-- app/templates/robocritter-certificate.hbs -->
+<div>
+    <label for="player">Player Name:</label>
+    <input type="text" id="player" value={{this.player}} oninput={{action (mut this.player) value="target.value"}} autocomplete="off" required>
+</div>
+
+<div>
+    <label for="robot">Robot Name:</label>
+    <input type="text" id="robot" value={{this.robot}} oninput={{action (mut this.robot) value="target.value"}} autocomplete="off" required>
+</div>
+
+<div>
+    <label for="minutes">Minutes:</label>
+    <input type="number" id="minutes" value={{this.minutes}} oninput={{action (mut this.minutes) value="target.value"}} autocomplete="off" required>
+</div>
+
+<div>
+    <label for="seconds">Seconds:</label>
+    <input type="number" id="seconds" value={{this.seconds}} oninput={{action (mut this.seconds) value="target.value"}} autocomplete="off" required>
+</div>
+
+<div><button {{on "click" this.downloadCertificate}}>Download Certificate</button></div>
+
