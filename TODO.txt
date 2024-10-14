@@ -1,8 +1,9 @@
 Fix adapter to not send the competition update every time. - Need help.
-Get the authemticator working properly.
+Get the authemticator working properly. - DONE.
 Get the changeset validations working.
 Measurements need to fail or be purged when a competition is changed? Maybe add a competition field to the measurements table?
 Triggers are not visible in dbeaver. Is this a permissions issue?
 Still getting key errors from the adapter when:
+  - Creating a pass fail measurement.
 Pass/fail radio buttons not working.
 Refactor Adpater/Serializer into a Handler.

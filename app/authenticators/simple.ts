@@ -15,7 +15,7 @@ export default class SimpleAuthenticator extends BaseAuthenticator {
 
   authenticate(data: string) {
     const fullname = data;
-    console.log('authenticating ' + fullname);
+    console.log('simple.ts: authenticating ' + fullname);
     if (fullname !== undefined) {
       return Promise.resolve({
         fullname,

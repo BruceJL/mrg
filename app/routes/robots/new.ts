@@ -7,9 +7,9 @@ export default class RobotsNewRoute extends Route {
   @service declare store: Services['store'];
 
   async model(params: any) {
-    let store = this.store;
-    let robot = await store.createRecord('robot');
-    let competitions = await store.findAll('competition');
+    const store = this.store;
+    const robot = await store.createRecord('robot');
+    const competitions = await store.findAll('competition');
     robot.competition = store.peekRecord('competition', params.competition);
 
     return hash({

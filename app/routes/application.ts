@@ -1,14 +1,14 @@
 import Route from '@ember/routing/route';
-import Transition from '@ember/routing/transition';
 import { service } from '@ember/service';
 import type { Registry as Services } from '@ember/service';
+import type RouterService from '@ember/routing/router-service';
+type Transition = ReturnType<RouterService['transitionTo']>;
 
 export default class Application extends Route {
-  @service declare session: Services['session']; //EmberSimpleAuthSession
+  @service session; //EmberSimpleAuthSession
 
-  beforemodel(transition: Transition) {
-    super.beforeModel(transition);
-    this.session.setup();
+  async beforeModel(transition: Transition) {
+    await this.session.setup();
     this.session.requireAuthentication(transition, 'login');
   }
 }
