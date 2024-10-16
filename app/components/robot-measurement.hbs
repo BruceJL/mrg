@@ -1,6 +1,4 @@
 <h3>Measurement Information</h3>
-
-
 <p><b>Measured:</b> {{@data.formattedMeasured}}</p>
 <table class="form" >
   <thead>
@@ -42,7 +40,7 @@
     <col>
     <col>
     <col>
-    {{#each @data.measurement as |m|}}
+    {{#each this.reversedMeasurments as |m|}}
       <tr>
         <td>{{m.type}}</td>
         <td>{{m.humanReadableResult}}</td>

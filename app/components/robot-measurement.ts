@@ -1,7 +1,6 @@
 import Component from '@glimmer/component';
 import { action } from '@ember/object';
 import { tracked } from '@glimmer/tracking';
-import { debug } from '@ember/debug';
 import { service } from '@ember/service';
 import type { Registry as Services } from '@ember/service';
 import { type SyncHasMany } from '@ember-data/model';
@@ -20,11 +19,12 @@ function isMeasured(
   let itemType = '';
   let foundMeasurements = false;
 
-  const measurementsArray = measurements.slice();
-  [...measurementsArray].sort((a, b) =>
-    a.datetime > b.datetime ? 1 : b.datetime > a.datetime ? -1 : 0,
-  );
-
+  // Sort with item 0 being the latest item.
+  const measurementsArray = measurements
+    .slice()
+    .sort((a, b) =>
+      a.datetime < b.datetime ? 1 : b.datetime < a.datetime ? -1 : 0,
+    );
   measurementsArray.forEach(function (
     item: RobotMeasurementModel,
     _index,
@@ -35,12 +35,14 @@ function isMeasured(
       if (itemDatetime < registrationTime) {
         done = true;
         foundMeasurements = false;
-        debug('passedMeasurement: No current measurements found for ' + type);
+        console.log(
+          'passedMeasurement: No current measurements found for ' + type,
+        );
       } else {
         itemType = item.type;
         if (type === itemType) {
           result = Boolean(item.result);
-          debug('passedMeasurement: Found: ' + result + ' for ' + type);
+          console.log('passedMeasurement: Found: ' + result + ' for ' + type);
           done = true;
           foundMeasurements = true;
         }
@@ -79,7 +81,7 @@ export default class RobotMeasurementComponent extends Component<ComponentSignat
 
   @action
   PopulateRadioBoxes(model: RobotModel): void {
-    debug('PopulateRadioBoxes fired');
+    console.log('PopulateRadioBoxes fired');
     const registrationTime = this.competition.registrationTime;
     this.Mass = isMeasured(model.measurement, 'Mass', registrationTime, true);
     this.Size = isMeasured(model.measurement, 'Size', registrationTime, true);
@@ -96,6 +98,10 @@ export default class RobotMeasurementComponent extends Component<ComponentSignat
       registrationTime,
       true,
     );
+  }
+
+  get reversedMeasurments(): RobotMeasurementModel[] {
+    return this.measurement.slice().reverse();
   }
 
   // This function is called by the radio boxes on the page to populate
@@ -147,7 +153,7 @@ export default class RobotMeasurementComponent extends Component<ComponentSignat
 
   @action
   createMeasurement(value: boolean, type: string, robot: RobotModel): void {
-    debug(
+    console.log(
       'Logging ' +
         type +
         ' measurement of: ' +
