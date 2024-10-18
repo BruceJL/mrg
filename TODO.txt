@@ -6,5 +6,5 @@ Triggers are not visible in dbeaver. Is this a permissions issue? Commented on c
 Sanitize the competitor data for publishing.
 Still getting key errors from the adapter when:
   - Creating a pass fail measurement.
-Pass/fail radio buttons not working.
+Pass/fail radio buttons not working. - DONE.
 Refactor Adpater/Serializer into a Handler.
