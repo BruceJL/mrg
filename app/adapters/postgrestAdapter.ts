@@ -185,7 +185,7 @@ export default class PostgrestAdapter extends MinimumInterfaceAdapter {
   query<K extends keyof ModelRegistry>(
     _store: Store,
     type: ModelRegistry[K],
-    query: { [key: string]: Object },
+    query: { [key: string]: object },
     _recordArray: any, //: Collection,
     // options: Object, Spec'd in MinimumInterfaceAdapter, but not Adapter?
   ): RSVP.Promise<any> {
@@ -208,7 +208,7 @@ export default class PostgrestAdapter extends MinimumInterfaceAdapter {
   queryRecord<K extends keyof ModelRegistry>(
     store: Store,
     type: ModelRegistry[K],
-    query: { [key: string]: Object }, //Dict<unknown>, as per MinimumAdapterInterface
+    query: { [key: string]: object }, //Dict<unknown>, as per MinimumAdapterInterface
     //options: { adapterOptions?: unknown }, Spec'd in MinimumInterfaceAdapter, but not Adapter?
   ): RSVP.Promise<any> {
     let url = '';

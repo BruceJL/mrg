@@ -47,13 +47,14 @@ The program is currently running on a Toshiba Satellite A200 (circa 2007) withou
 
 #### Installation of the Server OS.
 The application is best deployed on a debian stable (or occasionally testing) environment. If using low-powered or obsolete hardware, Install debian with only the base install and the following packages
-  - sshd (or 'SSH server' using tasksel)
+  - openssh-server (or 'SSH server' using tasksel)
   - podman
   - pwgen
   - git
   - dnsmasq
+  - sudo
 
-Which can be installed using apt: `apt install sshd podman pwgen git dnsmasq`.
+Which can be installed using apt: `sudo  apt install openssh-server podman pwgen git dnsmasq`.
 
 #### Creation of the Pod
 The application is deployed as a Podman pod. After cloning the repo, change to the `pod` directory and run `sudo ./buildpod.sh`. This will download and configure the 4 containers in the pod to run the application.

@@ -102,7 +102,7 @@ export default class PostgresSerializer extends MinimumSerializerInterface {
         if (resourceHash[key] === 'belongsTo') {
           data['relationships'][key] = {};
           data['relationships'][key]['data'] = {};
-          data['relationships'][key]['data']['id'] = payload[key];
+          data['relationships'][key]['data']['id'] = payload[key].toString();
           data['relationships'][key]['data']['type'] = key;
         } else if (resourceHash[key] === 'hasMany') {
           // TODO:
