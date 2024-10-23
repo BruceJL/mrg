@@ -11,7 +11,7 @@ export default class RobocritterCertificateController extends Controller {
   @action
   async downloadCertificate(event: any) {
     event.preventDefault();
-    const response = await fetch('/flask/api/generate-certificate', {
+    const response = await fetch('/flask/api/generate-robotcritter-certificate', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
