@@ -680,4 +680,4 @@ def create_resources():
 #    return entries
 
 
-Frontend()
+# Frontend()
