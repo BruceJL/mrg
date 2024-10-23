@@ -4,6 +4,7 @@ from RobocritterCertificate import make_odf_certificate
 from flask_cors import CORS
 from EventCertificate import make_odf_certificates
 from EventScoresheet import make_odf_score_sheets
+from EventLabels import make_odf5160_labels
 from databaseSetup import connect_to_database
 from Event import Event
 from FrontEnd import (
@@ -11,6 +12,7 @@ from FrontEnd import (
     get_robot_entry_from_database,
     get_event_entries_from_database,
     load_ring_assignments_from_database,
+    make_odf5160_labels,
 )
 
 
@@ -68,6 +70,8 @@ scoresheet_model = api.model(
         ),
     },
 )
+
+labelsheet_model = scoresheet_model
 
 
 """
@@ -158,14 +162,37 @@ class ScoreSheet(Resource):
         load_ring_assignments_from_database(cursor, event)
 
         event.rebuild_matches()
-        filename = make_odf_score_sheets(
+        file_name = make_odf_score_sheets(
             event=event,
         )
 
-        response = send_file(filename, as_attachment=True, download_name=filename)
+        response = send_file(file_name, as_attachment=True, download_name=file_name)
 
         # Remove the file after sending
-        os.remove(filename)
+        os.remove(file_name)
+
+        return response
+
+
+# Make labels for robots
+@ns.route("/generate-label-sheets")
+class LabelSheet(Resource):
+    @api.expect(labelsheet_model)
+    def post(self):
+        # Get JSON data from POST request body
+        data = request.get_json()
+        competition = data.get("competition")
+
+        events = get_event_list_from_database(cursor)
+        event = events[competition]
+
+        get_event_entries_from_database(cursor, event)
+        file_name = make_odf5160_labels(competition, event.entries)
+
+        response = send_file(file_name, as_attachment=True, download_name=file_name)
+
+        # Remove the file after sending
+        os.remove(file_name)
 
         return response
 
