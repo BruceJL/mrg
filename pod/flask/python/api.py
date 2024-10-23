@@ -13,6 +13,7 @@ from FrontEnd import (
     get_event_entries_from_database,
     load_ring_assignments_from_database,
     make_odf5160_labels,
+    update_round_robin_assignments,
 )
 
 
@@ -72,6 +73,18 @@ scoresheet_model = api.model(
 )
 
 labelsheet_model = scoresheet_model
+
+checked_in_model = api.model(
+    "CheckedInModel",
+    {
+        "competition": fields.String(
+            required=True, description="Name of the competition"
+        ),
+        "number_rings": fields.Integer(
+            required=True, description="Number of rings to slot"
+        ),
+    },
+)
 
 
 """
@@ -194,6 +207,34 @@ class LabelSheet(Resource):
         # Remove the file after sending
         os.remove(file_name)
 
+        return response
+
+
+# Slot all the checked in entries
+@ns.route("/slot-checked-in-entries")
+class SlotCheckedInEntries(Resource):
+    @api.expect(checked_in_model)
+    def post(self):
+
+        # Get JSON data from POST request body
+        data = request.get_json()
+        competition = data.get("competition")
+        number_rings = data.get("number_rings")
+
+        events = get_event_list_from_database(cursor)
+        event = events[competition]
+
+        # get all the entries for a given event.
+        event.entries.clear()
+        get_event_entries_from_database(cursor, event)
+
+        # Fetch the current ring assignements from the database for the event.
+        event.round_robin_tournaments.clear()
+        load_ring_assignments_from_database(cursor, event)
+
+        update_round_robin_assignments(cursor, event, number_rings)
+
+        response = {"message": "All done!"}
         return response
 
 
