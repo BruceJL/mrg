@@ -14,6 +14,7 @@ from FrontEnd import (
     load_ring_assignments_from_database,
     make_odf5160_labels,
     update_round_robin_assignments,
+    reset_round_robin_tournaments,
 )
 
 
@@ -72,7 +73,7 @@ scoresheet_model = api.model(
     },
 )
 
-labelsheet_model = scoresheet_model
+reset_ring_model = labelsheet_model = scoresheet_model
 
 checked_in_model = api.model(
     "CheckedInModel",
@@ -233,6 +234,28 @@ class SlotCheckedInEntries(Resource):
         load_ring_assignments_from_database(cursor, event)
 
         update_round_robin_assignments(cursor, event, number_rings)
+
+        response = {"message": "All done!"}
+        return response
+
+
+# Delete all of the ring assignments for a given competition
+@ns.route("/reset-competition-ring-assignments")
+class ResetCompetitionRingAssignments(Resource):
+    @api.expect(reset_ring_model)
+    def post(self):
+        # Get JSON data from POST request body
+        data = request.get_json()
+        competition = data.get("competition")
+
+        events = get_event_list_from_database(cursor)
+        event = events[competition]
+
+        # Clear out all ring assignements.
+        query = reset_round_robin_tournaments(event)
+        for q in query:
+            cursor.execute(q)
+        event.round_robin_tournaments = {}
 
         response = {"message": "All done!"}
         return response
