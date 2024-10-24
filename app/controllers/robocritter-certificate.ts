@@ -3,8 +3,8 @@ import { action } from '@ember/object';
 import { tracked } from '@glimmer/tracking';
 
 export default class RobocritterCertificateController extends Controller {
-  @tracked minutes = null;
-  @tracked seconds = null;
+  @tracked minutes = 0;
+  @tracked seconds = 0;
   @tracked player: string = '';
   @tracked robot: string = '';
 
@@ -39,3 +39,5 @@ export default class RobocritterCertificateController extends Controller {
     }
   }
 }
+
+
