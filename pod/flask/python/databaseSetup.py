@@ -1,22 +1,24 @@
 from pgdb import connect, DatabaseError
+import logging
 
 
 def connect_to_database(username, password):
     try:
         # Connect to the database
         with connect(
-            dsn="localhost:mrg",
+            # localhost cause contacting postgres on ::1
+            dsn="127.0.0.1:mrg",
             user=username,
             password=password,
         ) as conn:
             conn.autocommit = True
             cursor = conn.cursor()
-            print("Connected to the database")
             return cursor
-
     except DatabaseError as e:
-        print("Failed to connect:", e)
+        logging.debug(f"Database error occurred: {e}")
+    except Exception as e:
+        logging.debug(f"An error occurred: {e}")
 
 
 if __name__ == "__main__":
-    connect_to_database("tracyhuang", "password")
+    connect_to_database("postgres", "password")

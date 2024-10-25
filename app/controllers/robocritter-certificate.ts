@@ -9,7 +9,7 @@ export default class RobocritterCertificateController extends Controller {
   @tracked robot: string = '';
 
   @action
-  async downloadCertificate(event: any) {
+  async downloadCertificate(event: SubmitEvent) {
     event.preventDefault();
     const response = await fetch('/flask/api/generate-robotcritter-certificate', {
       method: 'POST',

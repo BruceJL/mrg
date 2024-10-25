@@ -17,18 +17,21 @@ from FrontEnd import (
     reset_round_robin_tournaments,
 )
 
-
 import os
+import logging
+
+logging.basicConfig(level=logging.DEBUG)
 
 app = Flask(__name__)
 CORS(app)
+
 api = Api(app)
 
 ns = Namespace("competitions", description="Competitions related operations")
 api.add_namespace(ns, path="/api")
 
 # Set up the database connection
-cursor = connect_to_database("tracyhuang", "password")
+cursor = connect_to_database("postgres", "password")
 
 
 # Define the model for input validation and documentation
