@@ -165,3 +165,30 @@
 <div>
   <button type="button" {{on "click" this.downloadLabels }}>Download Labels</button>
 </div>
+<hr />
+<h3>Score Sheet</h3>
+<div>
+  <button type="button" {{on "click" this.downloadScoreSheet }}>Download Score Sheet</button>
+</div>
+<hr />
+<h3>Slot Checked In Entries</h3>
+<form {{on "submit" this.slotCheckedInRings}}>
+  <div>
+    <label for="number_rings">Number of Rings:</label>
+    <Input
+      @type="number"
+      id="number_rings"
+      @value={{this.number_rings}}
+      autocomplete="off"
+      required
+    />
+  </div>
+  <div>
+    <button type="submit">Slot Checked In Entries</button>
+  </div>
+</form>
+<hr />
+<h3>Reset Competition RingAssignments</h3>
+<div>
+  <button type="button" {{on "click" this.resetRingAssignments }}>Reset Ring Assignments</button>
+</div>

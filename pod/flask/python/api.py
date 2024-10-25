@@ -238,12 +238,11 @@ class SlotCheckedInEntries(Resource):
 
         update_round_robin_assignments(cursor, event, number_rings)
 
-        response = {"message": "All done!"}
-        return response
+        return 200
 
 
 # Delete all of the ring assignments for a given competition
-@ns.route("/reset-competition-ring-assignments")
+@ns.route("/reset-ring-assignments")
 class ResetCompetitionRingAssignments(Resource):
     @api.expect(reset_ring_model)
     def post(self):
@@ -260,8 +259,7 @@ class ResetCompetitionRingAssignments(Resource):
             cursor.execute(q)
         event.round_robin_tournaments = {}
 
-        response = {"message": "All done!"}
-        return response
+        return 200
 
 
 if __name__ == "__main__":

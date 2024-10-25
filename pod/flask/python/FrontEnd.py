@@ -476,7 +476,7 @@ def update_round_robin_assignments(
         )
 
         # Build the dict to hold the rings and their entries.
-        for i in range(1, event.rings + 1, 1):
+        for i in range(1, int(event.rings) + 1, 1):
             event.create_ring(i)
 
         # Make dict containing the entries from a given school

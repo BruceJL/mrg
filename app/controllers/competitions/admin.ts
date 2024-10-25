@@ -114,4 +114,79 @@ export default class CompetitionAdminController extends Controller {
       alert(`Failed to download labels`);
     }
   }
+
+  @action
+  async downloadScoreSheet(){
+    const response = await fetch('/flask/api/generate-scoresheet', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        competition: this.model.id,
+      }),
+    });
+
+    if (response.ok) {
+      const blob = await response.blob();
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = this.model.id + '_score_sheet.odt';
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      window.URL.revokeObjectURL(url);
+    } else {
+      alert(`Failed to download score sheet`);
+    }
+  }
+
+  @tracked number_rings: number | null = null;
+
+  @action
+  async slotCheckedInRings(event:SubmitEvent) 
+  {
+    event.preventDefault();
+
+    const response = await fetch('/flask/api/slot-checked-in-entries', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        competition: this.model.id,
+        number_rings: this.number_rings,
+      }),
+    });
+
+    if (response.ok) {
+      // log out message in response
+      alert(`Successfully slotted checked in rings`);
+    } else {
+      alert(`Failed to slot checked in rings`);
+    }
+
+    this.number_rings = null;
+  }
+
+  @action
+  async resetRingAssignments(){
+    const response = await fetch('/flask/api/reset-ring-assignments', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        competition: this.model.id,
+      }),
+    });
+
+    if (response.ok) {
+      // log out message in response
+      alert(`Successfully reset ring assignments`);
+    } else {
+      alert(`Failed to reset ring assignments`);
+    }
+  }
 }
