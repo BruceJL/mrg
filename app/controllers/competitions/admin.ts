@@ -52,21 +52,21 @@ export default class CompetitionAdminController extends Controller {
     changeset.rollback();
   }
 
-  @tracked place1: string = "";
-  @tracked place2: string = "";
-  @tracked place3: string = "";
+  @tracked place1: string = '';
+  @tracked place2: string = '';
+  @tracked place3: string = '';
 
   @action
-  async downloadCertificates(event:SubmitEvent){
+  async downloadCertificates(event: SubmitEvent) {
     event.preventDefault();
-    console.log(`${this.model.id}`)
+
     const response = await fetch('/flask/api/generate-event-certificates', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        competition:this.model.id,
+        competition: this.model.id,
         place1: this.place1,
         place2: this.place2,
         place3: this.place3,
@@ -85,6 +85,33 @@ export default class CompetitionAdminController extends Controller {
       window.URL.revokeObjectURL(url);
     } else {
       alert(`Failed to download certificates`);
+    }
+  }
+
+  @action
+  async downloadLabels() {
+    const response = await fetch('/flask/api/generate-label-sheets', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        competition: this.model.id,
+      }),
+    });
+
+    if (response.ok) {
+      const blob = await response.blob();
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = this.model.id + '_labels.odt';
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      window.URL.revokeObjectURL(url);
+    } else {
+      alert(`Failed to download labels`);
     }
   }
 }

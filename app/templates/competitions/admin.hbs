@@ -6,27 +6,30 @@
       <tbody>
         <tr>
           <td><b>Rings:</b></td>
-          <td><input id="Ring Count"
-            value={{changeset.rings}}
-            type="number"
-            title="This is the number of rings that will be used."
-          /></td>
+          <td><input
+              id="Ring Count"
+              value={{changeset.rings}}
+              type="number"
+              title="This is the number of rings that will be used."
+            /></td>
         </tr>
         <tr>
           <td><b>Maximum Entries per ring:</b></td>
-          <td><input id="Max Entries"
-            value={{changeset.maxRobotsPerRing}}
-            type="number"
-            title="This is the maximum allowable number of robots in a given ring"
-          /></td>
+          <td><input
+              id="Max Entries"
+              value={{changeset.maxRobotsPerRing}}
+              type="number"
+              title="This is the maximum allowable number of robots in a given ring"
+            /></td>
         </tr>
         <tr>
           <td><b>Minimum Entries per ring:</b></td>
-          <td><input id="Min Entries"
-            value={{changeset.minRobotsPerRing}}
-            type="number"
-            title="This is the maximum allowable number of robots in a given ring"
-          /></td>
+          <td><input
+              id="Min Entries"
+              value={{changeset.minRobotsPerRing}}
+              type="number"
+              title="This is the maximum allowable number of robots in a given ring"
+            /></td>
         </tr>
         <tr>
           <td><b>Maximum Entries:</b></td>
@@ -35,19 +38,25 @@
       </tbody>
     </table>
     <button type="button" {{on "click" (fn this.save changeset)}}>Save</button>
-    <button type="button" {{on "click" (fn this.rollback changeset)}}>Undo</button>
+    <button
+      type="button"
+      {{on "click" (fn this.rollback changeset)}}
+    >Undo</button>
   {{/let}}
 </p>
-<hr>
+<hr />
 <h3>Restart Measurements</h3>
 <p>
-  <button type="button" {{on "click" (fn this.resetMeasurementTime this.model)}}>
+  <button
+    type="button"
+    {{on "click" (fn this.resetMeasurementTime this.model)}}
+  >
     Set Measurment Time
   </button>
   <b>Current Measurement Time:</b>
   {{moment-format this.model.registrationTime "YYYY MMM DD, h:mm:ss"}}
 </p>
-<hr>
+<hr />
 <h3>Required Measurements</h3>
 <table class="form">
   <thead>
@@ -95,7 +104,7 @@
       <td>Scratch:</td>
       <td>
         <input
-          id = "Scratch"
+          id="Scratch"
           type="checkbox"
           name="model.measureScratch"
           checked={{this.model.measureScratch}}
@@ -117,7 +126,7 @@
     </tr>
   </tbody>
 </table>
-<hr>
+<hr />
 <h3>Winners Certificates</h3>
 <form {{on "submit" this.downloadCertificates}}>
   <div>
@@ -151,3 +160,8 @@
   </div>
   <div><button type="submit">Download Certificates</button></div>
 </form>
+<hr />
+<h3>Label Sheets</h3>
+<div>
+  <button type="button" {{on "click" this.downloadLabels }}>Download Labels</button>
+</div>
