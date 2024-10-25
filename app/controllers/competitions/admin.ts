@@ -84,7 +84,7 @@ export default class CompetitionAdminController extends Controller {
       a.remove();
       window.URL.revokeObjectURL(url);
     } else {
-      alert(`Failed to download certificates`);
+      alert('Failed to download certificates');
     }
   }
 
@@ -111,7 +111,7 @@ export default class CompetitionAdminController extends Controller {
       a.remove();
       window.URL.revokeObjectURL(url);
     } else {
-      alert(`Failed to download labels`);
+      alert('Failed to download labels');
     }
   }
 
@@ -138,7 +138,7 @@ export default class CompetitionAdminController extends Controller {
       a.remove();
       window.URL.revokeObjectURL(url);
     } else {
-      alert(`Failed to download score sheet`);
+      alert('Failed to download score sheet');
     }
   }
 
@@ -161,10 +161,9 @@ export default class CompetitionAdminController extends Controller {
     });
 
     if (response.ok) {
-      // log out message in response
-      alert(`Successfully slotted checked in rings`);
+      alert('Successfully slotted checked in rings');
     } else {
-      alert(`Failed to slot checked in rings`);
+      alert('Failed to slot checked in rings');
     }
 
     this.number_rings = null;
@@ -183,10 +182,13 @@ export default class CompetitionAdminController extends Controller {
     });
 
     if (response.ok) {
-      // log out message in response
-      alert(`Successfully reset ring assignments`);
+      alert('Successfully reset ring assignments');
     } else {
-      alert(`Failed to reset ring assignments`);
+      alert('Failed to reset ring assignments');
     }
+  }
+
+  get isRoundRobin() {
+    return ['MSR', 'MS1', 'MS2', 'MS3', 'MSA','PST','PSA'].includes(this.model.id);
   }
 }

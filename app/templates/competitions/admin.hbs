@@ -166,6 +166,7 @@
   <button type="button" {{on "click" this.downloadLabels }}>Download Labels</button>
 </div>
 <hr />
+{{#if this.isRoundRobin}}
 <h3>Score Sheet</h3>
 <div>
   <button type="button" {{on "click" this.downloadScoreSheet }}>Download Score Sheet</button>
@@ -192,3 +193,5 @@
 <div>
   <button type="button" {{on "click" this.resetRingAssignments }}>Reset Ring Assignments</button>
 </div>
+<hr />
+{{/if}}
