@@ -36,3 +36,4 @@ pod/postgresql/01_mrg_data.sql
 
 # Mac OS
 *.DS_Store
+pod/tracy_*.sh
