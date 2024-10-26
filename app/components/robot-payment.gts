@@ -4,6 +4,12 @@ import { tracked } from '@glimmer/tracking';
 import { service } from '@ember/service';
 import RobotModel from 'mrg-sign-in/models/robot';
 import type { Registry as Services } from '@ember/service';
+import { on } from '@ember/modifier';
+import { fn } from '@ember/helper';
+import { val } from '../helpers/val'
+import { eq } from 'ember-truth-helpers';
+import { notEq } from 'ember-truth-helpers';
+
 
 export interface ComponentSignature {
   Args: {
@@ -81,4 +87,61 @@ export default class RobotCheckinController extends Component<ComponentSignature
     });
     record.save();
   }
+
+  <template>
+    <h3>Payment Information</h3>
+    <table class="form">
+      <tbody>
+        <tr>
+          <td>Invoiced:</td>
+          <td colspan="2">{{@data.formattedInvoicedDollars}}</td>
+        </tr>
+        <tr>
+          <td>Paid:</td>
+          <td>
+            <select
+              aria-label="Select Payment Type"
+              {{on "change" (val @fn this.selectPaymentType)}}
+              disabled={{this.paymentSelectDisabled}}
+            >
+              <option value="" selected={{eq @data.paymentType null}} disabled={{true}}>
+                Select payment method
+              </option>
+              {{#each this.PaymentOptions as |o|}}
+                <option value={{o}} selected={{eq @data.paymentType o}}>
+                  {{o}}
+                </option>
+              {{/each}}
+            </select>
+          </td>
+          <td colspan="2">
+            {{#if (eq @data.paymentType "INVOICED") }}
+                Invoiced
+            {{else if (eq @data.paymentType "COMPLEMENTARY")}}
+                Complementary
+            {{else if (notEq @data.paymentType null)}}
+              {{#if @data.isPaid}}
+                {{@data.formattedPaidDollars}}
+                <button type="button" {{on "click" this.refund}}>Refund</button>
+              {{else}}
+                <button type="button" {{on "click" (fn this.paid "10")}}>Paid $10.00</button><br>
+                <button type="button" {{on "click" (fn this.paid "20")}}>Paid $20.00</button>
+              {{/if}}
+            {{/if}}
+          </td>
+        </tr>
+        <tr>
+          <td>On-time/Late:</td>
+          <td>
+            {{#if @data.late}}
+              LATE
+            {{else}}
+              ON-TIME
+            {{/if}}
+          </td>
+          <td></td>
+        </tr>
+      </tbody>
+    </table>
+  </template>
 }

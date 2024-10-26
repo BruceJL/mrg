@@ -4,6 +4,8 @@ import { tracked } from '@glimmer/tracking';
 import { service } from '@ember/service';
 import type { Registry as Services } from '@ember/service';
 import { type SyncHasMany } from '@ember-data/model';
+import { on } from '@ember/modifier';
+import { fn } from '@ember/helper';
 
 import RobotMeasurementModel from 'mrg-sign-in/models/measurement';
 import RobotModel from 'mrg-sign-in/models/robot';
@@ -176,4 +178,58 @@ export default class RobotMeasurementComponent extends Component<ComponentSignat
       robot.reload();
     });
   }
+  <template>
+    <h3>Measurement Information</h3>
+    <p><b>Measured:</b> {{@data.formattedMeasured}}</p>
+    <table class="form" >
+      <thead>
+        <th>Measurement</th>
+        <th>Pass</th>
+        <th>Fail</th>
+      </thead>
+      <tbody>
+        {{#each this.requiredMeasurements as |measurement|}}
+          <tr>
+            <td>{{measurement}}:</td>
+            <td>
+            <input
+                aria-label="Mark Passed"
+                type="radio"
+                {{on "click" (fn this.createMeasurement true measurement @data)}}
+                checked={{this.isMeasured @data measurement true}}
+              />
+            </td>
+            <td>
+              <input
+                aria-label="Mark Failed"
+                type="radio"
+                {{on "click" (fn this.createMeasurement false measurement @data)}}
+                checked={{this.isMeasured @data measurement false}}
+              />
+            </td>
+          </tr>
+        {{/each}}
+      </tbody>
+    </table>
+    <table class="form">
+      <thead>
+        <th>Type</th>
+        <th>Result</th>
+        <th>Time</th>
+      </thead>
+      <tbody>
+        <col>
+        <col>
+        <col>
+        {{#each this.reversedMeasurments as |m|}}
+          <tr>
+            <td>{{m.type}}</td>
+            <td>{{m.humanReadableResult}}</td>
+            <td>{{moment-format m.datetime "h:mm:ss a"}}</td>
+          </tr>
+        {{/each}}
+      </tbody>
+    </table>
+
+  </template>
 }
