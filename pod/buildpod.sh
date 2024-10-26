@@ -20,6 +20,7 @@ echo "export POSTGRESPWD=$POSTGRESPWD\nexport POSTGRESTPWD=$POSTGRESTPWD" > ./pa
 podman pod stop $PODNAME
 podman pod rm $PODNAME
 podman volume prune -f
+podman image prune -f
 
 # Create the new pod
 # Note that the JSON interface (port 3000) can be dropped for production.
@@ -80,5 +81,11 @@ podman container create --replace --pod $PODNAME \
   --name flask-mrg \
   flask-mrg
 
-# Start the pod
-podman pod start $PODNAME
+# # Start the pod
+# podman pod start $PODNAME
+
+# Start containers one by one to make sure dependencies are met.
+podman container start $POSTGRES_CONTAINER_NAME
+podman container start postgrest
+podman container start nginx
+podman container start flask-mrg
