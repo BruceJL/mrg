@@ -6,6 +6,8 @@ import type { Registry as Services } from '@ember/service';
 import { type SyncHasMany } from '@ember-data/model';
 import { on } from '@ember/modifier';
 import { fn } from '@ember/helper';
+import momentFormat from 'ember-moment/helpers/moment-format';
+
 
 import RobotMeasurementModel from 'mrg-sign-in/models/measurement';
 import RobotModel from 'mrg-sign-in/models/robot';
@@ -225,7 +227,7 @@ export default class RobotMeasurementComponent extends Component<ComponentSignat
           <tr>
             <td>{{m.type}}</td>
             <td>{{m.humanReadableResult}}</td>
-            <td>{{moment-format m.datetime "h:mm:ss a"}}</td>
+            <td>{{momentFormat m.datetime "h:mm:ss a"}}</td>
           </tr>
         {{/each}}
       </tbody>
