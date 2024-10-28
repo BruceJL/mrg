@@ -21,7 +21,8 @@ CREATE ROLE web_anon;
 ALTER ROLE web_anon WITH NOSUPERUSER NOINHERIT NOCREATEROLE NOCREATEDB LOGIN NOREPLICATION NOBYPASSRLS;
 COMMENT ON ROLE web_anon IS 'web_anon access';
 
-
+CREATE ROLE python_api;
+ALTER ROLE python_api WITH NOSUPERUSER NOINHERIT NOCREATEROLE NOCREATEDB LOGIN NOREPLICATION NOBYPASSRLS;
 --
 -- Role memberships
 --
@@ -70,7 +71,7 @@ ALTER SCHEMA robots OWNER TO postgres;
 -- Grant Schema permissions
 GRANT usage ON SCHEMA robots to web_anon GRANTED by postgres;
 GRANT usage ON SCHEMA people to web_anon GRANTED by postgres;
-
+GRANT usage ON SCHEMA robots to python_api GRANTED by postgres;
 --
 -- Name: check_in_status; Type: TYPE; Schema: robots; Owner: postgres
 --
@@ -587,6 +588,8 @@ $$;
 
 ALTER FUNCTION robots.update_slotted_status() OWNER TO postgres;
 
+-- Grant tables access to python_api
+GRANT SELECT,UPDATE,DELETE,INSERT ON ALL TABLES IN SCHEMA robots TO python_api;
 
 --
 -- Data for Name: competition; Type: TABLE DATA; Schema: robots; Owner: postgres
@@ -612,7 +615,6 @@ SSR	SSR	Super Scramble Rookie	5	2	2	i	2023-02-06 11:36:42.201776-06	t	t	f	f	f	5	
 LFS	LFS	Line Follower - Scratch	4	4	8	i	2023-02-06 11:36:42.201776-06	f	t	f	f	f	46	6
 NXT	NXT	Lego Challenge	4	4	8	i	2023-02-06 11:36:42.201776-06	f	f	f	f	f	6	12
 \.
-
 
 
 --

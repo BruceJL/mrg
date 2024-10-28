@@ -31,7 +31,9 @@ ns = Namespace("competitions", description="Competitions related operations")
 api.add_namespace(ns, path="/api")
 
 # Set up the database connection
-cursor = connect_to_database("postgres", "password")
+DB_USERNAME = os.environ.get("DB_USERNAME")
+DB_PASSWORD = os.environ.get("DB_PASSWORD")
+cursor = connect_to_database(DB_USERNAME, DB_PASSWORD)
 
 
 # Define the model for input validation and documentation
