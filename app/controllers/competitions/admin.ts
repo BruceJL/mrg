@@ -4,8 +4,11 @@ import Controller from '@ember/controller';
 import CompetitionModel from 'mrg-sign-in/models/competition';
 import { EmberChangeset } from 'ember-changeset';
 import { tracked } from '@glimmer/tracking';
+import type { ModelFrom } from '../routes/competitions/admin';
 
 export default class CompetitionAdminController extends Controller {
+  declare model: ModelFrom<CompetitionModel>;
+
   @action
   toggleMeasurement(
     competition: CompetitionModel,
@@ -60,7 +63,7 @@ export default class CompetitionAdminController extends Controller {
   async downloadCertificates(event: SubmitEvent) {
     event.preventDefault();
 
-    const response = await fetch('/flask/api/generate-event-certificates', {
+    const response = await fetch('/api/flask/generate-event-certificates', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -90,7 +93,7 @@ export default class CompetitionAdminController extends Controller {
 
   @action
   async downloadLabels() {
-    const response = await fetch('/flask/api/generate-label-sheets', {
+    const response = await fetch('/api/flask/generate-label-sheets', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -116,8 +119,8 @@ export default class CompetitionAdminController extends Controller {
   }
 
   @action
-  async downloadScoreSheet(){
-    const response = await fetch('/flask/api/generate-scoresheet', {
+  async downloadScoreSheet() {
+    const response = await fetch('/api/flask/generate-scoresheet', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -145,11 +148,10 @@ export default class CompetitionAdminController extends Controller {
   @tracked number_rings: number | null = null;
 
   @action
-  async slotCheckedInRings(event:SubmitEvent) 
-  {
+  async slotCheckedInRings(event: SubmitEvent) {
     event.preventDefault();
 
-    const response = await fetch('/flask/api/slot-checked-in-entries', {
+    const response = await fetch('/api/flask/slot-checked-in-entries', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -170,8 +172,8 @@ export default class CompetitionAdminController extends Controller {
   }
 
   @action
-  async resetRingAssignments(){
-    const response = await fetch('/flask/api/reset-ring-assignments', {
+  async resetRingAssignments() {
+    const response = await fetch('/api/flask/reset-ring-assignments', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -189,6 +191,8 @@ export default class CompetitionAdminController extends Controller {
   }
 
   get isRoundRobin() {
-    return ['MSR', 'MS1', 'MS2', 'MS3', 'MSA','PST','PSA'].includes(this.model.id);
+    return ['MSR', 'MS1', 'MS2', 'MS3', 'MSA', 'PST', 'PSA'].includes(
+      this.model.id,
+    );
   }
 }

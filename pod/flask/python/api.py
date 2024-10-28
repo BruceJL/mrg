@@ -28,7 +28,7 @@ CORS(app)
 api = Api(app)
 
 ns = Namespace("competitions", description="Competitions related operations")
-api.add_namespace(ns, path="/api")
+api.add_namespace(ns, path="/")
 
 # Set up the database connection
 DB_USERNAME = os.environ.get("DB_USERNAME")
