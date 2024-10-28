@@ -1,5 +1,10 @@
 from pgdb import connect, DatabaseError
 import logging
+import os
+
+# Set up the database connection
+DB_USERNAME = os.environ.get("DB_USERNAME")
+DB_PASSWORD = os.environ.get("DB_PASSWORD")
 
 
 def connect_to_database(username, password):
@@ -12,13 +17,8 @@ def connect_to_database(username, password):
             password=password,
         ) as conn:
             conn.autocommit = True
-            cursor = conn.cursor()
-            return cursor
+            return conn
     except DatabaseError as e:
         logging.debug(f"Database error occurred: {e}")
     except Exception as e:
         logging.debug(f"An error occurred: {e}")
-
-
-if __name__ == "__main__":
-    connect_to_database("postgres", "password")

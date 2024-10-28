@@ -1,4 +1,4 @@
-from flask import Flask, request, send_file
+from flask import Flask, request, send_file, g
 from flask_restx import Resource, Api, Namespace, fields
 from RobocritterCertificate import make_odf_certificate
 from flask_cors import CORS
@@ -33,8 +33,7 @@ api.add_namespace(ns, path="/")
 # Set up the database connection
 DB_USERNAME = os.environ.get("DB_USERNAME")
 DB_PASSWORD = os.environ.get("DB_PASSWORD")
-cursor = connect_to_database(DB_USERNAME, DB_PASSWORD)
-
+DB_CONNECTION = connect_to_database(DB_USERNAME, DB_PASSWORD)
 
 # Define the model for input validation and documentation
 robocritter_model = api.model(
@@ -134,6 +133,7 @@ class EventCertificate(Resource):
         place3 = data.get("place3")
 
         # Get the current competition
+        cursor = getCursor()
         events = get_event_list_from_database(cursor)
         event = events[competition]
 
@@ -171,6 +171,7 @@ class ScoreSheet(Resource):
         data = request.get_json()
         competition = data.get("competition")
 
+        cursor = getCursor()
         events = get_event_list_from_database(cursor)
         event = events[competition]
 
@@ -202,6 +203,7 @@ class LabelSheet(Resource):
         data = request.get_json()
         competition = data.get("competition")
 
+        cursor = getCursor()
         events = get_event_list_from_database(cursor)
         event = events[competition]
 
@@ -227,6 +229,7 @@ class SlotCheckedInEntries(Resource):
         competition = data.get("competition")
         number_rings = data.get("number_rings")
 
+        cursor = getCursor()
         events = get_event_list_from_database(cursor)
         event = events[competition]
 
@@ -252,6 +255,7 @@ class ResetCompetitionRingAssignments(Resource):
         data = request.get_json()
         competition = data.get("competition")
 
+        cursor = getCursor()
         events = get_event_list_from_database(cursor)
         event = events[competition]
 
@@ -262,6 +266,14 @@ class ResetCompetitionRingAssignments(Resource):
         event.round_robin_tournaments = {}
 
         return 200
+
+
+def getCursor():
+    global DB_CONNECTION
+    if DB_CONNECTION is None or DB_CONNECTION.closed:
+        logging.debug("=== Reconnecting to the database====")
+        DB_CONNECTION = connect_to_database(DB_USERNAME, DB_PASSWORD)
+    return DB_CONNECTION.cursor()
 
 
 if __name__ == "__main__":
