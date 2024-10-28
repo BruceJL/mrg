@@ -1,4 +1,4 @@
-from flask import Flask, request, send_file, g
+from flask import Flask, request, send_file
 from flask_restx import Resource, Api, Namespace, fields
 from RobocritterCertificate import make_odf_certificate
 from flask_cors import CORS

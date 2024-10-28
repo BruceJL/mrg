@@ -1,10 +1,5 @@
 from pgdb import connect, DatabaseError
 import logging
-import os
-
-# Set up the database connection
-DB_USERNAME = os.environ.get("DB_USERNAME")
-DB_PASSWORD = os.environ.get("DB_PASSWORD")
 
 
 def connect_to_database(username, password):
