@@ -1,51 +1,64 @@
 <!-- app/templates/robocritter-certificate.hbs -->
-<div>
+<form
+  {{on "submit" this.downloadCertificate}}
+  style="
+  width: 50%;
+  margin: 20px auto;
+  padding: 10px;
+  border: 3px solid black;"
+>
+  <div>
     <label for="player">Player Name:</label>
-    <input
-      type="text"
+    <Input
+      @type="text"
       id="player"
-      value={{this.player}}
-      oninput={{action (mut this.player) value="target.value"}}
+      placeholder="Enter your name"
+      size="30"
+      @value = {{this.player}}
       autocomplete="off"
       required
-    >
-</div>
-
-<div>
+    />
+  </div>
+  <br />
+  <div>
     <label for="robot">Robot Name:</label>
-    <input
-      type="text"
+    <Input
+      @type="text"
       id="robot"
-      value={{this.robot}}
-      oninput={{action (mut this.robot) value="target.value"}}
+      placeholder="Enter your robot's name"
+      size="30"
+      @value={{this.robot}}
       autocomplete="off"
       required
-    >
-</div>
-
-<div>
+    />
+  </div>
+  <br />
+  <div>
     <label for="minutes">Minutes:</label>
-    <input
-      type="number"
+    <Input
+      @type="number"
       id="minutes"
-      value={{this.minutes}}
-      oninput={{action (mut this.minutes) value="target.value"}}
+      @value={{this.minutes}}
       autocomplete="off"
+      min="0"
+      max="59"
       required
-    >
-</div>
-
-<div>
+    />
+  </div>
+  <br />
+  <div>
     <label for="seconds">Seconds:</label>
-    <input
-      type="number"
+    <Input
+      @type="number"
       id="seconds"
-      value={{this.seconds}}
-      oninput={{action (mut this.seconds) value="target.value"}}
+      @value={{this.seconds}}
       autocomplete="off"
+      min="0"
+      max="59"
       required
-    >
-</div>
+    />
 
-<div><button {{on "click" this.downloadCertificate}}>Download Certificate</button></div>
-
+  </div>
+  <br />
+  <div><button type="submit">Download Certificate</button></div>
+</form>

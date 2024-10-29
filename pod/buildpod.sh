@@ -7,6 +7,7 @@
 # Create some passwords
 export POSTGRESPWD=`pwgen -s 25`
 export POSTGRESTPWD=`pwgen -s 25`
+export FLASKDBPWD=`pwgen -s 25`
 
 # Setup some static naming of things.
 export DB_NAME=mrg
@@ -14,12 +15,13 @@ export PODNAME=mrg-check-in
 export POSTGRES_CONTAINER_NAME=postgres
 
 # Dump the passwords to a text file. Just in case.
-echo "export POSTGRESPWD=$POSTGRESPWD\nexport POSTGRESTPWD=$POSTGRESTPWD" > ./passwords.txt
+echo "export POSTGRESPWD=$POSTGRESPWD\nexport POSTGRESTPWD=$POSTGRESTPWD\nexport FLASKDBPWD=$FLASKDBPWD" > ./passwords.txt
 
 # Delete the old pod
 podman pod stop $PODNAME
 podman pod rm $PODNAME
 podman volume prune -f
+podman image prune -f
 
 # Create the new pod
 # Note that the JSON interface (port 3000) can be dropped for production.
@@ -42,6 +44,7 @@ podman container create \
   docker.io/library/postgres
 
 echo "ALTER USER authenticator WITH PASSWORD '$POSTGRESTPWD';" > ./postgresql/password.sql
+echo "ALTER USER python_api WITH PASSWORD '$FLASKDBPWD';" > ./postgresql/password.sql
 podman cp ./postgresql/. $POSTGRES_CONTAINER_NAME:/docker-entrypoint-initdb.d/.
 rm ./postgresql/password.sql
 
@@ -78,7 +81,10 @@ podman build \
 # Create the flask container.
 podman container create --replace --pod $PODNAME \
   --name flask-mrg \
+  -e DB_PASSWORD=$FLASKDBPWD \
+  -e DB_USERNAME="python_api" \
   flask-mrg
 
 # Start the pod
 podman pod start $PODNAME
+

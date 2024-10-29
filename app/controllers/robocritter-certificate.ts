@@ -3,14 +3,15 @@ import { action } from '@ember/object';
 import { tracked } from '@glimmer/tracking';
 
 export default class RobocritterCertificateController extends Controller {
-  @tracked minutes: number = 0;
-  @tracked seconds: number = 0;
+  @tracked minutes = 0;
+  @tracked seconds = 0;
   @tracked player: string = '';
   @tracked robot: string = '';
 
   @action
-  async downloadCertificate() {
-    const response = await fetch('/flask/api/generate-certificate', {
+  async downloadCertificate(event: SubmitEvent) {
+    event.preventDefault();
+    const response = await fetch('/flask/api/generate-robotcritter-certificate', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -38,3 +39,5 @@ export default class RobocritterCertificateController extends Controller {
     }
   }
 }
+
+

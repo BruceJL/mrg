@@ -2,4 +2,4 @@ odfpy
 flask
 flask-restx
 flask_cors
-pgdb
+pyGreSQL

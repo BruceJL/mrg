@@ -27,9 +27,13 @@
 # python
 **/__pycache__/
 **.pyc
-pods/flask/python/ScoreSheets/*
-pods/flask/python/*.csv
+pod/flask/python/ScoreSheets/*
+pod/flask/python/*.csv
 
 # Unnecessary files
-pods/passwords.txt
-pods/postgresql/01_mrg_data.sql
+pod/passwords.txt
+pod/postgresql/01_mrg_data.sql
+
+# Mac OS
+*.DS_Store
+pod/tracy_*.sh

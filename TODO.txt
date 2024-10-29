@@ -1,5 +1,6 @@
 Get the authemticator working properly. - DONE.
 Get the changeset validations working. - DONE.
+<<<<<<< HEAD
 Pass/fail radio buttons not working. - DONE.
 Sanitize the competitor data for publishing. - DONE.
 Still getting key errors from the adapter when creating a pass fail measurement. DONE
@@ -8,6 +9,14 @@ Triggers are not visible in dbeaver. Is this a permissions issue?
   - Created new issue: https://github.com/dbeaver/dbeaver/issues/35986
 
 Fix adapter to not send the competition update every time. - Need help. Need to make a Cache object somehow.
+=======
+Measurements need to fail or be purged when a competition is changed? Maybe add a competition field to the measurements table?
+Triggers are not visible in dbeaver. Is this a permissions issue? Commented on closed ticket https://github.com/dbeaver/dbeaver/issues/18760
+Sanitize the competitor data for publishing.
+Still getting key errors from the adapter when:
+  - Creating a pass fail measurement.
+Pass/fail radio buttons not working. - DONE.
+>>>>>>> feat/convert_script_to_web
 Refactor Adpater/Serializer into a Handler.
 
 New Functionality:
