@@ -5,6 +5,7 @@ from flask_cors import CORS
 from EventCertificate import make_odf_certificates
 from EventScoresheet import make_odf_score_sheets
 from EventLabels import make_odf5160_labels
+from ParticipationCertificate import make_odf_participation_certificates
 from databaseSetup import connect_to_database
 from Event import Event
 from FrontEnd import (
@@ -77,7 +78,7 @@ scoresheet_model = api.model(
     },
 )
 
-reset_ring_model = labelsheet_model = scoresheet_model
+partitipation_model = reset_ring_model = labelsheet_model = scoresheet_model
 
 checked_in_model = api.model(
     "CheckedInModel",
@@ -268,6 +269,41 @@ class ResetCompetitionRingAssignments(Resource):
         return 200
 
 
+# Generate participation certificates for all competitors.
+@ns.route("/generate-participation-certificates")
+class ParticipationCertificate(Resource):
+    @api.expect(partitipation_model)
+    def post(self):
+
+        data = request.get_json()
+        competition = data.get("competition")
+
+        cursor = getCursor()
+        events = get_event_list_from_database(cursor)
+        event = events[competition]
+
+        # get all the entries for a given event.
+        event.entries.clear()
+        get_event_entries_from_database(cursor, event)
+
+        logging.debug(
+            f"Genereating {len(event.entries)} {event.id} participation certificates"
+        )
+
+        file_name = make_odf_participation_certificates(
+            event=event,
+            competitors=event.entries,
+        )
+
+        response = send_file(file_name, as_attachment=True, download_name=file_name)
+
+        # Remove the file after sending
+        os.remove(file_name)
+
+        return response
+
+
+# Get the cursor to interact with the database
 def getCursor():
     global DB_CONNECTION
     if DB_CONNECTION is None or DB_CONNECTION.closed:

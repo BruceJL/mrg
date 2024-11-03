@@ -190,6 +190,32 @@ export default class CompetitionAdminController extends Controller {
     }
   }
 
+  @action
+  async downloadParticipationCertificates() {
+    const response = await fetch('/api/flask/generate-participation-certificates', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        competition: this.model.id,
+      }),
+    });
+
+    if (response.ok) {
+      const blob = await response.blob();
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = this.model.id + '_participation_certificates.odg';
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      window.URL.revokeObjectURL(url);
+    } else {
+      alert('Failed to download participation certificates');
+    }
+  }
   get isRoundRobin() {
     return ['MSR', 'MS1', 'MS2', 'MS3', 'MSA', 'PST', 'PSA'].includes(
       this.model.id,
