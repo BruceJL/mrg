@@ -1,6 +1,6 @@
 import datetime
 import calendar
-from odf.opendocument import OpenDocumentDrawing
+from odf.opendocument import OpenDocumentDrawing, OpenDocument
 from odf.style import (
     Style,
     MasterPage,
@@ -18,13 +18,21 @@ from pathlib import Path
 from utilities import make_ordinal
 
 
-# To Do: Clean nonused codes
-def make_odf_certificate(
-    minutes: "int",
-    seconds: "int",
-    player: "str",
-    robot: "str",
-):
+def make_odf_certificate(minutes: int, seconds, player, robot) -> str:
+    doc = make_odf_certificate_odoc(minutes, seconds, player, robot)
+    file_name = (
+        Path(__file__).parent / f"{player} with {robot}-robotcritter-certificate.odg"
+    )
+    doc.save(file_name)
+    return str(file_name)
+
+
+def make_odf_certificate_odoc(
+    minutes: int,
+    seconds: int,
+    player: str,
+    robot: str,
+) -> OpenDocument:
     now = datetime.datetime.now()
     games_iteration: "int" = now.year - 1995
 
@@ -505,10 +513,4 @@ def make_odf_certificate(
     # teletype.addTextToElement(p, "\n")
     information_text_box.addElement(p)
 
-    # Save document
-    file_name = (
-        Path(__file__).parent / f"{player} with {robot}-robotcritter-certificate.odg"
-    )
-    document.save(file_name)
-
-    return str(file_name)
+    return document

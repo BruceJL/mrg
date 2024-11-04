@@ -1,6 +1,6 @@
 import datetime
 import calendar
-from odf.opendocument import OpenDocumentDrawing
+from odf.opendocument import OpenDocumentDrawing, OpenDocument
 from odf.style import (
     Style,
     MasterPage,
@@ -16,12 +16,24 @@ from odf.draw import Page, Frame, TextBox, Image
 from odf import teletype
 from Entry import Entry
 from utilities import make_ordinal
+from pathlib import Path
 
 
 def make_odf_participation_certificates(
     event,
     competitors: list[Entry],
 ) -> str:
+
+    doc = make_odf_participation_certificates_odoc(event, competitors)
+    filename = Path(__file__).parent / f"{event.id}-participation_certificates.odg"
+    doc.save(filename)
+    return str(filename)
+
+
+def make_odf_participation_certificates_odoc(
+    event,
+    competitors: list[Entry],
+) -> OpenDocument:
 
     now = datetime.datetime.now()
     games_iteration: "int" = now.year - 1998
@@ -347,12 +359,8 @@ def make_odf_participation_certificates(
     styles.addElement(s)
 
     # Add in the robot logo picture.
-    picture_path = Path(__file__).parent / "logos/robocritters_logo.png"
+    picture_path = Path(__file__).parent / "logos/robot.png"
     robot_logo_href = document.addPicture(picture_path)
-
-    # sort up the competitors by schools
-    competitors.sort(key=lambda x: x.school)
-    robot_logo_href = document.addPicture("robot.png")
 
     # filter out robots by  who checked in.
     bots = []
@@ -560,8 +568,4 @@ def make_odf_participation_certificates(
         )
         sponsors_text_box.addElement(p)
 
-    # Save document
-    file_name = Path(__file__).parent / f"{event.id}-participation-certificates.odg"
-    document.save(file_name)
-
-    return str(file_name)
+    return document
