@@ -1,6 +1,5 @@
 import datetime
 import calendar
-from typing import TYPE_CHECKING
 from odf.opendocument import OpenDocumentDrawing
 from odf.style import (
     Style,
@@ -16,28 +15,16 @@ from odf.text import P, Span
 from odf.draw import Page, Frame, TextBox, Image
 from odf import teletype
 from pathlib import Path
-
-
-# stolen from:
-# https://stackoverflow.com/questions/9647202/ordinal-numbers-replacement
-def make_ordinal(n: "int"):
-    """
-    Convert an integer into its ordinal representation::
-
-        make_ordinal(0)   => '0th'
-        make_ordinal(3)   => '3rd'
-        make_ordinal(122) => '122nd'
-        make_ordinal(213) => '213th'
-    """
-    n = int(n)
-    suffix = ["th", "st", "nd", "rd", "th"][min(n % 10, 4)]
-    if 11 <= (n % 100) <= 13:
-        suffix = "th"
-    return suffix
+from utilities import make_ordinal
 
 
 # To Do: Clean nonused codes
-def make_odf_certificate(minutes: "int", seconds: "int", player: "str", robot: "str"):
+def make_odf_certificate(
+    minutes: "int",
+    seconds: "int",
+    player: "str",
+    robot: "str",
+):
     now = datetime.datetime.now()
     games_iteration: "int" = now.year - 1995
 

@@ -128,33 +128,33 @@
 </table>
 <hr />
 <h3>Winners Certificates</h3>
-<form {{on "submit" this.downloadCertificates}}>
+<form aria-label="Download Winners Certificates" {{on "submit" (fn this.downloadCertificates true)}}>cd
   <div>
     <label for="place1">1st place Robot's ID:</label>
-    <Input
-      @type="text"
+    <input
+      type="text"
       id="place1"
       placeholder="Ex:403"
       size="10"
-      @value={{this.place1}}
+      value={{this.place1}}
       autocomplete="off"
     />
     <label for="place2">2nd place Robot's ID::</label>
-    <Input
-      @type="text"
+    <input
+      type="text"
       id="place2"
       placeholder="Ex:398"
       size="10"
-      @value={{this.place2}}
+      value={{this.place2}}
       autocomplete="off"
     />
     <label for="place3">3rd place Robot's ID:</label>
-    <Input
-      @type="text"
+    <input
+      type="text"
       id="place3"
       placeholder="Ex:410"
       size="10"
-      @value={{this.place3}}
+      value={{this.place3}}
       autocomplete="off"
     />
   </div>
@@ -163,7 +163,8 @@
 <hr />
 <h3>Label Sheets</h3>
 <div>
-  <button type="button" {{on "click" this.downloadLabels }}>Download Labels</button>
+  <button type="button" {{on "click" (fn this.downloadLabels true)}}>Download Labels (PDF)</button>
+  <button type="button" {{on "click" (fn this.downloadLabels false)}}>Download Labels (libreoffice)</button>
 </div>
 <hr />
 <h3>Participation Certificates</h3>
@@ -172,31 +173,33 @@
 </div>
 <hr />
 {{#if this.isRoundRobin}}
-<h3>Score Sheet</h3>
-<div>
-  <button type="button" {{on "click" this.downloadScoreSheet }}>Download Score Sheet</button>
-</div>
-<hr />
-<h3>Slot Checked In Entries</h3>
-<form {{on "submit" this.slotCheckedInRings}}>
+  <h3>Score Sheet</h3>
   <div>
-    <label for="number_rings">Number of Rings:</label>
-    <Input
-      @type="number"
-      id="number_rings"
-      @value={{this.number_rings}}
-      autocomplete="off"
-      required
-    />
+    <button type="button" {{on "click" (fn this.downloadScoreSheet true)}}>Download Score Sheet (PDF)</button>
+    <button type="button" {{on "click" (fn this.downloadScoreSheet false)}}>Download Score Sheet (libreoffice)</button>
   </div>
+  <hr />
+  <h3>Slot Checked In Entries</h3>
+  <form aria-label="Slot checked in entries" {{on "submit" this.slotCheckedInRings}}>
+    <div>
+      <label for="number_rings">Number of Rings:</label>
+      <input
+        aria-label="Number of Rings"
+        type="number"
+        value={{this.number_rings}}
+         {{on "change" (val (fn (mut this.number_rings)))}}
+        autocomplete="off"
+        required
+      />
+    </div>
+    <div>
+      <button type="submit">Slot Checked In Entries</button>
+    </div>
+  </form>
+  <hr />
+  <h3>Reset Competition RingAssignments</h3>
   <div>
-    <button type="submit">Slot Checked In Entries</button>
+    <button type="button" {{on "click" this.resetRingAssignments }}>Reset Ring Assignments</button>
   </div>
-</form>
-<hr />
-<h3>Reset Competition RingAssignments</h3>
-<div>
-  <button type="button" {{on "click" this.resetRingAssignments }}>Reset Ring Assignments</button>
-</div>
-<hr />
+  <hr />
 {{/if}}

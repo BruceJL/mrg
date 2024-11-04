@@ -1,4 +1,3 @@
-from typing import TYPE_CHECKING
 from odf.opendocument import OpenDocumentText
 from odf.table import Table, TableColumn, TableRow, TableCell
 from odf.style import (
@@ -16,10 +15,7 @@ from odf.style import (
 from odf import style
 from odf.text import P, H
 from time import strftime, gmtime
-import random
-
-if TYPE_CHECKING:
-    from Event import Event
+from Event import Event
 
 
 def make_odf_score_sheets(

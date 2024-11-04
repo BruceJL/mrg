@@ -1,7 +1,6 @@
 import datetime
 import calendar
-from typing import TYPE_CHECKING
-from odf.opendocument import OpenDocumentDrawing
+from odf.opendocument import OpenDocumentDrawing, OpenDocument
 from odf.style import (
     Style,
     MasterPage,
@@ -16,31 +15,29 @@ from odf.text import P, Span
 from odf.draw import Page, Frame, TextBox, Image
 from odf import teletype
 from pathlib import Path
-
-if TYPE_CHECKING:
-    from Entry import Entry
-    from typing import List
-
-
-# stolen from:
-# https://stackoverflow.com/questions/9647202/ordinal-numbers-replacement
-def make_ordinal(n: "int"):
-    """
-    Convert an integer into its ordinal representation::
-
-        make_ordinal(0)   => '0th'
-        make_ordinal(3)   => '3rd'
-        make_ordinal(122) => '122nd'
-        make_ordinal(213) => '213th'
-    """
-    n = int(n)
-    suffix = ["th", "st", "nd", "rd", "th"][min(n % 10, 4)]
-    if 11 <= (n % 100) <= 13:
-        suffix = "th"
-    return suffix
+from utilities import make_ordinal
+from Entry import Entry
+from Event import Event
 
 
-def make_odf_certificates(event, winners: "List[Entry]"):
+def make_odf_winners_certificates(
+    event: Event,
+    winners: list[Entry],
+) -> str:
+    doc = make_odf_winners_certificates_odoc(
+        event=event,
+        winners=winners,
+    )
+    file_name = Path(__file__).parent / f"{event.id}-certificates.odg"
+    doc.save(file_name)
+
+    return str(file_name)
+
+
+def make_odf_winners_certificates_odoc(
+    event: Event,
+    winners: list[Entry],
+) -> OpenDocument:
 
     now = datetime.datetime.now()
     games_iteration: "int" = now.year - 1998
@@ -569,8 +566,4 @@ def make_odf_certificates(event, winners: "List[Entry]"):
         )
         sponsors_text_box.addElement(p)
 
-    # Save document
-    file_name = Path(__file__).parent / f"{event.id}-certificates.odg"
-    document.save(file_name)
-
-    return str(file_name)
+    return document

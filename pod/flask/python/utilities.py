@@ -1,131 +1,389 @@
-"""Some useful functions used by several things"""
+from pgdb import connect, DatabaseError, Cursor
+import logging
+import math
+import random
+from EventEntry import EventEntry
+from RingAssignment import RingAssignment
+from RoundRobin import RoundRobinTournament
+from Event import Event
+from Entry import Entry
 
-import re, datetime
+
+def connect_to_database(username, password):
+    try:
+        # Connect to the database
+        with connect(
+            # localhost cause contacting postgres on ::1
+            dsn="127.0.0.1:mrg",
+            user=username,
+            password=password,
+        ) as conn:
+            conn.autocommit = True
+            return conn
+    except DatabaseError as e:
+        logging.debug(f"Database error occurred: {e}")
+    except Exception as e:
+        logging.debug(f"An error occurred: {e}")
 
 
-def optionalFieldIsGood(mine, theirs):
-    """check if optional field theirs matches with mine"""
-    if (theirs is None or
-            theirs == "" or
-            theirs == mine):
-        return True
+# stolen from:
+# https://stackoverflow.com/questions/9647202/ordinal-numbers-replacement
+def make_ordinal(n: "int") -> str:
+    """
+    Convert an integer into its ordinal representation::
+
+        make_ordinal(0)   => '0th'
+        make_ordinal(3)   => '3rd'
+        make_ordinal(122) => '122nd'
+        make_ordinal(213) => '213th'
+    """
+    n = int(n)
+    suffix = ["th", "st", "nd", "rd", "th"][min(n % 10, 4)]
+    if 11 <= (n % 100) <= 13:
+        suffix = "th"
+    return suffix
+
+
+# Gets the list of events types from the database.
+def get_event_list_from_database(
+    cursor: Cursor,
+) -> dict[str, Event]:
+    cursor.execute("SELECT * FROM robots.competition;")
+    data = cursor.fetchall()
+    events: dict[str, Event] = {}
+
+    for row in data:
+        if row.name != "":
+            event = Event(
+                id=row.name,
+                min_entries_per_ring=row.minRobotsPerRing,
+                max_entries_per_ring=row.maxRobotsPerRing,
+                max_rings=row.rings,
+                max_entries=row.maxEntries,
+                long_name=row.longName,
+            )
+        # event.check_string = row['checkString']
+        events[row.name] = event
+    return events
+
+
+# Get Robot's info by its ID from the database
+def get_robot_entry_from_database(
+    cursor: Cursor,
+    robot_id: str,
+) -> Entry:
+    sql = f'SELECT * FROM robots."robot" WHERE id = {robot_id};'
+    cursor.execute(sql)
+    data = cursor.fetchall()
+    return make_entry(data[0])
+
+
+def make_entry(row: tuple[str, "Any"]) -> Entry:
+    return Entry(
+        id=row.id,
+        robotName=row.name,
+        coach=row.coach,
+        school=row.school,
+        competition=row.competition,
+        driver1=row.driver1,
+        driver1Grade=row.driver1gr,
+        driver2=row.driver2,
+        driver2Grade=row.driver2gr,
+        driver3=row.driver3,
+        driver3Grade=row.driver3gr,
+        checkInStatus=row.checkInStatus,
+        measured=row.measured,
+        registered=row.registered,
+        paymentType=row.paymentType,
+    )
+
+
+# Gets all the entries for a given event from the database
+def get_event_entries_from_database(
+    cursor: Cursor,
+    event: Event,
+) -> None:
+    sql = (
+        "SELECT * FROM robots.robot WHERE competition = "
+        + f"'{event.id}' ORDER BY registered;"
+    )
+
+    cursor.execute(sql)
+
+    data = cursor.fetchall()
+
+    for row in data:
+        if row.name != "":
+            event.add_entry(make_entry(row))
+
+
+# Creates the ring assignments (EventEntry's) for a given competition from
+# the database
+def load_ring_assignments_from_database(
+    cursor: Cursor,
+    event: Event,
+) -> None:
+
+    sql = 'SELECT * FROM robots."ringAssignment" ' f"WHERE competition = '{event.id}';"
+    cursor.execute(sql)
+    data = cursor.fetchall()
+    found_entry: Entry | None = None
+    found_row: RingAssignment
+
+    for row in data:
+        found_row = row
+        robot_id: int = row.robot
+        found_entry = None
+
+        # Associate a robot with the entry
+        for entry in event.entries:
+            if entry.id == robot_id:
+                found_entry = entry
+                break
+
+        assert found_entry is not None, f"No matching robot for id: {entry.id} found."
+
+        event_entry = EventEntry(
+            entry=found_entry,
+            letter=found_row.letter,
+            placed=found_row.placed,
+        )
+
+        if found_row.ring not in event.round_robin_tournaments:
+            event.create_ring(found_row.ring)
+
+        event.round_robin_tournaments[found_row.ring].event_entries.append(event_entry)
+
+
+def update_round_robin_assignments(
+    cursor: Cursor,
+    event: Event,
+    number_rings: int,
+) -> None:
+    slotted_entries: list[Entry] = []
+    num_entries = 0
+    max_entries = event.max_entries_per_ring * event.max_rings
+
+    # Sort the entries by date registered.
+    event.entries.sort()
+
+    for entry in event.entries:
+        if entry.checkInStatus == "CHECKED-IN":
+            num_entries = num_entries + 1
+            if num_entries > max_entries:
+                break
+            slotted_entries.append(entry)
+
+    assert num_entries != 0, "There are no entries to slot!"
+
+    if not event.round_robin_tournaments:
+        print(f"Doing inital ring assignment for {event.id}")
+        best_remainder: int = len(event.entries)
+        best_rings: int = 1
+        event.version += 1
+
+        if number_rings == 0:
+            # Locate a solution that uses the maximum number of rings with
+            # a zero remainder
+            for i in range(event.max_rings, 1, -1):
+                if num_entries / i < event.min_entries_per_ring:
+                    # print(str(i) + " rings has " + str(num_entries/i) +
+                    # robots per ring, which is too few.")
+                    continue
+                if num_entries / i > event.max_entries_per_ring:
+                    # print(str(i) + " rings has " + str(num_entries/i) +
+                    # " robots per ring, which is too many.")
+                    continue
+                elif num_entries % i == 0:
+                    event.rings = i
+                    # print(str(i) + " rings works perfectly.")
+                    break
+                elif num_entries % i < best_remainder:
+                    # print(str(i) + " rings has a better remainder of "
+                    # + str(num_entries % i))
+                    best_remainder = num_entries % i
+                    best_rings = i
+
+            if event.rings == 0:
+                event.rings = best_rings
+        else:
+            event.rings = number_rings
+
+        print(
+            f"{event.id} - using {number_rings} rings with an average of "
+            + f"{float(num_entries) / float(number_rings)} robots per ring."
+        )
+
+        # Build the dict to hold the rings and their entries.
+        for i in range(1, int(event.rings) + 1, 1):
+            event.create_ring(i)
+
+        # Make dict containing the entries from a given school
+        school_entries: dict[str, list[Entry]] = {}
+        slotted: int = 0
+        slotted_entries.sort()
+        for entry in slotted_entries:
+            if entry.school not in school_entries.keys():
+                school_entries[entry.school] = []
+            school_entries[entry.school].append(entry)
+            if slotted == max_entries:
+                break
+
+        # Slot the entries into the rings based upon school.
+        # This will minimize the number of entries from the same school in
+        # a given ring.
+        i = 0
+        round_robin_keys = list(event.round_robin_tournaments.keys())
+        length = len(round_robin_keys)
+        for key in school_entries.keys():
+            entries = school_entries[key]
+            while len(entries):
+                index = math.floor(random.random() * len(entries))
+                found = 0
+
+                if not found:
+                    event.round_robin_tournaments[
+                        round_robin_keys[i % length]
+                    ].add_entry(entries[index])
+                    entries.remove(entries[index])
+                    i += 1
+
+        ring_assignment_query = (
+            'INSERT into robots."ringAssignment" '
+            "(robot, competition, ring, letter) "
+            "VALUES "
+        )
+
+        participation_query = "UPDATE robots.robot SET participated=TRUE WHERE id in ("
+
+        for tournament in event.round_robin_tournaments.values():
+            for event_entry in tournament.event_entries:
+                ring_assignment_query += (
+                    f"('{event_entry.entry.id}', '{event.id}', "
+                    f"{tournament.ring}, '{event_entry.letter}'),"
+                )
+
+                participation_query += f"{event_entry.entry.id},"
+
+        # get rid of that last comma.
+        ring_assignment_query = ring_assignment_query[:-1]
+        ring_assignment_query += ";"
+
+        # get rid of the last 'OR'
+        participation_query = participation_query[:-1]
+        participation_query += ");"
+
+        print(ring_assignment_query)
+        print(participation_query)
+        cursor.execute(ring_assignment_query)
+        cursor.execute(participation_query)
+
+    # There are already existing assignments.
     else:
-        return False
+        print("Amending ring assignments for " + event.id)
+        # locate checked-in entries that were assigned a ring but have
+        # since been removed.
+        for tournament in event.round_robin_tournaments.values():
+            for event_entry in tournament.event_entries:
+                remove = 1
+                name = ""
+                for entry in slotted_entries:
+                    if event_entry.entry.id == entry.id:
+                        remove = 0
+                        name = entry.robotName
+                        break
+
+                if remove:
+                    # The competitor exists in the assignment data, but not
+                    # in the checked-in entries;
+                    # The assignment data needs to be removed.
+                    print(f"\tRemoving {name} from ring {tournament.ring}")
+
+                    # Remove the event entry from the tournament
+                    tournament.remove_event_entry(event_entry)
+
+                    # delete the ringAssignment entry
+                    s = (
+                        'DELETE from robots."ringAssignment" WHERE '
+                        f"robot={event_entry.entry.id};"
+                    )
+                    cursor.execute(s)
+
+                    # clear the participated flag.
+                    s = (
+                        'UPDATE robots."robot" set participated=FALSE '
+                        + f"WHERE `id`={event_entry.entry.id};"
+                    )
+                    cursor.execute(s)
+
+        # locate checked-in competitors that have not been assigned a ring.
+        for entry in slotted_entries:
+            add = 1
+            for tournament in event.round_robin_tournaments.values():
+                if 0 == add:
+                    break
+                for event_entry in tournament.event_entries:
+                    if event_entry.entry.id == entry.id:
+                        # We found the competitor, we don't need to
+                        # add them
+                        add = 0
+                        break
+
+            if add:
+                # The competitor is checked in, but no ring assignment
+                # exists. Find the ring with the fewest competitors and
+                # assign the competitor to the first free position.
+
+                smallest_tournament_size = 999
+                smallest_tournament: RoundRobinTournament
+                for inner_tournament in event.round_robin_tournaments.values():
+                    size = len(inner_tournament.event_entries)
+                    if size < smallest_tournament_size:
+                        smallest_tournament_size = size
+                        smallest_tournament = inner_tournament
+
+                # Now that we know the ring to slot into, place the
+                # competitor in the ring
+                print(
+                    f"\tAdding {entry.robotName} to {event.id} "
+                    f"{smallest_tournament.name}"
+                )
+
+                event_entry = smallest_tournament.add_entry(entry)
+
+                s = (
+                    'INSERT into robots."ringAssignment" '
+                    "(robot, competition, ring, letter) "
+                    "VALUES "
+                    f"('{event_entry.entry.id}', '{event.id}', "
+                    f"'{smallest_tournament.ring}', '{event_entry.letter}');"
+                )
+
+                cursor.execute(s)
+
+                s = (
+                    "UPDATE robots.robot SET participated=true "
+                    f"WHERE id = {event_entry.entry.id};"
+                )
+
+                cursor.execute(s)
+
+        print("All done amending " + event.id)
 
 
-def requiredFieldIsGood(mine, theirs):
-    """check if required field theirs matches with mine"""
-    if (theirs is not None and
-            mine == theirs):
-        return True
-    else:
-        return False
+def reset_round_robin_tournaments(event: Event) -> list[str]:
+    sql = []
+    s = 'DELETE from robots."ringAssignment" ' + f"WHERE competition='{event.id}';"
+    sql.append(s)
 
+    # Clear all participated flags.
+    s = (
+        "UPDATE robots.robot SET participated=FALSE "
+        + f"WHERE competition='{event.id}';"
+    )
+    sql.append(s)
 
-def sanitize(string):
-    """Returns string with unsanitary characters (";) removed"""
-    return string.translate(None, '";')
+    # clear out the object data.
+    # self.round_robin_tournaments = {}
 
-
-def validateName(name):
-    """Returns False if name looks potentially incorrect"""
-    if name.count(' ') > 1:
-        return False
-    # if has > 2 caps or 0 caps
-    if sum(1 for c in name if c.isupper()) > 2 or sum(1 for c in name if c.isupper()) == 0:
-        return False
-    # if has more than 1 of ' or -
-    if name.count('\'') > 1:
-        return False
-    if name.count('-') > 1:
-        return False
-    # if has any chars other than A-Z ' -
-    if re.match('[A-Za-z\'-]*', name) == None:
-        return False
-
-    return True
-
-
-def stripPhoneNumber(number):
-    """Returns number stripped of any characters other than 0-9, +, and x"""
-    newNumber = ''
-    for c in number:
-        if c.isdigit() or c == '+' or c == 'x':
-            newNumber += c
-
-    return newNumber
-
-
-def validEmail(email):
-    """Returns False if email isn't in valid format"""
-    # match = re.match("^\\w+@[a-zA-Z_]+?\\.[a-zA-Z]{2,3}$", email)
-    match = re.match(
-        r"[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?",
-        email)
-    return match != None
-
-
-def stripPostal(postal):
-    """Returns postal code string stripped of any characters other than A-Z, 0-9"""
-    newPostal = ''
-    for c in postal.upper():
-        if c.isalnum():
-            newPostal += c
-
-    return newPostal
-
-
-def convertTimeToSeconds(timeString):
-    """convert MM:SS to seconds"""
-    tokens = timeString.split(':')
-    return int(tokens[0]) * 60 + int(tokens[1])
-
-
-def convertStringToTimedelta(timeString):
-    """convert 'M:SS' to timedelta"""
-    tokens = timeString.split(':')
-    minutes = int(tokens[0])
-    seconds = int(tokens[1])
-    return datetime.timedelta(minutes=minutes, seconds=seconds)
-
-
-def humanPostalCodeFormat(postalString):
-    """tries to add a space after 3 characters and returns the string"""
-    result = postalString
-    if len(postalString) > 3:
-        result = postalString[0:3] + " " + postalString[3:]
-    return result
-
-
-def humanPhoneNumberFormat(phoneString):
-    """tries to add "-" to phoneString, returns result"""
-    result = phoneString
-    extString = ""
-    fourDigit = ""
-    threeDigit = []
-    if 'x' in phoneString:
-        extString = phoneString[phoneString.index('x')+1:]
-        result = phoneString[0:phoneString.index('x')-1]
-
-    if len(result) > 4:
-        fourDigit = result[-4:]
-        result = result[0:-4]
-
-    for i in range(len(result), 0, -3):
-        threeDigit.append(result[i-3:i])
-        result = result[0:i-3]
-
-    # Now put it all back together
-    if result != "":
-        result += "-"
-
-    for i in range(len(threeDigit)-1, -1, -1):
-        result += (threeDigit[i] + "-")
-
-    if fourDigit != "":
-        result += (fourDigit)
-
-    if extString != "":
-        result += (" ext. " + extString)
-
-    return result
+    return sql

@@ -1,4 +1,4 @@
-from odf.opendocument import OpenDocumentText
+from odf.opendocument import OpenDocumentText, OpenDocument
 from odf.table import Table, TableColumn, TableRow, TableCell
 from odf.style import (
     Style,
@@ -16,9 +16,26 @@ from odf.style import (
 from odf.text import P
 from datetime import date
 import math
+from Entry import Entry
 
 
-def make_odf5160_labels(competition, entries):
+def make_odf5160_labels(
+    competition: str,
+    entries: list[Entry],
+) -> str:
+    file_name = f"{competition}_labels.odt"
+    doc = make_odf5160_labels_odt(
+        competition=competition,
+        entries=entries,
+    )
+    doc.save(file_name)
+    return file_name
+
+
+def make_odf5160_labels_odt(
+    competition: str,
+    entries: list[Entry],
+) -> OpenDocument:
     # This will generate an ODF files for 5160 labels for a given event.
     # global table
     label_width = 2.625
@@ -653,6 +670,4 @@ def make_odf5160_labels(competition, entries):
         )
         tr.addElement(tc)
 
-    file_name = f"{competition}_labels.odt"
-    document.save(file_name)
-    return str(file_name)
+        return document

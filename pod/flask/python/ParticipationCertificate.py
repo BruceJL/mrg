@@ -1,6 +1,5 @@
 import datetime
 import calendar
-from typing import TYPE_CHECKING
 from odf.opendocument import OpenDocumentDrawing
 from odf.style import (
     Style,
@@ -15,32 +14,14 @@ from odf.style import (
 from odf.text import P, Span
 from odf.draw import Page, Frame, TextBox, Image
 from odf import teletype
-from pathlib import Path
-
-if TYPE_CHECKING:
-    from Entry import Entry
-    from typing import List
+from Entry import Entry
+from utilities import make_ordinal
 
 
-# stolen from:
-# https://stackoverflow.com/questions/9647202/ordinal-numbers-replacement
-def make_ordinal(n: "int"):
-    """
-    Convert an integer into its ordinal representation::
-
-        make_ordinal(0)   => '0th'
-        make_ordinal(3)   => '3rd'
-        make_ordinal(122) => '122nd'
-        make_ordinal(213) => '213th'
-    """
-    n = int(n)
-    suffix = ["th", "st", "nd", "rd", "th"][min(n % 10, 4)]
-    if 11 <= (n % 100) <= 13:
-        suffix = "th"
-    return suffix
-
-
-def make_odf_participation_certificates(event, competitors: "List[Entry]"):
+def make_odf_participation_certificates(
+    event,
+    competitors: list[Entry],
+) -> str:
 
     now = datetime.datetime.now()
     games_iteration: "int" = now.year - 1998
@@ -371,6 +352,7 @@ def make_odf_participation_certificates(event, competitors: "List[Entry]"):
 
     # sort up the competitors by schools
     competitors.sort(key=lambda x: x.school)
+    robot_logo_href = document.addPicture("robot.png")
 
     # filter out robots by  who checked in.
     bots = []
