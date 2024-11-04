@@ -3,15 +3,8 @@ import subprocess
 import logging
 from flask import Flask, request, send_file
 from flask_restx import Resource, Api, Namespace, fields
-from RobocritterCertificate import make_odf_certificate
-from flask_cors import CORS
-from EventCertificate import make_odf_certificates
-from EventScoresheet import make_odf_score_sheets
-from EventLabels import make_odf5160_labels
-from ParticipationCertificate import make_odf_participation_certificates
-from databaseSetup import connect_to_database
-from Event import Event
-from FrontEnd import (
+from utilities import (
+    connect_to_database,
     get_event_list_from_database,
     get_robot_entry_from_database,
     get_event_entries_from_database,
