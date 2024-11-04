@@ -98,6 +98,22 @@ def make_entry(row: tuple[str, "Any"]) -> Entry:
     )
 
 
+# Gets all the entries from the database
+def get_all_entries_from_database(cursor: Cursor) -> list[Entry]:
+    cursor.execute("SELECT * FROM robots.robot ORDER BY school;")
+    data = cursor.fetchall()
+    entries: list[Entry] = []
+
+    for row in data:
+        if row.name != "":
+            entries.append(make_entry(row))
+
+    # sort the entries by school
+    entries.sort(key=lambda x: x.school)
+
+    return entries
+
+
 # Gets all the entries for a given event from the database
 def get_event_entries_from_database(
     cursor: Cursor,

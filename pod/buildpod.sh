@@ -87,4 +87,3 @@ podman container create --replace --pod $PODNAME \
 
 # Start the pod
 podman pod start $PODNAME
-

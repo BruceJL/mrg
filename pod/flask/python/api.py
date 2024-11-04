@@ -8,6 +8,7 @@ from utilities import (
     get_event_list_from_database,
     get_robot_entry_from_database,
     get_event_entries_from_database,
+    get_all_entries_from_database,
     load_ring_assignments_from_database,
     update_round_robin_assignments,
     reset_round_robin_tournaments,
@@ -79,7 +80,7 @@ scoresheet_model = api.model(
     },
 )
 
-partitipation_model = reset_ring_model = labelsheet_model = scoresheet_model
+reset_ring_model = labelsheet_model = scoresheet_model
 
 checked_in_model = api.model(
     "CheckedInModel",
@@ -310,25 +311,16 @@ class ResetCompetitionRingAssignments(Resource):
 # Generate participation certificates for all competitors.
 @ns.route("/generate-participation-certificates")
 class ParticipationCertificate(Resource):
-    @api.expect(partitipation_model)
     def post(self):
-
         data = request.get_json()
-        competition = data.get("competition")
         pdf = data.get("pdf")
 
         cursor = getCursor()
-        events = get_event_list_from_database(cursor)
-        event = events[competition]
 
-        # get all the entries for a given event.
-        event.entries.clear()
-        get_event_entries_from_database(cursor, event)
+        # get all the entries
+        entries = get_all_entries_from_database(cursor)
 
-        file_name = make_odf_participation_certificates(
-            event=event,
-            competitors=event.entries,
-        )
+        file_name = make_odf_participation_certificates(competitors=entries)
 
         if pdf:
             file_name = convert_odt_to_pdf(file_name)

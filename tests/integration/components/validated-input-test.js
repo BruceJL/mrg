@@ -17,9 +17,9 @@ module('Integration | Component | validated input', function(hooks) {
 
     // Template block usage:
     await render(hbs`
-      {{#validated-input}}
+      <ValidatedInput>
         template block text
-      {{/validated-input}}
+      </ValidatedInput>
     `);
 
     assert.dom('*').hasText('template block text');

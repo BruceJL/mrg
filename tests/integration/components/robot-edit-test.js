@@ -17,9 +17,9 @@ module('Integration | Component | robot edit', function(hooks) {
 
     // Template block usage:
     await render(hbs`
-      {{#robot-edit}}
+      <RobotEdit>
         template block text
-      {{/robot-edit}}
+      </RobotEdit>
     `);
 
     assert.dom('*').hasText('template block text');
