@@ -14,6 +14,7 @@ from utilities import (
     reset_round_robin_tournaments,
 )
 from RobocritterCertificate import make_odf_certificate
+from VolunteerCertificate import make_odf_volunteer_certificate
 from EventScoresheet import make_odf_score_sheets
 from EventCertificate import make_odf_winners_certificates
 from EventLabels import make_odf5160_labels
@@ -102,7 +103,7 @@ Endpoints
 
 @ns.route("/generate-robotcritter-certificate")
 class RobotCritterCertificate(Resource):
-    @api.expect(robocritter_model)
+    # @api.expect(robocritter_model)
     def post(self):
 
         # Get JSON data from POST request body
@@ -134,7 +135,7 @@ class RobotCritterCertificate(Resource):
 # Generate certificates for 1st, 2nd and 3rd places for a chosen Competition
 @ns.route("/generate-event-certificates")
 class EventCertificate(Resource):
-    @api.expect(event_model)
+    # @api.expect(event_model)
     def post(self):
         # Get JSON data from POST request body
         data = request.get_json()
@@ -184,7 +185,7 @@ class EventCertificate(Resource):
 # Generate scoresheets for robots
 @ns.route("/generate-scoresheet")
 class ScoreSheet(Resource):
-    @api.expect(scoresheet_model)
+    # @api.expect(scoresheet_model)
     def post(self):
         # Get JSON data from POST request body
         data = request.get_json()
@@ -224,7 +225,7 @@ class ScoreSheet(Resource):
 # Make labels for robots
 @ns.route("/generate-label-sheets")
 class LabelSheet(Resource):
-    @api.expect(labelsheet_model)
+    # @api.expect(labelsheet_model)
     def post(self):
         # Get JSON data from POST request body
         data = request.get_json()
@@ -256,7 +257,7 @@ class LabelSheet(Resource):
 # Slot all the checked in entries
 @ns.route("/slot-checked-in-entries")
 class SlotCheckedInEntries(Resource):
-    @api.expect(checked_in_model)
+    # @api.expect(checked_in_model)
     def post(self):
 
         # Get JSON data from POST request body
@@ -289,7 +290,7 @@ class SlotCheckedInEntries(Resource):
 # Delete all of the ring assignments for a given competition
 @ns.route("/reset-ring-assignments")
 class ResetCompetitionRingAssignments(Resource):
-    @api.expect(reset_ring_model)
+    # @api.expect(reset_ring_model)
     def post(self):
         # Get JSON data from POST request body
         data = request.get_json()
@@ -321,6 +322,27 @@ class ParticipationCertificate(Resource):
         entries = get_all_entries_from_database(cursor)
 
         file_name = make_odf_participation_certificates(competitors=entries)
+
+        if pdf:
+            file_name = convert_odt_to_pdf(file_name)
+
+        response = send_file(file_name, as_attachment=True, download_name=file_name)
+
+        # Remove the file after sending
+        os.remove(file_name)
+
+        return response
+
+
+# Generate volunteer certificate for a given volunteer
+@ns.route("/generate-volunteer-certificate")
+class VolunteerCertificate(Resource):
+    def post(self):
+        data = request.get_json()
+        volunteer = data.get("volunteer")
+        pdf = data.get("pdf")
+
+        file_name = make_odf_volunteer_certificate(volunteer)
 
         if pdf:
             file_name = convert_odt_to_pdf(file_name)

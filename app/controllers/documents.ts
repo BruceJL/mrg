@@ -1,5 +1,6 @@
 import Controller from '@ember/controller';
 import { action } from '@ember/object';
+import { tracked } from '@glimmer/tracking';
 
 async function processReponse(response: Response, file_name: string){
     const blob = await response.blob();
@@ -13,8 +14,11 @@ async function processReponse(response: Response, file_name: string){
         window.URL.revokeObjectURL(url);
   }
 
-export default class DocumentsController extends Controller {
 
+
+export default class DocumentsController extends Controller {
+    @tracked volunteer_name:string = "";
+    
     @action
     async downloadParticipationCertificates( pdf:boolean) {
     const response = await fetch('/api/flask/generate-participation-certificates', {
@@ -38,6 +42,33 @@ export default class DocumentsController extends Controller {
         processReponse(response, filename);
     } else {
         alert('Failed to download participation certificates');
+    }
+    }
+
+    @action
+    async downloadVolunteerCertificate(name:string ,pdf:boolean) {
+    const response = await fetch('/api/flask/generate-volunteer-certificate', {
+        method: 'POST',
+        headers: {
+        'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+        volunteer: name,
+        pdf: pdf,
+        }),
+    });
+
+    let filename = "";
+    if(true === pdf){
+        filename = 'volunteer_certificate.pdf';
+    }else{
+        filename = 'volunteer_certificate.odg';
+    }
+
+    if (response.ok) {
+        processReponse(response, filename);
+    } else {
+        alert('Failed to download volunteer certificate');
     }
     }
 }
