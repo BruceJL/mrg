@@ -1,29 +1,29 @@
+import os
+import subprocess
+import logging
 from flask import Flask, request, send_file
 from flask_restx import Resource, Api, Namespace, fields
-from RobocritterCertificate import make_odf_certificate
-from flask_cors import CORS
-from EventCertificate import make_odf_certificates
-from EventScoresheet import make_odf_score_sheets
-from EventLabels import make_odf5160_labels
-from databaseSetup import connect_to_database
-from Event import Event
-from FrontEnd import (
+from utilities import (
+    connect_to_database,
     get_event_list_from_database,
     get_robot_entry_from_database,
     get_event_entries_from_database,
     load_ring_assignments_from_database,
-    make_odf5160_labels,
     update_round_robin_assignments,
     reset_round_robin_tournaments,
 )
+from RobocritterCertificate import make_odf_certificate
+from EventScoresheet import make_odf_score_sheets
+from EventCertificate import make_odf_winners_certificates
+from EventLabels import make_odf5160_labels
 
-import os
-import logging
+# from ParticipationCertificate import make_odf_participation_certificates
+
 
 logging.basicConfig(level=logging.DEBUG)
 
 app = Flask(__name__)
-CORS(app)
+# CORS(app)
 
 api = Api(app)
 
@@ -47,6 +47,7 @@ robocritter_model = api.model(
         ),
         "place": fields.String(required=True, description="Name of the place"),
         "robot": fields.String(required=True, description="Name of the robot"),
+        "pdf": fields.Boolean(required=False, description="PDF file requested"),
     },
 )
 
@@ -65,6 +66,7 @@ event_model = api.model(
         "place3": fields.String(
             required=True, description="Name of the third place place"
         ),
+        "pdf": fields.Boolean(required=False, description="PDF file requested"),
     },
 )
 
@@ -74,6 +76,7 @@ scoresheet_model = api.model(
         "competition": fields.String(
             required=True, description="Name of the competition"
         ),
+        "pdf": fields.Boolean(required=False, description="PDF file requested"),
     },
 )
 
@@ -108,11 +111,19 @@ class RobotCritterCertificate(Resource):
         seconds = data.get("seconds")
         place = data.get("place")
         robot = data.get("robot")
+        pdf = data.get("pdf")
 
         # Generate certificate
         file_name = make_odf_certificate(minutes, seconds, place, robot)
 
-        response = send_file(file_name, as_attachment=True, download_name=file_name)
+        if pdf:
+            file_name = convert_odt_to_pdf(file_name)
+
+        response = send_file(
+            file_name,
+            as_attachment=True,
+            download_name=file_name,
+        )
 
         # Remove the file after sending
         os.remove(file_name)
@@ -128,6 +139,7 @@ class EventCertificate(Resource):
         # Get JSON data from POST request body
         data = request.get_json()
         competition = data.get("competition")
+        pdf = data.get("pdf")
         place1 = data.get("place1")
         place2 = data.get("place2")
         place3 = data.get("place3")
@@ -149,12 +161,19 @@ class EventCertificate(Resource):
         if not winners:
             print("No winners found")
 
-        file_name = make_odf_certificates(
+        file_name = make_odf_winners_certificates(
             event=event,
             winners=winners,
         )
 
-        response = send_file(file_name, as_attachment=True, download_name=file_name)
+        if pdf:
+            file_name = convert_odt_to_pdf(file_name)
+
+        response = send_file(
+            file_name,
+            as_attachment=True,
+            download_name=file_name,
+        )
 
         # Remove the file after sending
         os.remove(file_name)
@@ -170,6 +189,7 @@ class ScoreSheet(Resource):
         # Get JSON data from POST request body
         data = request.get_json()
         competition = data.get("competition")
+        pdf = data.get("pdf")
 
         cursor = getCursor()
         events = get_event_list_from_database(cursor)
@@ -186,7 +206,14 @@ class ScoreSheet(Resource):
             event=event,
         )
 
-        response = send_file(file_name, as_attachment=True, download_name=file_name)
+        if pdf:
+            file_name = convert_odt_to_pdf(file_name)
+
+        response = send_file(
+            file_name,
+            as_attachment=True,
+            download_name=file_name,
+        )
 
         # Remove the file after sending
         os.remove(file_name)
@@ -202,6 +229,7 @@ class LabelSheet(Resource):
         # Get JSON data from POST request body
         data = request.get_json()
         competition = data.get("competition")
+        pdf = data.get("pdf")
 
         cursor = getCursor()
         events = get_event_list_from_database(cursor)
@@ -210,7 +238,14 @@ class LabelSheet(Resource):
         get_event_entries_from_database(cursor, event)
         file_name = make_odf5160_labels(competition, event.entries)
 
-        response = send_file(file_name, as_attachment=True, download_name=file_name)
+        if pdf:
+            file_name = convert_odt_to_pdf(file_name)
+
+        response = send_file(
+            file_name,
+            as_attachment=True,
+            download_name=file_name,
+        )
 
         # Remove the file after sending
         os.remove(file_name)
@@ -232,6 +267,7 @@ class SlotCheckedInEntries(Resource):
         cursor = getCursor()
         events = get_event_list_from_database(cursor)
         event = events[competition]
+        event.rings = number_rings
 
         # get all the entries for a given event.
         event.entries.clear()
@@ -241,7 +277,11 @@ class SlotCheckedInEntries(Resource):
         event.round_robin_tournaments.clear()
         load_ring_assignments_from_database(cursor, event)
 
-        update_round_robin_assignments(cursor, event, number_rings)
+        update_round_robin_assignments(
+            cursor=cursor,
+            event=event,
+            number_rings=number_rings,
+        )
 
         return 200
 
@@ -274,6 +314,35 @@ def getCursor():
         logging.debug("=== Reconnecting to the database====")
         DB_CONNECTION = connect_to_database(DB_USERNAME, DB_PASSWORD)
     return DB_CONNECTION.cursor()
+
+
+def convert_odt_to_pdf(
+    input_file: str,
+) -> str:
+    """
+    Convert an ODT file to a PDF file using LibreOffice.
+    If the file already exists, it will be overwritten.
+
+    Args:
+        input_file (str): The path to the input ODT file.
+        output_file (str): The path to save the output PDF file.
+
+    Returns:
+        None
+    """
+    output_file = os.path.splitext(input_file)[0] + ".pdf"
+
+    cmd = [
+        "libreoffice",
+        "--headless",
+        "--convert-to",
+        "pdf",
+        input_file,
+    ]
+
+    subprocess.run(args=cmd)
+    os.remove(input_file)
+    return output_file
 
 
 if __name__ == "__main__":

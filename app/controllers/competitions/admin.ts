@@ -4,10 +4,23 @@ import Controller from '@ember/controller';
 import CompetitionModel from 'mrg-sign-in/models/competition';
 import { EmberChangeset } from 'ember-changeset';
 import { tracked } from '@glimmer/tracking';
-import type { ModelFrom } from '../routes/competitions/admin';
+import type { ModelFrom } from '../../routes/competitions/admin';
+
+
+async function processReponse(response: Response, file_name: string){
+  const blob = await response.blob();
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = file_name;
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      window.URL.revokeObjectURL(url);
+}
 
 export default class CompetitionAdminController extends Controller {
-  declare model: ModelFrom<CompetitionModel>;
+  declare model: ModelFrom<CompetitionAdminRoute>;
 
   @action
   toggleMeasurement(
@@ -59,8 +72,9 @@ export default class CompetitionAdminController extends Controller {
   @tracked place2: string = '';
   @tracked place3: string = '';
 
+  // Download the Winners certificates for the competitions.
   @action
-  async downloadCertificates(event: SubmitEvent) {
+  async downloadCertificates(event: SubmitEvent, pdf: boolean) {
     event.preventDefault();
 
     const response = await fetch('/api/flask/generate-event-certificates', {
@@ -73,26 +87,28 @@ export default class CompetitionAdminController extends Controller {
         place1: this.place1,
         place2: this.place2,
         place3: this.place3,
+        pdf: pdf,
       }),
     });
 
+    let filename = "";
+    if(true === pdf){
+      filename = this.model.id + '_certificates.pdf';
+    }else{
+      filename = this.model.id + '_certificates.odt';
+    }
+
+
     if (response.ok) {
-      const blob = await response.blob();
-      const url = window.URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = this.model.id + '_certificates.odg';
-      document.body.appendChild(a);
-      a.click();
-      a.remove();
-      window.URL.revokeObjectURL(url);
+      processReponse(response, filename )
     } else {
       alert('Failed to download certificates');
     }
   }
 
+  // Download the labels for the competition.
   @action
-  async downloadLabels() {
+  async downloadLabels(pdf: boolean) {
     const response = await fetch('/api/flask/generate-label-sheets', {
       method: 'POST',
       headers: {
@@ -100,26 +116,27 @@ export default class CompetitionAdminController extends Controller {
       },
       body: JSON.stringify({
         competition: this.model.id,
+        pdf: pdf,
       }),
     });
 
+    let filename = "";
+    if(true === pdf){
+      filename = this.model.id + '_labels.pdf';
+    }else{
+      filename = this.model.id + '_labels.odt';
+    }
+
     if (response.ok) {
-      const blob = await response.blob();
-      const url = window.URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = this.model.id + '_labels.odt';
-      document.body.appendChild(a);
-      a.click();
-      a.remove();
-      window.URL.revokeObjectURL(url);
+      processReponse(response, filename )
     } else {
       alert('Failed to download labels');
     }
   }
 
+  // Download the score sheets for the competitions.
   @action
-  async downloadScoreSheet() {
+  async downloadScoreSheet(pdf: boolean) {
     const response = await fetch('/api/flask/generate-scoresheet', {
       method: 'POST',
       headers: {
@@ -127,19 +144,19 @@ export default class CompetitionAdminController extends Controller {
       },
       body: JSON.stringify({
         competition: this.model.id,
+        pdf: pdf,
       }),
     });
 
+    let filename = "";
+    if(true === pdf){
+      filename = this.model.id + '_score_sheet.pdf';
+    }else{
+      filename = this.model.id + '_score_sheet.odt';
+    }
+
     if (response.ok) {
-      const blob = await response.blob();
-      const url = window.URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = this.model.id + '_score_sheet.odt';
-      document.body.appendChild(a);
-      a.click();
-      a.remove();
-      window.URL.revokeObjectURL(url);
+      processReponse(response, filename);
     } else {
       alert('Failed to download score sheet');
     }
@@ -147,6 +164,7 @@ export default class CompetitionAdminController extends Controller {
 
   @tracked number_rings: number | null = null;
 
+  // Slot all checked in competitors to rings
   @action
   async slotCheckedInRings(event: SubmitEvent) {
     event.preventDefault();
@@ -171,6 +189,7 @@ export default class CompetitionAdminController extends Controller {
     this.number_rings = null;
   }
 
+  // Reset the ring assignment (clear all rings).
   @action
   async resetRingAssignments() {
     const response = await fetch('/api/flask/reset-ring-assignments', {

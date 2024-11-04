@@ -3,42 +3,42 @@ from enum import Enum
 
 
 class priority(Enum):
-    PREFERRED = 5,
-    CROSS_TRAINING = 4,
-    EXPERIENCE_OR_TRAINING = 3,
-    PRIOR_JUDGE = 2,
-    TIMER_NO_TRAINING = 1,
-    UNABLE = 0,
+    PREFERRED = (5,)
+    CROSS_TRAINING = (4,)
+    EXPERIENCE_OR_TRAINING = (3,)
+    PRIOR_JUDGE = (2,)
+    TIMER_NO_TRAINING = (1,)
+    UNABLE = (0,)
 
 
 class job(Enum):
-    TIMER = 1,
-    JUDGE = 2,
-    SIGN_IN = 3,
-    JIGS_AND_MEASURES = 4,
-    SECURITY = 5,
-    NONE = 0,
-    WITHDRAWN = -1,
-    SPECIAL = 6,
+    TIMER = (1,)
+    JUDGE = (2,)
+    SIGN_IN = (3,)
+    JIGS_AND_MEASURES = (4,)
+    SECURITY = (5,)
+    NONE = (0,)
+    WITHDRAWN = (-1,)
+    SPECIAL = (6,)
 
 
-class Volunteer (object):
+class Volunteer(object):
     def __init__(
-      self,
-      first_name: str = "",
-      last_name: str = "",
-      will_train:  bool = False,
-      will_setup: bool = False,
-      saturday_games: bool = False,
-      saturday_takedown: bool = False,
-      prior_security: bool = False,
-      prior_timer: bool = False,
-      prior_judge: bool = False,
-      prior_signin: bool = False,
-      prior_measure: bool = False,
-      preferred_job: job = job.NONE,
-      # start_time: time = time(hour=8),
-      # end_time: time = time(hour=6),
+        self,
+        first_name: str = "",
+        last_name: str = "",
+        will_train: bool = False,
+        will_setup: bool = False,
+        saturday_games: bool = False,
+        saturday_takedown: bool = False,
+        prior_security: bool = False,
+        prior_timer: bool = False,
+        prior_judge: bool = False,
+        prior_signin: bool = False,
+        prior_measure: bool = False,
+        preferred_job: job = job.NONE,
+        # start_time: time = time(hour=8),
+        # end_time: time = time(hour=6),
     ):
         self.first_name = first_name
         self.last_name = last_name
@@ -68,9 +68,8 @@ class Volunteer (object):
             return priority.PREFERRED
 
         # Make people who've only worked other jobs timers.
-        elif (
-          not (self.prior_timer or self.prior_judge) and
-          (self.prior_security or self.prior_measure or self.prior_signin)
+        elif not (self.prior_timer or self.prior_judge) and (
+            self.prior_security or self.prior_measure or self.prior_signin
         ):
             return priority.CROSS_TRAINING
 
@@ -96,17 +95,19 @@ class Volunteer (object):
 
     @property
     def canDoJigsAndMeasures(self) -> bool:
-        return self.preferred_job in [job.JIGS_AND_MEASURES, job.NONE] \
-               and self.jigsAndMeasuresPriority != priority.UNABLE
+        return (
+            self.preferred_job in [job.JIGS_AND_MEASURES, job.NONE]
+            and self.jigsAndMeasuresPriority != priority.UNABLE
+        )
 
-    @ property
+    @property
     def signInPriority(self) -> priority:
         # Grant People thier preferences.
         if self.preferred_job == job.SIGN_IN:
             return priority.PREFERRED
 
         # top priority is cross-training
-        elif (self.will_train and not self.prior_signin):
+        elif self.will_train and not self.prior_signin:
             return priority.CROSS_TRAINING
 
         elif self.will_train or self.prior_signin:
@@ -116,8 +117,10 @@ class Volunteer (object):
 
     @property
     def canDoSignIn(self) -> bool:
-        return self.preferred_job in [job.SIGN_IN, job.NONE] \
-               and self.signInPriority != priority.UNABLE
+        return (
+            self.preferred_job in [job.SIGN_IN, job.NONE]
+            and self.signInPriority != priority.UNABLE
+        )
 
     @property
     def securityPriority(self) -> priority:
@@ -136,8 +139,10 @@ class Volunteer (object):
 
     @property
     def canDoSecurity(self) -> bool:
-        return self.preferred_job in [job.SECURITY, job.NONE] \
-               and self.securityPriority != priority.UNABLE
+        return (
+            self.preferred_job in [job.SECURITY, job.NONE]
+            and self.securityPriority != priority.UNABLE
+        )
 
     @property
     def judgingPriority(self) -> priority:
@@ -155,8 +160,10 @@ class Volunteer (object):
 
     @property
     def canDoJudging(self) -> bool:
-        return self.preferred_job in [job.JUDGE, job.NONE] \
-               and self.judgingPriority != priority.UNABLE
+        return (
+            self.preferred_job in [job.JUDGE, job.NONE]
+            and self.judgingPriority != priority.UNABLE
+        )
 
     @property
     def specialPriority(self) -> priority:

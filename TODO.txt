@@ -1,23 +1,24 @@
-Get the authemticator working properly. - DONE.
-Get the changeset validations working. - DONE.
-<<<<<<< HEAD
-Pass/fail radio buttons not working. - DONE.
-Sanitize the competitor data for publishing. - DONE.
-Still getting key errors from the adapter when creating a pass fail measurement. DONE
-Triggers are not visible in dbeaver. Is this a permissions issue?
-  - Commented on closed ticket https://github.com/dbeaver/dbeaver/issues/18760
-  - Created new issue: https://github.com/dbeaver/dbeaver/issues/35986
+- Refactor Adpater/Serializer into a Handler. Use the new warp drive patterns.
+- Measurements need to fail or be purged when a competition is changed? Maybe add a competition field to the measurements table?
+- Convert the scripts in app/controllers/competitions/admin.ts to use HTTP gets instead of posts for PDF downloads.
+- Write a routine to produce participation certificates for all competitors. This would involve selecting all unique names from the competitor database, sorting by school, and producing a ODF document with a page for every competitor such that it can be bulk printed. I have the template to supply you.
+- Write a routine to produce volunteer certificates. This would be similar to the robocritter script, where the name is supplied and one certificate is produced. I have them template for this as well.
+- Update the label generation script to have the primary key from the database on the robot's label.
+- Add the ability to produce PDFs of all current ODF deliverables, such that LibreOffice isn't needed to print out the files.
+- Write the ability to record the results of round robin matches using the check-in system. This would mean:
+  - writing new ember pages that mimic the scoresheet ODF files.
+  - Having the ability to assign "Judge Name" to each ring such that judges don't accidentally judge the wrong ring.
+  - The user would be able to press buttons on the page to mark who won a given match.
+  - Having the ability to start a timer on the page to track match length would be a nice to have.
+  - Another page to display a ranking would be handy as well so that rankings can be displayed publicly.
+  - The database would need updating to capture the information.
+- Find a way to capture which competitors won 1st, 2nd and 3rd place such that the location of the trophies are captured.
+- Build a system that can display a live scoreboard on a TV/projector.
+- Create a new label generation script that produces all required labels in one go.
+- Gussy up the system with some pretty CSS.
+- Disallow certain registration combinations, e.g. MSR past grade 10.
+- Update registration page to reflect that slotting has occurred for a given competition.
+- Create a script that will automatically scroll long lists when displayed in “Viewer” mode. e.g. a view only console for competitors to check ring assignments, etc.s
+- Replace the Flask test API with a production API.
 
-Fix adapter to not send the competition update every time. - Need help. Need to make a Cache object somehow.
-=======
-Measurements need to fail or be purged when a competition is changed? Maybe add a competition field to the measurements table?
-Triggers are not visible in dbeaver. Is this a permissions issue? Commented on closed ticket https://github.com/dbeaver/dbeaver/issues/18760
-Sanitize the competitor data for publishing.
-Still getting key errors from the adapter when:
-  - Creating a pass fail measurement.
-Pass/fail radio buttons not working. - DONE.
->>>>>>> feat/convert_script_to_web
-Refactor Adpater/Serializer into a Handler.
 
-New Functionality:
-Measurements need to fail or be purged when a competition is changed? Maybe add a competition field to the measurements table?
