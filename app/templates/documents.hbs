@@ -1,7 +1,43 @@
 {{page-title "Documents"}}
 <h3>Participation Certificates</h3>
 <div>
-  <button type="button" {{on "click" (fn this.downloadParticipationCertificates true)}}>Download Participation Certificates (PDF)</button>
-  <button type="button" {{on "click" (fn this.downloadParticipationCertificates false)}}>Download Participation Certificates (libreoffice)</button>
+  <button
+    type="button"
+    {{on "click" (fn this.downloadParticipationCertificates true)}}
+  >Download Participation Certificates (PDF)</button>
+  <button
+    type="button"
+    {{on "click" (fn this.downloadParticipationCertificates false)}}
+  >Download Participation Certificates (libreoffice)</button>
 </div>
 <hr />
+<h3>Volunteer Certificate</h3>
+<div>
+  <div>
+    <label for="name">Volunteer Name:</label>
+    <Input
+      @type="text"
+      id="name"
+      placeholder="Enter name"
+      size="30"
+      @value={{this.volunteer_name}}
+      autocomplete="off"
+      required
+    />
+  </div>
+  <br />
+  <button
+    type="button"
+    {{on
+      "click"
+      (fn this.downloadVolunteerCertificate this.volunteer_name true)
+    }}
+  >Download Volunteer Certificate (PDF)</button>
+  <button
+    type="button"
+    {{on
+      "click"
+      (fn this.downloadVolunteerCertificate this.volunteer_name false)
+    }}
+  >Download Volunteer Certificate (libreoffice)</button>
+</div>
