@@ -209,33 +209,6 @@ export default class CompetitionAdminController extends Controller {
     }
   }
 
-  @action
-  async downloadParticipationCertificates( pdf:boolean) {
-    const response = await fetch('/api/flask/generate-participation-certificates', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        competition: this.model.id,
-        pdf: pdf,
-      }),
-    });
-
-    let filename = "";
-    if(true === pdf){
-      filename = this.model.id + '_participation_certificates.pdf';
-    }else{
-      filename = this.model.id + '_participation_certificates.odg';
-    }
-
-    if (response.ok) {
-      processReponse(response, filename);
-    } else {
-      alert('Failed to download participation certificates');
-    }
-  }
-
   get isRoundRobin() {
     return ['MSR', 'MS1', 'MS2', 'MS3', 'MSA', 'PST', 'PSA'].includes(
       this.model.id,

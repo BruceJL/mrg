@@ -20,18 +20,15 @@ from pathlib import Path
 
 
 def make_odf_participation_certificates(
-    event,
     competitors: list[Entry],
 ) -> str:
-
-    doc = make_odf_participation_certificates_odoc(event, competitors)
-    filename = Path(__file__).parent / f"{event.id}-participation_certificates.odg"
+    doc = make_odf_participation_certificates_odoc(competitors)
+    filename = Path(__file__).parent / f"participation_certificates.odg"
     doc.save(filename)
     return str(filename)
 
 
 def make_odf_participation_certificates_odoc(
-    event,
     competitors: list[Entry],
 ) -> OpenDocument:
 

@@ -16,9 +16,9 @@ module('Integration | Component | robot listing', function(hooks) {
 
     // Template block usage:
     await render(hbs`
-      {{#robot-listing}}
+      <RobotListing>
         template block text
-      {{/robot-listing}}
+      </RobotListing>
     `);
 
     assert.dom('*').hasText('template block text');

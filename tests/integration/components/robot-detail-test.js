@@ -16,9 +16,9 @@ module('Integration | Component | robot detail', function(hooks) {
 
     // Template block usage:
     await render(hbs`
-      {{#robot-detail}}
+      <RobotDetail>
         template block text
-      {{/robot-detail}}
+      </RobotDetail>
     `);
 
     assert.dom('*').hasText('template block text');

@@ -37,4 +37,5 @@ Router.map(function () {
   this.route('robot');
   this.route('log');
   this.route('robocritter-certificate');
+  this.route('documents');
 });
