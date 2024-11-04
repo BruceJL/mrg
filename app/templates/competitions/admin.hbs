@@ -169,7 +169,8 @@
 <hr />
 <h3>Participation Certificates</h3>
 <div>
-  <button type="button" {{on "click" this.downloadParticipationCertificates }}>Download Participation Certificates</button>
+  <button type="button" {{on "click" (fn this.downloadParticipationCertificates true)}}>Download Participation Certificates (PDF)</button>
+  <button type="button" {{on "click" (fn this.downloadParticipationCertificates false)}}>Download Participation Certificates (libreoffice)</button>
 </div>
 <hr />
 {{#if this.isRoundRobin}}

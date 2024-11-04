@@ -16,8 +16,7 @@ from RobocritterCertificate import make_odf_certificate
 from EventScoresheet import make_odf_score_sheets
 from EventCertificate import make_odf_winners_certificates
 from EventLabels import make_odf5160_labels
-
-# from ParticipationCertificate import make_odf_participation_certificates
+from ParticipationCertificate import make_odf_participation_certificates
 
 
 logging.basicConfig(level=logging.DEBUG)
@@ -316,6 +315,7 @@ class ParticipationCertificate(Resource):
 
         data = request.get_json()
         competition = data.get("competition")
+        pdf = data.get("pdf")
 
         cursor = getCursor()
         events = get_event_list_from_database(cursor)
@@ -325,14 +325,13 @@ class ParticipationCertificate(Resource):
         event.entries.clear()
         get_event_entries_from_database(cursor, event)
 
-        logging.debug(
-            f"Genereating {len(event.entries)} {event.id} participation certificates"
-        )
-
         file_name = make_odf_participation_certificates(
             event=event,
             competitors=event.entries,
         )
+
+        if pdf:
+            file_name = convert_odt_to_pdf(file_name)
 
         response = send_file(file_name, as_attachment=True, download_name=file_name)
 

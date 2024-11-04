@@ -210,7 +210,7 @@ export default class CompetitionAdminController extends Controller {
   }
 
   @action
-  async downloadParticipationCertificates() {
+  async downloadParticipationCertificates( pdf:boolean) {
     const response = await fetch('/api/flask/generate-participation-certificates', {
       method: 'POST',
       headers: {
@@ -218,23 +218,24 @@ export default class CompetitionAdminController extends Controller {
       },
       body: JSON.stringify({
         competition: this.model.id,
+        pdf: pdf,
       }),
     });
 
+    let filename = "";
+    if(true === pdf){
+      filename = this.model.id + '_participation_certificates.pdf';
+    }else{
+      filename = this.model.id + '_participation_certificates.odg';
+    }
+
     if (response.ok) {
-      const blob = await response.blob();
-      const url = window.URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = this.model.id + '_participation_certificates.odg';
-      document.body.appendChild(a);
-      a.click();
-      a.remove();
-      window.URL.revokeObjectURL(url);
+      processReponse(response, filename);
     } else {
       alert('Failed to download participation certificates');
     }
   }
+
   get isRoundRobin() {
     return ['MSR', 'MS1', 'MS2', 'MS3', 'MSA', 'PST', 'PSA'].includes(
       this.model.id,
