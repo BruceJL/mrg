@@ -7,7 +7,6 @@ from pathlib import Path
 class testLabelGeneration(unittest.TestCase):
     def test_label_generation(self):
         doc = make_odf5160_labels_odt(
-            competition=fake_event.id,
             entries=fake_entries,
         )
 

@@ -19,13 +19,32 @@ import math
 from Entry import Entry
 
 
+# Generate labels for all events at once
+def make_odf5160_all_event_labels(
+    entries: list[Entry],
+) -> str:
+
+    file_name = f"all({len(entries)})_labels.odt"
+
+    entries.sort(key=lambda x: (x.competition, x.robotName))
+
+    doc = make_odf5160_labels_odt(
+        entries=entries,
+    )
+    doc.save(file_name)
+    return file_name
+
+
+# Generate labels for a given event
 def make_odf5160_labels(
     competition: str,
     entries: list[Entry],
 ) -> str:
     file_name = f"{competition}_labels.odt"
+
+    entries = sorted(entries, key=lambda x: x.robotName)
+
     doc = make_odf5160_labels_odt(
-        competition=competition,
         entries=entries,
     )
     doc.save(file_name)
@@ -33,7 +52,6 @@ def make_odf5160_labels(
 
 
 def make_odf5160_labels_odt(
-    competition: str,
     entries: list[Entry],
 ) -> OpenDocument:
     # This will generate an ODF files for 5160 labels for a given event.
@@ -414,7 +432,7 @@ def make_odf5160_labels_odt(
     s.addElement(t)
     styles.addElement(s)
 
-    def make_label(robot_id, robot_name, driver_name, school_name):
+    def make_label(competition, robot_id, robot_name, driver_name, school_name):
 
         # Create the sub-table in the cell.
         sub_table = Table(name="Table", stylename=sub_table_style_name)
@@ -610,7 +628,6 @@ def make_odf5160_labels_odt(
     table = 0
     tr = 0
 
-    entries = sorted(entries, key=lambda x: x.robotName)
     for j in range(0, len(entries), 1):
 
         # Start a new page of labels
@@ -647,6 +664,7 @@ def make_odf5160_labels_odt(
 
         tc.addElement(
             make_label(
+                competition=entries[j].competition,
                 robot_id=entries[j].id,
                 robot_name=entries[j].robotName,
                 driver_name=entries[j].driver1,
@@ -675,6 +693,7 @@ def make_odf5160_labels_odt(
         )
         tc.addElement(
             make_label(
+                "",
                 "______",
                 "_______________",
                 "__________________",

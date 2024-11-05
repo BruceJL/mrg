@@ -1,4 +1,16 @@
 {{page-title "Documents"}}
+<h3>Robot Labels</h3>
+<div>
+  <button
+    type="button"
+    {{on "click" (fn this.downloadLabels true)}}
+  >Download Robot Labels (PDF)</button>
+  <button
+    type="button"
+    {{on "click" (fn this.downloadLabels false)}}
+  >Download Robot Labels (libreoffice)</button>
+</div>
+<hr />
 <h3>Participation Certificates</h3>
 <div>
   <button

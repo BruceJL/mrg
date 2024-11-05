@@ -17,7 +17,7 @@ from RobocritterCertificate import make_odf_certificate
 from VolunteerCertificate import make_odf_volunteer_certificate
 from EventScoresheet import make_odf_score_sheets
 from EventCertificate import make_odf_winners_certificates
-from EventLabels import make_odf5160_labels
+from EventLabels import make_odf5160_labels, make_odf5160_all_event_labels
 from ParticipationCertificate import make_odf_participation_certificates
 
 
@@ -222,7 +222,7 @@ class ScoreSheet(Resource):
         return response
 
 
-# Make labels for robots
+# Make labels for robots in a competition
 @ns.route("/generate-label-sheets")
 class LabelSheet(Resource):
     # @api.expect(labelsheet_model)
@@ -238,6 +238,33 @@ class LabelSheet(Resource):
 
         get_event_entries_from_database(cursor, event)
         file_name = make_odf5160_labels(competition, event.entries)
+
+        if pdf:
+            file_name = convert_odt_to_pdf(file_name)
+
+        response = send_file(
+            file_name,
+            as_attachment=True,
+            download_name=file_name,
+        )
+
+        # Remove the file after sending
+        os.remove(file_name)
+
+        return response
+
+
+# Make labels for robots in all events at once
+@ns.route("/generate-all-label-sheets")
+class AllLabelSheets(Resource):
+    def post(self):
+        data = request.get_json()
+        pdf = data.get("pdf")
+
+        cursor = getCursor()
+        entries = get_all_entries_from_database(cursor)
+
+        file_name = make_odf5160_all_event_labels(entries)
 
         if pdf:
             file_name = convert_odt_to_pdf(file_name)
@@ -390,6 +417,7 @@ def convert_odt_to_pdf(
 
     subprocess.run(args=cmd)
     os.remove(input_file)
+
     return output_file
 
 

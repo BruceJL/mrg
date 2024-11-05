@@ -71,4 +71,31 @@ export default class DocumentsController extends Controller {
         alert('Failed to download volunteer certificate');
     }
     }
+
+    @action
+    async downloadLabels(pdf:boolean) {
+    const response = await fetch('/api/flask/generate-all-label-sheets', {
+        method: 'POST',
+        headers: {
+        'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+        pdf: pdf,
+        }),
+    });
+
+    let filename = "";
+    if(true === pdf){
+        filename = 'all_labels.pdf';
+    }
+    else{
+        filename = 'all_labels.odt';
+    }
+
+    if (response.ok) {
+        processReponse(response, filename);
+    } else {
+        alert('Failed to download labels');
+    }
+    }
 }
