@@ -414,7 +414,7 @@ def make_odf5160_labels_odt(
     s.addElement(t)
     styles.addElement(s)
 
-    def make_label(robot_name, driver_name, school_name):
+    def make_label(robot_id, robot_name, driver_name, school_name):
 
         # Create the sub-table in the cell.
         sub_table = Table(name="Table", stylename=sub_table_style_name)
@@ -454,6 +454,13 @@ def make_odf5160_labels_odt(
         table_cell = TableCell(
             valuetype="string",
             stylename=label_cell_style_name,
+        )
+
+        table_cell.addElement(
+            P(
+                text=f"#{robot_id}",
+                stylename=robot_name_style_name,
+            )
         )
 
         table_cell.addElement(
@@ -640,6 +647,7 @@ def make_odf5160_labels_odt(
 
         tc.addElement(
             make_label(
+                robot_id=entries[j].id,
                 robot_name=entries[j].robotName,
                 driver_name=entries[j].driver1,
                 school_name=entries[j].school,
@@ -666,7 +674,12 @@ def make_odf5160_labels_odt(
             stylename=label_cell_style_name,
         )
         tc.addElement(
-            make_label("_______________", "__________________", "___________________")
+            make_label(
+                "______",
+                "_______________",
+                "__________________",
+                "___________________",
+            )
         )
         tr.addElement(tc)
 
