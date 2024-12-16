@@ -96,7 +96,7 @@ export default class RobotModel extends Model {
   })
   declare competition: CompetitionModel;
 
-  @belongsTo('ring-assignment', {
+  @hasMany('ring-assignment', {
     async: false,
     inverse: 'robot',
   })
