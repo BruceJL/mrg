@@ -12,7 +12,7 @@ export default class RingAssignmentModel extends Model {
 
   @belongsTo('robot', {
     async: false,
-    inverse: 'ring-assignment',
+    inverse: null,
   })
   declare robot: RobotModel;
 
