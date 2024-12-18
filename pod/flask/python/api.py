@@ -20,8 +20,12 @@ from EventCertificate import make_odf_winners_certificates
 from EventLabels import make_odf5160_labels, make_odf5160_all_event_labels
 from ParticipationCertificate import make_odf_participation_certificates
 
+DEBUGMODE = True
 
-logging.basicConfig(level=logging.DEBUG)
+if DEBUGMODE:
+    logging.basicConfig(level=logging.DEBUG)
+else:
+    logging.basicConfig(level=logging.WARNING)
 
 app = Flask(__name__)
 # CORS(app)
@@ -36,65 +40,6 @@ DB_USERNAME = os.environ.get("DB_USERNAME")
 DB_PASSWORD = os.environ.get("DB_PASSWORD")
 DB_CONNECTION = connect_to_database(DB_USERNAME, DB_PASSWORD)
 
-# Define the model for input validation and documentation
-robocritter_model = api.model(
-    "RobocritterModel",
-    {
-        "minutes": fields.Integer(
-            required=True, description="Minutes for the competition"
-        ),
-        "seconds": fields.Integer(
-            required=True, description="Seconds for the competition"
-        ),
-        "place": fields.String(required=True, description="Name of the place"),
-        "robot": fields.String(required=True, description="Name of the robot"),
-        "pdf": fields.Boolean(required=False, description="PDF file requested"),
-    },
-)
-
-event_model = api.model(
-    "EventModel",
-    {
-        "competition": fields.String(
-            required=True, description="Name of the competition"
-        ),
-        "place1": fields.String(
-            required=True, description="Name of the first place place"
-        ),
-        "place2": fields.String(
-            required=True, description="Name of the second place place"
-        ),
-        "place3": fields.String(
-            required=True, description="Name of the third place place"
-        ),
-        "pdf": fields.Boolean(required=False, description="PDF file requested"),
-    },
-)
-
-scoresheet_model = api.model(
-    "ScoresheetModel",
-    {
-        "competition": fields.String(
-            required=True, description="Name of the competition"
-        ),
-        "pdf": fields.Boolean(required=False, description="PDF file requested"),
-    },
-)
-
-reset_ring_model = labelsheet_model = scoresheet_model
-
-checked_in_model = api.model(
-    "CheckedInModel",
-    {
-        "competition": fields.String(
-            required=True, description="Name of the competition"
-        ),
-        "number_rings": fields.Integer(
-            required=True, description="Number of rings to slot"
-        ),
-    },
-)
-
 
 """
 Endpoints
@@ -103,7 +48,7 @@ Endpoints
 
 @ns.route("/generate-robotcritter-certificate")
 class RobotCritterCertificate(Resource):
-    # @api.expect(robocritter_model)
+
     def post(self):
 
         # Get JSON data from POST request body
@@ -135,7 +80,7 @@ class RobotCritterCertificate(Resource):
 # Generate certificates for 1st, 2nd and 3rd places for a chosen Competition
 @ns.route("/generate-event-certificates")
 class EventCertificate(Resource):
-    # @api.expect(event_model)
+
     def post(self):
         # Get JSON data from POST request body
         data = request.get_json()
@@ -185,7 +130,7 @@ class EventCertificate(Resource):
 # Generate scoresheets for robots
 @ns.route("/generate-scoresheet")
 class ScoreSheet(Resource):
-    # @api.expect(scoresheet_model)
+
     def post(self):
         # Get JSON data from POST request body
         data = request.get_json()
@@ -225,7 +170,7 @@ class ScoreSheet(Resource):
 # Make labels for robots in a competition
 @ns.route("/generate-label-sheets")
 class LabelSheet(Resource):
-    # @api.expect(labelsheet_model)
+
     def post(self):
         # Get JSON data from POST request body
         data = request.get_json()
@@ -284,7 +229,7 @@ class AllLabelSheets(Resource):
 # Slot all the checked in entries
 @ns.route("/slot-checked-in-entries")
 class SlotCheckedInEntries(Resource):
-    # @api.expect(checked_in_model)
+
     def post(self):
 
         # Get JSON data from POST request body
@@ -317,7 +262,7 @@ class SlotCheckedInEntries(Resource):
 # Delete all of the ring assignments for a given competition
 @ns.route("/reset-ring-assignments")
 class ResetCompetitionRingAssignments(Resource):
-    # @api.expect(reset_ring_model)
+
     def post(self):
         # Get JSON data from POST request body
         data = request.get_json()
@@ -422,4 +367,4 @@ def convert_odt_to_pdf(
 
 
 if __name__ == "__main__":
-    app.run(debug=True)
+    app.run(debug=DEBUGMODE)

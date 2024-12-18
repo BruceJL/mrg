@@ -21,9 +21,9 @@ def connect_to_database(username, password):
             conn.autocommit = True
             return conn
     except DatabaseError as e:
-        logging.debug(f"Database error occurred: {e}")
+        logging.error(f"Database error occurred: {e}")
     except Exception as e:
-        logging.debug(f"An error occurred: {e}")
+        logging.error(f"An error occurred: {e}")
 
 
 # stolen from:
@@ -193,7 +193,7 @@ def update_round_robin_assignments(
     assert num_entries != 0, "There are no entries to slot!"
 
     if not event.round_robin_tournaments:
-        print(f"Doing inital ring assignment for {event.id}")
+        logging.debug(f"Doing inital ring assignment for {event.id}")
         best_remainder: int = len(event.entries)
         best_rings: int = 1
         event.version += 1
@@ -203,19 +203,19 @@ def update_round_robin_assignments(
             # a zero remainder
             for i in range(event.max_rings, 1, -1):
                 if num_entries / i < event.min_entries_per_ring:
-                    # print(str(i) + " rings has " + str(num_entries/i) +
+                    # logging.debug(str(i) + " rings has " + str(num_entries/i) +
                     # robots per ring, which is too few.")
                     continue
                 if num_entries / i > event.max_entries_per_ring:
-                    # print(str(i) + " rings has " + str(num_entries/i) +
+                    # logging.debug(str(i) + " rings has " + str(num_entries/i) +
                     # " robots per ring, which is too many.")
                     continue
                 elif num_entries % i == 0:
                     event.rings = i
-                    # print(str(i) + " rings works perfectly.")
+                    # logging.debug(str(i) + " rings works perfectly.")
                     break
                 elif num_entries % i < best_remainder:
-                    # print(str(i) + " rings has a better remainder of "
+                    # logging.debug(str(i) + " rings has a better remainder of "
                     # + str(num_entries % i))
                     best_remainder = num_entries % i
                     best_rings = i
@@ -225,9 +225,9 @@ def update_round_robin_assignments(
         else:
             event.rings = number_rings
 
-        print(
+        logging.debug(
             f"{event.id} - using {number_rings} rings with an average of "
-            + f"{float(num_entries) / float(number_rings)} robots per ring."
+            + f"{float(num_entries) / float(event.rings)} robots per ring."
         )
 
         # Build the dict to hold the rings and their entries.
@@ -289,14 +289,14 @@ def update_round_robin_assignments(
         participation_query = participation_query[:-1]
         participation_query += ");"
 
-        print(ring_assignment_query)
-        print(participation_query)
+        logging.debug(ring_assignment_query)
+        logging.debug(participation_query)
         cursor.execute(ring_assignment_query)
         cursor.execute(participation_query)
 
     # There are already existing assignments.
     else:
-        print("Amending ring assignments for " + event.id)
+        logging.debug("Amending ring assignments for " + event.id)
         # locate checked-in entries that were assigned a ring but have
         # since been removed.
         for tournament in event.round_robin_tournaments.values():
@@ -313,7 +313,7 @@ def update_round_robin_assignments(
                     # The competitor exists in the assignment data, but not
                     # in the checked-in entries;
                     # The assignment data needs to be removed.
-                    print(f"\tRemoving {name} from ring {tournament.ring}")
+                    logging.debug(f"\tRemoving {name} from ring {tournament.ring}")
 
                     # Remove the event entry from the tournament
                     tournament.remove_event_entry(event_entry)
@@ -360,7 +360,7 @@ def update_round_robin_assignments(
 
                 # Now that we know the ring to slot into, place the
                 # competitor in the ring
-                print(
+                logging.debug(
                     f"\tAdding {entry.robotName} to {event.id} "
                     f"{smallest_tournament.name}"
                 )
@@ -384,7 +384,7 @@ def update_round_robin_assignments(
 
                 cursor.execute(s)
 
-        print("All done amending " + event.id)
+        logging.debug("All done amending " + event.id)
 
 
 def reset_round_robin_tournaments(event: Event) -> list[str]:
