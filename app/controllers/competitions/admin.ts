@@ -5,22 +5,16 @@ import CompetitionModel from 'mrg-sign-in/models/competition';
 import { EmberChangeset } from 'ember-changeset';
 import { tracked } from '@glimmer/tracking';
 import type { ModelFrom } from '../../routes/competitions/admin';
+import { service } from '@ember/service';
+import FileDownloadService from 'mrg-sign-in/services/file-download';
+import RoundRobinService from 'mrg-sign-in/services/round-robin';
 
-
-async function processReponse(response: Response, file_name: string){
-  const blob = await response.blob();
-      const url = window.URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = file_name;
-      document.body.appendChild(a);
-      a.click();
-      a.remove();
-      window.URL.revokeObjectURL(url);
-}
 
 export default class CompetitionAdminController extends Controller {
   declare model: ModelFrom<CompetitionAdminRoute>;
+
+  @service('file-download') declare fileDownloadService: FileDownloadService;
+  @service('round-robin') declare rrService: RoundRobinService;
 
   @action
   toggleMeasurement(
@@ -74,137 +68,74 @@ export default class CompetitionAdminController extends Controller {
 
   // Download the Winners certificates for the competitions.
   @action
-  async downloadCertificates(event: SubmitEvent, pdf: boolean) {
+  async downloadCertificates(pdf: boolean, event: SubmitEvent) {
+
     event.preventDefault();
 
-    const response = await fetch('/api/flask/generate-event-certificates', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        competition: this.model.id,
-        place1: this.place1,
-        place2: this.place2,
-        place3: this.place3,
-        pdf: pdf,
-      }),
-    });
+    const filename = pdf ? `${this.model.id}_certificates.pdf` : `${this.model.id}_certificates.odt`;
+    const body = {
+      competition: this.model.id,
+      place1: this.place1,
+      place2: this.place2,
+      place3: this.place3,
+      pdf,
+    };
 
-    let filename = "";
-    if(true === pdf){
-      filename = this.model.id + '_certificates.pdf';
-    }else{
-      filename = this.model.id + '_certificates.odt';
-    }
-
-
-    if (response.ok) {
-      processReponse(response, filename )
-    } else {
-      alert('Failed to download certificates');
-    }
+    await this.fileDownloadService.downloadFile('/api/flask/generate-event-certificates', body, filename);
   }
 
   // Download the labels for the competition.
   @action
   async downloadLabels(pdf: boolean) {
-    const response = await fetch('/api/flask/generate-label-sheets', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        competition: this.model.id,
-        pdf: pdf,
-      }),
-    });
+    const filename = pdf ? `${this.model.id}_labels.pdf` : `${this.model.id}_labels.odt`;
+    const body = {
+      competition: this.model.id,
+      pdf,
+    };
 
-    let filename = "";
-    if(true === pdf){
-      filename = this.model.id + '_labels.pdf';
-    }else{
-      filename = this.model.id + '_labels.odt';
-    }
-
-    if (response.ok) {
-      processReponse(response, filename )
-    } else {
-      alert('Failed to download labels');
-    }
+    await this.fileDownloadService.downloadFile('/api/flask/generate-label-sheets', body, filename);
   }
 
   // Download the score sheets for the competitions.
   @action
   async downloadScoreSheet(pdf: boolean) {
-    const response = await fetch('/api/flask/generate-scoresheet', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        competition: this.model.id,
-        pdf: pdf,
-      }),
-    });
 
-    let filename = "";
-    if(true === pdf){
-      filename = this.model.id + '_score_sheet.pdf';
-    }else{
-      filename = this.model.id + '_score_sheet.odt';
-    }
+    const filename = pdf ? `${this.model.id}_score_sheet.pdf` : `${this.model.id}_score_sheet.odt`;
+    const body = {
+      competition: this.model.id,
+      pdf,
+    };
 
-    if (response.ok) {
-      processReponse(response, filename);
-    } else {
-      alert('Failed to download score sheet');
-    }
+    await this.fileDownloadService.downloadFile('/api/flask/generate-scoresheet', body, filename);
   }
 
-  @tracked number_rings: number | null = null;
+  @tracked number_rings: number = 0;
 
   // Slot all checked in competitors to rings
   @action
   async slotCheckedInRings(event: SubmitEvent) {
     event.preventDefault();
 
-    const response = await fetch('/api/flask/slot-checked-in-entries', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        competition: this.model.id,
-        number_rings: this.number_rings,
-      }),
-    });
+    const success = await this.rrService.slotCheckedInEntries(this.model.id, this.number_rings);
 
-    if (response.ok) {
+    if (success) {
       alert('Successfully slotted checked in rings');
+      console.log('Successfully slotted checked in rings');
     } else {
       alert('Failed to slot checked in rings');
     }
 
-    this.number_rings = null;
+    this.number_rings = 0;
   }
 
   // Reset the ring assignment (clear all rings).
   @action
   async resetRingAssignments() {
-    const response = await fetch('/api/flask/reset-ring-assignments', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        competition: this.model.id,
-      }),
-    });
+    const success = await this.rrService.resetRingAssignments(this.model.id);
 
-    if (response.ok) {
+    if (success) {
       alert('Successfully reset ring assignments');
-    } else {
+    }else {
       alert('Failed to reset ring assignments');
     }
   }

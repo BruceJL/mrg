@@ -16,11 +16,13 @@ from odf import style
 from odf.text import P, H
 from time import strftime, gmtime
 from Event import Event
+import logging
 
 
 def make_odf_score_sheets(
     event: "Event",
 ) -> "str":
+
     document = OpenDocumentText()
 
     name_column_width = 1.25
@@ -297,12 +299,14 @@ def make_odf_score_sheets(
     s.addElement(t)
     styles.addElement(s)
 
+    # End of style definitions
+
     indexes = list(event.round_robin_tournaments.keys())
     # random.shuffle(indexes)
     for i in indexes:
         tournament = event.round_robin_tournaments[i]
 
-        print("building sheet for tournament: " + str(tournament.ring))
+        logging.debug("building sheet for tournament: " + str(tournament.ring))
         h = H(
             outlinelevel=1,
             text=event.id
@@ -345,7 +349,7 @@ def make_odf_score_sheets(
         # Populate the first row with  the rest of the robot names
         # (1 per column).
         for j in range(0, len(tournament.matches)):
-            print(
+            logging.debug(
                 "building entry for match: "
                 + tournament.matches[j].contestant1.entry.robotName
                 + " vs "
