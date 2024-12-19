@@ -90,3 +90,23 @@ class Event(object):
                 )
             fout.write(s)
         fout.close()
+
+    def get_judges(self):
+        """
+        Get the judges for each ring in the event
+        Returns:
+        arrary[str]: The judges for each ring in the event
+        """
+        return [
+            tournament.judge if tournament.judge else "No Judge"
+            for tournament in self.round_robin_tournaments.values()
+        ]
+
+    def set_judge(self, ring: int, judge: str):
+        """
+        Set the judge for a ring in the event
+        Args:
+            ring (int): The ring number
+            judge (str): The judge name
+        """
+        self.round_robin_tournaments[ring].judge = judge

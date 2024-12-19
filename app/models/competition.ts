@@ -19,6 +19,7 @@ export default class CompetitionModel extends Model {
   @attr('number') declare robotCount: number;
   @attr('number') declare robotCheckedInCount: number;
 
+
   @hasMany('robot', {
     async: false,
     inverse: 'competition',
