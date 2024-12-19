@@ -178,11 +178,10 @@
   <form aria-label="Slot checked in entries" {{on "submit" this.slotCheckedInRings}}>
     <div>
       <label for="number_rings">Number of Rings:</label>
-      <input
+      <Input
         id="number_rings"
-        type="number"
-        value={{this.number_rings}}
-         {{on "change" (val (fn (mut this.number_rings)))}}
+        @type="number"
+        @value={{this.number_rings}}
         autocomplete="off"
         required
       />
@@ -197,4 +196,18 @@
     <button type="button" {{on "click" this.resetRingAssignments }}>Reset Ring Assignments</button>
   </div>
   <hr />
+  <h3>Judge Assignments</h3>
+  {{#each this.judges as |judge index|}}
+  {{#let (add index 1) as |ring|}}
+  <div>
+    <label for="judge-{{ring}}">Ring {{ring}} :</label>
+    <input id="judge-{{ring}}" type="text" value={{judge}}
+    {{on "change" (fn this.updateJudge index)}}
+    autocomplete="off"
+    />
+    <button type="button" {{on "click" (fn this.assignJudge ring)}}>Save</button>
+  </div>
+  <hr/>
+  {{/let}}
+  {{/each}}
 {{/if}}

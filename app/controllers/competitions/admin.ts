@@ -11,10 +11,17 @@ import RoundRobinService from 'mrg-sign-in/services/round-robin';
 
 
 export default class CompetitionAdminController extends Controller {
+
   declare model: ModelFrom<CompetitionAdminRoute>;
 
   @service('file-download') declare fileDownloadService: FileDownloadService;
   @service('round-robin') declare rrService: RoundRobinService;
+
+  get isRoundRobin() {
+    return ['MSR', 'MS1', 'MS2', 'MS3', 'MSA', 'PST', 'PSA'].includes(
+      this.model.id,
+    );
+  }
 
   @action
   toggleMeasurement(
@@ -110,39 +117,63 @@ export default class CompetitionAdminController extends Controller {
   }
 
   @tracked number_rings: number = 0;
+  @tracked judges:string[] = [];
 
   // Slot all checked in competitors to rings
   @action
   async slotCheckedInRings(event: SubmitEvent) {
     event.preventDefault();
 
-    const success = await this.rrService.slotCheckedInEntries(this.model.id, this.number_rings);
+    const response = await this.rrService.slotCheckedInEntries(this.model.id, this.number_rings);
 
-    if (success) {
+    if (response.ok) {
       alert('Successfully slotted checked in rings');
       console.log('Successfully slotted checked in rings');
     } else {
       alert('Failed to slot checked in rings');
     }
 
-    this.number_rings = 0;
+    this.loadCurrentJudges();
+
   }
 
   // Reset the ring assignment (clear all rings).
   @action
   async resetRingAssignments() {
-    const success = await this.rrService.resetRingAssignments(this.model.id);
+    const response = await this.rrService.resetRingAssignments(this.model.id);
 
-    if (success) {
+    if (response.ok) {
       alert('Successfully reset ring assignments');
+      this.number_rings = 0;
     }else {
       alert('Failed to reset ring assignments');
     }
+
+    this.loadCurrentJudges();
   }
 
-  get isRoundRobin() {
-    return ['MSR', 'MS1', 'MS2', 'MS3', 'MSA', 'PST', 'PSA'].includes(
-      this.model.id,
-    );
+  @action
+  async assignJudge(ringNumber: number) {
+
+    if (ringNumber > this.judges.length) {
+      console.error('Invalid ring number');
+    }
+
+    var judge = this.judges[ringNumber - 1] || "No Judge";
+
+    const msg = `Assigning ${judge} to ring ${ringNumber}`;
+    console.log(msg);
+    this.rrService.assignJudge(this.model.id, ringNumber, judge);
   }
+
+  @action
+  async loadCurrentJudges() {
+    this.judges = await this.rrService.getJudges(this.model.id);
+  }
+
+  @action
+  updateJudge(index:number, event: Event) {
+    this.judges[index] = event.target.value;
+  }
+
 }

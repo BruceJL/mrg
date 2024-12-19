@@ -1,8 +1,8 @@
 import os
 import subprocess
 import logging
-from flask import Flask, request, send_file
-from flask_restx import Resource, Api, Namespace, fields
+from flask import Flask, request, send_file, jsonify
+from flask_restx import Resource, Api, Namespace
 from utilities import (
     connect_to_database,
     get_event_list_from_database,
@@ -28,8 +28,6 @@ else:
     logging.basicConfig(level=logging.WARNING)
 
 app = Flask(__name__)
-# CORS(app)
-
 api = Api(app)
 
 ns = Namespace("competitions", description="Competitions related operations")
@@ -40,7 +38,7 @@ DB_USERNAME = os.environ.get("DB_USERNAME")
 DB_PASSWORD = os.environ.get("DB_PASSWORD")
 DB_CONNECTION = connect_to_database(DB_USERNAME, DB_PASSWORD)
 
-
+eventlist = []
 """
 Endpoints
 """
@@ -91,8 +89,9 @@ class EventCertificate(Resource):
         place3 = data.get("place3")
 
         # Get the current competition
-        cursor = getCursor()
-        events = get_event_list_from_database(cursor)
+        cursor = get_cursor()
+
+        events = eventlist
         event = events[competition]
 
         winners = []
@@ -137,8 +136,9 @@ class ScoreSheet(Resource):
         competition = data.get("competition")
         pdf = data.get("pdf")
 
-        cursor = getCursor()
-        events = get_event_list_from_database(cursor)
+        cursor = get_cursor()
+
+        events = eventlist
         event = events[competition]
 
         event.entries.clear()
@@ -177,8 +177,9 @@ class LabelSheet(Resource):
         competition = data.get("competition")
         pdf = data.get("pdf")
 
-        cursor = getCursor()
-        events = get_event_list_from_database(cursor)
+        cursor = get_cursor()
+
+        events = eventlist
         event = events[competition]
 
         get_event_entries_from_database(cursor, event)
@@ -206,7 +207,7 @@ class AllLabelSheets(Resource):
         data = request.get_json()
         pdf = data.get("pdf")
 
-        cursor = getCursor()
+        cursor = get_cursor()
         entries = get_all_entries_from_database(cursor)
 
         file_name = make_odf5160_all_event_labels(entries)
@@ -237,8 +238,9 @@ class SlotCheckedInEntries(Resource):
         competition = data.get("competition")
         number_rings = data.get("number_rings")
 
-        cursor = getCursor()
-        events = get_event_list_from_database(cursor)
+        cursor = get_cursor()
+
+        events = eventlist
         event = events[competition]
         event.rings = number_rings
 
@@ -268,8 +270,9 @@ class ResetCompetitionRingAssignments(Resource):
         data = request.get_json()
         competition = data.get("competition")
 
-        cursor = getCursor()
-        events = get_event_list_from_database(cursor)
+        cursor = get_cursor()
+
+        events = eventlist
         event = events[competition]
 
         # Clear out all ring assignements.
@@ -288,7 +291,7 @@ class ParticipationCertificate(Resource):
         data = request.get_json()
         pdf = data.get("pdf")
 
-        cursor = getCursor()
+        cursor = get_cursor()
 
         # get all the entries
         entries = get_all_entries_from_database(cursor)
@@ -327,8 +330,53 @@ class VolunteerCertificate(Resource):
         return response
 
 
+# Assign a judge to a tournament(ring) of a given competition
+@ns.route("/assign-judge")
+class AssignJudge(Resource):
+    def post(self):
+        data = request.get_json()
+        competition = data.get("competition")
+        tournament = int(data.get("ring"))
+        judge = data.get("judge")
+
+        events = eventlist
+        event = events[competition]
+
+        assert tournament < len(event.round_robin_tournaments) + 1, logging.debug(
+            f"Tournament number {tournament} is out of range for the number of rings in the competition : {len(event.round_robin_tournaments) + 1}"
+        )
+
+        event.round_robin_tournaments[tournament].judge = judge
+
+        return 200
+
+
+# Get all the judges for a given competition
+@ns.route("/get-judges")
+class GetJudges(Resource):
+    def post(self):
+        data = request.get_json()
+        competition = data.get("competition")
+
+        events = eventlist
+        event = events[competition]
+
+        return jsonify(event.get_judges())
+
+
+"""
+Functions
+"""
+
+
+def setup_events():
+    cursor = get_cursor()
+    global eventlist
+    eventlist = get_event_list_from_database(cursor)
+
+
 # Get the cursor to interact with the database
-def getCursor():
+def get_cursor():
     global DB_CONNECTION
     if DB_CONNECTION is None or DB_CONNECTION.closed:
         logging.debug("=== Reconnecting to the database====")
@@ -367,4 +415,5 @@ def convert_odt_to_pdf(
 
 
 if __name__ == "__main__":
+    setup_events()
     app.run(debug=DEBUGMODE)

@@ -35,6 +35,7 @@ class RoundRobinTournament(object):
         self.ring = ring
         self.event = event
 
+        self.judge: str = ""
         self.event_entries: list[EventEntry] = []
         self.matches: list[RoundRobinMatch] = []
 
