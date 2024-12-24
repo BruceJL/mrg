@@ -24,6 +24,9 @@ Router.map(function () {
     this.route('admin', {
       path: '/:competition_id/admin',
     });
+    this.route('tournament',{
+      path: '/:competition_id/tournament/:ring_number'
+    });
   });
 
   this.route('ring-assignments', {

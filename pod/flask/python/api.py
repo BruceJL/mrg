@@ -30,8 +30,11 @@ else:
 app = Flask(__name__)
 api = Api(app)
 
-ns = Namespace("competitions", description="Competitions related operations")
-api.add_namespace(ns, path="/")
+ns_mrg = Namespace("mrg", description="")
+ns_tournament = Namespace("ring", description="Tournaments related operations")
+api.add_namespace(ns_mrg, path="/")
+api.add_namespace(ns_tournament, path="/tournaments")
+
 
 # Set up the database connection
 DB_USERNAME = os.environ.get("DB_USERNAME")
@@ -39,12 +42,108 @@ DB_PASSWORD = os.environ.get("DB_PASSWORD")
 DB_CONNECTION = connect_to_database(DB_USERNAME, DB_PASSWORD)
 
 eventlist = []
+
+
 """
-Endpoints
+Endpoints for ns_tournament
 """
 
 
-@ns.route("/generate-robotcritter-certificate")
+@ns_tournament.route("/<string:competition>/<int:ring>", strict_slashes=False)
+class Tournament(Resource):
+    def get(self, competition, ring):
+
+        logging.debug("GET request to /tournaments")
+
+        logging.debug(f"Competition: {competition}, Ring: {ring}")
+
+        event = eventlist[competition]
+
+        if ring > len(event.round_robin_tournaments):
+            msg = f"Ring number {ring} is out of range for the number of rings in the competition : {len(event.round_robin_tournaments)}"
+            logging.debug(msg)
+            return {"message": msg}, 404
+
+        logging.debug(event)
+        tournament = event.round_robin_tournaments[int(ring)]
+        tournament_data = tournament.to_json()
+
+        # Fetch matches associated with this tournament
+        matches = tournament.matches
+
+        data = tournament_data
+        data["relationships"] = {
+            "matches": {
+                "data": [{"type": "match", "id": str(match.id)} for match in matches]
+            },
+            "competition": {"data": {"type": "competition", "id": event.id}},
+        }
+
+        res = {"data": data, "included": []}
+
+        logging.debug(res)
+
+        # res = {"data": tournament_data}
+
+        return jsonify(res)
+
+
+@ns_tournament.route("/<string:competition>/<int:ring>/matches", strict_slashes=False)
+class TournamentMatches(Resource):
+    def get(self, competition, ring):
+        event = eventlist[competition]
+        tournament = event.round_robin_tournaments[int(ring)]
+
+        matches = []
+        for match in tournament.matches:
+            matches.append(match.to_json())
+
+        res = {"data": matches}
+
+        return jsonify(res)
+
+
+@ns_tournament.route(
+    "/<string:competition>/<int:ring>/matches/<int:match>", strict_slashes=False
+)
+class TournamentMatch(Resource):
+    def get(self, competition, ring, match):
+        event = eventlist[competition]
+        tournament = event.round_robin_tournaments[int(ring)]
+        match = tournament.matches[int(match)]
+
+        res = {"data": match.to_json()}
+        return jsonify(res)
+
+    def put(self, competition, ring, match: str):
+
+        # Get JSON data from PUT request body
+        data = request.get_json()
+        round1winner = data.get("round1winner")
+        round2winner = data.get("round2winner")
+
+        logging.debug("PUT request to /tournaments/<competition>/<ring>/<match>")
+        logging.debug(
+            f"Competition: {competition}, Ring: {ring}, Match: {match}, Round1 Winner: {round1winner}, Round2 Winner: {round2winner}"
+        )
+
+        event = eventlist[competition]
+        tournament = event.round_robin_tournaments[int(ring)]
+        match = tournament.matches[int(match) - 1]
+        match.round1winner = round1winner
+        match.round2winner = round2winner
+        logging.debug(
+            f"Match {match.id} updated with winners {round1winner} and {round2winner}"
+        )
+        return 200
+
+
+"""
+Endpoints for ns_mrg
+"""
+
+
+@ns_mrg.route("/generate-robotcritter-certificate")
 class RobotCritterCertificate(Resource):
 
     def post(self):
@@ -76,7 +175,7 @@ class RobotCritterCertificate(Resource):
 
 
 # Generate certificates for 1st, 2nd and 3rd places for a chosen Competition
-@ns.route("/generate-event-certificates")
+@ns_mrg.route("/generate-event-certificates")
 class EventCertificate(Resource):
 
     def post(self):
@@ -127,7 +226,7 @@ class EventCertificate(Resource):
 
 
 # Generate scoresheets for robots
-@ns.route("/generate-scoresheet")
+@ns_mrg.route("/generate-scoresheet")
 class ScoreSheet(Resource):
 
     def post(self):
@@ -168,7 +267,7 @@ class ScoreSheet(Resource):
 
 
 # Make labels for robots in a competition
-@ns.route("/generate-label-sheets")
+@ns_mrg.route("/generate-label-sheets")
 class LabelSheet(Resource):
 
     def post(self):
@@ -201,7 +300,7 @@ class LabelSheet(Resource):
 
 
 # Make labels for robots in all events at once
-@ns.route("/generate-all-label-sheets")
+@ns_mrg.route("/generate-all-label-sheets")
 class AllLabelSheets(Resource):
     def post(self):
         data = request.get_json()
@@ -228,7 +327,7 @@ class AllLabelSheets(Resource):
 
 
 # Slot all the checked in entries
-@ns.route("/slot-checked-in-entries")
+@ns_mrg.route("/slot-checked-in-entries")
 class SlotCheckedInEntries(Resource):
 
     def post(self):
@@ -258,11 +357,15 @@ class SlotCheckedInEntries(Resource):
             number_rings=number_rings,
         )
 
+        logging.debug("Rebuilding matches")
+
+        event.rebuild_matches()
+
         return 200
 
 
 # Delete all of the ring assignments for a given competition
-@ns.route("/reset-ring-assignments")
+@ns_mrg.route("/reset-ring-assignments")
 class ResetCompetitionRingAssignments(Resource):
 
     def post(self):
@@ -285,7 +388,7 @@ class ResetCompetitionRingAssignments(Resource):
 
 
 # Generate participation certificates for all competitors.
-@ns.route("/generate-participation-certificates")
+@ns_mrg.route("/generate-participation-certificates")
 class ParticipationCertificate(Resource):
     def post(self):
         data = request.get_json()
@@ -310,7 +413,7 @@ class ParticipationCertificate(Resource):
 
 
 # Generate volunteer certificate for a given volunteer
-@ns.route("/generate-volunteer-certificate")
+@ns_mrg.route("/generate-volunteer-certificate")
 class VolunteerCertificate(Resource):
     def post(self):
         data = request.get_json()
@@ -330,29 +433,29 @@ class VolunteerCertificate(Resource):
         return response
 
 
-# Assign a judge to a tournament(ring) of a given competition
-@ns.route("/assign-judge")
+# Assign a judge to a ring(ring) of a given competition
+@ns_mrg.route("/assign-judge")
 class AssignJudge(Resource):
     def post(self):
         data = request.get_json()
         competition = data.get("competition")
-        tournament = int(data.get("ring"))
+        ring = int(data.get("ring"))
         judge = data.get("judge")
 
         events = eventlist
         event = events[competition]
 
-        assert tournament < len(event.round_robin_tournaments) + 1, logging.debug(
-            f"Tournament number {tournament} is out of range for the number of rings in the competition : {len(event.round_robin_tournaments) + 1}"
+        assert ring < len(event.round_robin_tournaments) + 1, logging.debug(
+            f"Tournament number {ring} is out of range for the number of rings in the competition : {len(event.round_robin_tournaments) + 1}"
         )
 
-        event.round_robin_tournaments[tournament].judge = judge
+        event.round_robin_tournaments[ring].judge = judge
 
         return 200
 
 
 # Get all the judges for a given competition
-@ns.route("/get-judges")
+@ns_mrg.route("/get-judges")
 class GetJudges(Resource):
     def post(self):
         data = request.get_json()

@@ -8,6 +8,7 @@ import type { ModelFrom } from '../../routes/competitions/admin';
 import { service } from '@ember/service';
 import FileDownloadService from 'mrg-sign-in/services/file-download';
 import RoundRobinService from 'mrg-sign-in/services/round-robin';
+import CompetitionAdminRoute from 'mrg-sign-in/routes/competitions/admin';
 
 
 export default class CompetitionAdminController extends Controller {
