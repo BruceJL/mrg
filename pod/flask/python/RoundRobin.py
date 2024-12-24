@@ -39,6 +39,17 @@ class RoundRobinTournament(object):
         self.event_entries: list[EventEntry] = []
         self.matches: list[RoundRobinMatch] = []
 
+    def to_json(self):
+        return {
+            "type": "tournament",
+            "id": self.name,
+            "attributes": {
+                "ring": self.ring,
+                "event": self.event.id,
+                "judge": self.judge if self.judge else "No Judge",
+            },
+        }
+
     def add_entry(
         self,
         entry: Entry,
@@ -91,6 +102,7 @@ class RoundRobinTournament(object):
                 # This is the bye condition.
                 self.matches.append(
                     RoundRobinMatch(
+                        f"{self.event.id}-{self.ring}-{len(self.matches)+1}",
                         self.event_entries[lhs],
                         self.event_entries[rhs],
                     )
@@ -107,7 +119,9 @@ class RoundRobinTournament(object):
                     # This is the bye condition.
                     self.matches.append(
                         RoundRobinMatch(
-                            self.event_entries[lhs], self.event_entries[rhs]
+                            f"{self.event.id}-{self.ring}-{len(self.matches)+1}",
+                            self.event_entries[lhs],
+                            self.event_entries[rhs],
                         )
                     )
 
@@ -125,6 +139,21 @@ class RoundRobinTournament(object):
 
 
 class RoundRobinMatch(object):
-    def __init__(self, contestant1, contestant2):
+    def __init__(self, id, contestant1: EventEntry, contestant2):
+        self.id = id
         self.contestant1 = contestant1
         self.contestant2 = contestant2
+        self.round1winner: int = 0  # 1 = contestant1, 2 = contestant2, 0 = not played
+        self.round2winner: int = 0
+
+    def to_json(self):
+        return {
+            "type": "match",
+            "id": self.id,
+            "attributes": {
+                "contestant1": self.contestant1.entry.id,
+                "contestant2": self.contestant2.entry.id,
+                "round1winner": self.round1winner,
+                "round2winner": self.round2winner,
+            },
+        }

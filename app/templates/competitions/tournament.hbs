@@ -1,0 +1,13 @@
+{{this.poll this.refreshData 4000}}
+<h2>{{this.model.competition_id}}_Ring {{this.model.tournament.ring}}_Score_Sheet</h2>
+
+<h3>
+  Judge: {{this.model.tournament.judge}}<br>
+</h3>
+
+<hr/>
+<h3>Matches</h3>
+{{#each this.model.tournament.matches as |match|}}
+  <Match @match={{match}} />
+{{/each}}
+{{outlet}}

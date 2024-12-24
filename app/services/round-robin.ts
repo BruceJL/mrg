@@ -1,4 +1,5 @@
 import Service from '@ember/service';
+import type MatchModel from 'mrg-sign-in/models/match';
 
 export default class RoundRobinService extends Service {
 
@@ -24,11 +25,35 @@ export default class RoundRobinService extends Service {
     const res = await success.json();
     return res;
   }
+
+  async updateMatch(match:MatchModel): Promise<Response> {
+    // api route: "/<string:competition>/<int:ring>/matches/<int:match>"
+    // match id format: competitionId-ringNumber-matchNumber
+    const [competitionId, ringNumber, matchNumber] = match.id.split('-');
+    const body = {
+      competition: competitionId,
+      ring: ringNumber,
+      match: matchNumber,
+      round1winner: match.round1winner,
+      round2winner: match.round2winner,
+    };
+    return putRequest(`/api/flask/tournaments/${competitionId}/${ringNumber}/matches/${matchNumber}`, body);
+  }
 }
 
 async function postRequest(url: string, body: object): Promise<Response> {
   const response = await fetch(url, {
     method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(body),
+  });
+
+  return response;
+}
+
+async function putRequest(url: string, body: object): Promise<Response> {
+  const response = await fetch(url, {
+    method: 'PUT',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(body),
   });
