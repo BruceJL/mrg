@@ -49,6 +49,38 @@ Endpoints for ns_tournament
 """
 
 
+@ns_tournament.route(
+    "/<string:competition>/<int:ring>/start-time", strict_slashes=False
+)
+class TournamentTime(Resource):
+    def post(self, competition, ring):
+        data = request.get_json()
+        event = eventlist[competition]
+
+        tournament = event.round_robin_tournaments[int(ring)]
+        tournament.start_time = data.get("start_time")
+
+        logging.debug(
+            f"set start time for tournament {tournament.name} to {tournament.start_time}"
+        )
+
+        return 200
+
+    def get(self, competition, ring):
+        event = eventlist[competition]
+        tournament = event.round_robin_tournaments[int(ring)]
+        logging.debug(f"GET request to /tournaments/{competition}/{ring}/start-time")
+        logging.debug(f"Competition: {competition}, Ring: {ring}")
+        logging.debug(f"Start time: {tournament.start_time}")
+        return jsonify(tournament.start_time)
+
+    def delete(self, competition, ring):
+        event = eventlist[competition]
+        tournament = event.round_robin_tournaments[int(ring)]
+        tournament.start_time = ""
+        return 200
+
+
 @ns_tournament.route("/<string:competition>/<int:ring>", strict_slashes=False)
 class Tournament(Resource):
     def get(self, competition, ring):

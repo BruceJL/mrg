@@ -3,27 +3,40 @@ import type MatchModel from 'mrg-sign-in/models/match';
 
 export default class RoundRobinService extends Service {
 
-  async slotCheckedInEntries(competitionId: string, numberRings: number): Promise<Response> {
+  slotCheckedInEntries(competitionId: string, numberRings: number): Promise<Response> {
     const body = { competition: competitionId, number_rings: numberRings };
-    return await postRequest('/api/flask/slot-checked-in-entries', body);
+    return postRequest('/api/flask/slot-checked-in-entries', body);
   }
 
-  async resetRingAssignments(competitionId: string): Promise<Response> {
+  resetRingAssignments(competitionId: string): Promise<Response> {
     const body = { competition: competitionId };
     return postRequest('/api/flask/reset-ring-assignments', body);
   }
 
-  async assignJudge(competitionId: string, ringNumber: number, judgeName: string): Promise<Response> {
+  assignJudge(competitionId: string, ringNumber: number, judgeName: string): Promise<Response> {
     const body = { competition: competitionId, ring: ringNumber, judge: judgeName };
-    console.log(body);
     return postRequest('/api/flask/assign-judge', body);
   }
 
   async getJudges(competitionId: string): Promise<string[]> {
     const body = { competition: competitionId };
-    const success = await postRequest('/api/flask/get-judges', body);
-    const res = await success.json();
-    return res;
+    const res = await postRequest('/api/flask/get-judges', body);
+    return res.json();
+  }
+
+  async setStartTime(competitionId: string, ringNumber: number, startTime: string): Promise<Response> {
+    const body = { competition: competitionId, ring: ringNumber, start_time: startTime };
+    return postRequest(`/api/flask/tournaments/${competitionId}/${ringNumber}/start-time`, body);
+  }
+
+  async getStartTime(competitionId: string, ringNumber: number): Promise<string> {
+    const url = `/api/flask/tournaments/${competitionId}/${ringNumber}/start-time`;
+    const res = await getRequest(url,{});
+    return res.json();
+  }
+
+  async resetStartTime(competitionId: string, ringNumber: number): Promise<Response> {
+    return deleteRequest(`/api/flask/tournaments/${competitionId}/${ringNumber}/start-time`, {});
   }
 
   async updateMatch(match:MatchModel): Promise<Response> {
@@ -51,9 +64,28 @@ async function postRequest(url: string, body: object): Promise<Response> {
   return response;
 }
 
+async function getRequest(url: string, body:object): Promise<Response> {
+  const response = await fetch(url, {
+    method: 'GET',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(body),
+  });
+
+  return response;
+}
 async function putRequest(url: string, body: object): Promise<Response> {
   const response = await fetch(url, {
     method: 'PUT',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(body),
+  });
+
+  return response;
+}
+
+async function deleteRequest(url: string, body: object): Promise<Response> {
+  const response = await fetch(url, {
+    method: 'DELETE',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(body),
   });
