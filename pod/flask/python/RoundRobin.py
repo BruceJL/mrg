@@ -36,6 +36,7 @@ class RoundRobinTournament(object):
         self.event = event
 
         self.judge: str = ""
+        self.start_time: str = ""
         self.event_entries: list[EventEntry] = []
         self.matches: list[RoundRobinMatch] = []
 
@@ -47,6 +48,7 @@ class RoundRobinTournament(object):
                 "ring": self.ring,
                 "event": self.event.id,
                 "judge": self.judge if self.judge else "No Judge",
+                "start-time": self.start_time,
             },
         }
 

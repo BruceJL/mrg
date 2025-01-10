@@ -6,6 +6,7 @@ import type Match from './match'
 export default class TournamentModel extends Model {
   @attr('number') declare ring: number;
   @attr('string') declare judge: string;
+  @attr('string') declare startTime: string;
 
   @belongsTo('competition', {async: true, inverse:null}) declare competition: AsyncBelongsTo<CompetitionModel>;
 
