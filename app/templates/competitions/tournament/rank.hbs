@@ -1,0 +1,9 @@
+{{this.poll this.refreshData 5000}}
+<h3>{{this.model.competition_id}}  Ring {{this.model.ring_number}} Ranking </h3>
+<ul>
+  {{#each this.ranking as |entry|}}
+    <li>
+      ID: {{get entry '0'}}, Score: {{get entry '1'}}
+    </li>
+  {{/each}}
+</ul>

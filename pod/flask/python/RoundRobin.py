@@ -52,6 +52,25 @@ class RoundRobinTournament(object):
             },
         }
 
+    def get_ranking(self) -> "tuple":
+        ranking = {}
+        for event_entry in self.event_entries:
+            ranking[event_entry.entry.id] = 0
+        for match in self.matches:
+            if match.round1winner == 1:
+                ranking[match.contestant1.entry.id] += 1
+            elif match.round1winner == 2:
+                ranking[match.contestant2.entry.id] += 1
+            if match.round2winner == 1:
+                ranking[match.contestant1.entry.id] += 1
+            elif match.round2winner == 2:
+                ranking[match.contestant2.entry.id] += 1
+
+        # sort the ranking
+        ranking = sorted(ranking.items(), key=lambda item: item[1], reverse=True)
+
+        return ranking
+
     def add_entry(
         self,
         entry: Entry,
