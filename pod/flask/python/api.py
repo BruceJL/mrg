@@ -49,6 +49,16 @@ Endpoints for ns_tournament
 """
 
 
+@ns_tournament.route("/<string:competition>/<int:ring>/rank", strict_slashes=False)
+class TournamentRanking(Resource):
+    def get(self, competition, ring):
+        event = eventlist[competition]
+        tournament = event.round_robin_tournaments[int(ring)]
+
+        ranking = tournament.get_ranking()
+        return jsonify(ranking)
+
+
 @ns_tournament.route(
     "/<string:competition>/<int:ring>/start-time", strict_slashes=False
 )
@@ -69,9 +79,6 @@ class TournamentTime(Resource):
     def get(self, competition, ring):
         event = eventlist[competition]
         tournament = event.round_robin_tournaments[int(ring)]
-        logging.debug(f"GET request to /tournaments/{competition}/{ring}/start-time")
-        logging.debug(f"Competition: {competition}, Ring: {ring}")
-        logging.debug(f"Start time: {tournament.start_time}")
         return jsonify(tournament.start_time)
 
     def delete(self, competition, ring):
@@ -85,10 +92,6 @@ class TournamentTime(Resource):
 class Tournament(Resource):
     def get(self, competition, ring):
 
-        logging.debug("GET request to /tournaments")
-
-        logging.debug(f"Competition: {competition}, Ring: {ring}")
-
         event = eventlist[competition]
 
         if ring > len(event.round_robin_tournaments):
@@ -96,7 +99,6 @@ class Tournament(Resource):
             logging.debug(msg)
             return {"message": msg}, 404
 
-        logging.debug(event)
         tournament = event.round_robin_tournaments[int(ring)]
         tournament_data = tournament.to_json()
 
@@ -112,10 +114,6 @@ class Tournament(Resource):
         }
 
         res = {"data": data, "included": []}
-
-        logging.debug(res)
-
-        # res = {"data": tournament_data}
 
         return jsonify(res)
 
