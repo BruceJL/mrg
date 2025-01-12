@@ -1,10 +1,9 @@
-- Refactor Adpater/Serializer into a Handler. Use the new warp drive patterns.
 - Measurements need to fail or be purged when a competition is changed? Maybe add a competition field to the measurements table?
 - Convert the scripts in app/controllers/competitions/admin.ts to use HTTP gets instead of posts for PDF downloads.
 - Write a routine to produce participation certificates for all competitors. This would involve selecting all unique names from the competitor database, sorting by school, and producing a ODF document with a page for every competitor such that it can be bulk printed. I have the template to supply you.
 - Write a routine to produce volunteer certificates. This would be similar to the robocritter script, where the name is supplied and one certificate is produced. I have them template for this as well.
 - Update the label generation script to have the primary key from the database on the robot's label.
-- Add the ability to produce PDFs of all current ODF deliverables, such that LibreOffice isn't needed to print out the files.
+- Add the ability to produce PDFs of all current ODF deliverables, such that LibreOffice isn't needed to print out the files. - DONE
 - Write the ability to record the results of round robin matches using the check-in system. This would mean:
   - writing new ember pages that mimic the scoresheet ODF files.
   - Having the ability to assign "Judge Name" to each ring such that judges don't accidentally judge the wrong ring.
@@ -20,5 +19,6 @@
 - Update registration page to reflect that slotting has occurred for a given competition.
 - Create a script that will automatically scroll long lists when displayed in “Viewer” mode. e.g. a view only console for competitors to check ring assignments, etc.s
 - Replace the Flask test API with a production API.
+- Refactor Adpater/Serializer into a Handler. Use the new warp drive patterns.
 
 

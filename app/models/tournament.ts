@@ -8,7 +8,10 @@ export default class TournamentModel extends Model {
   @attr('string') declare judge: string;
   @attr('string') declare startTime: string;
 
-  @belongsTo('competition', {async: true, inverse:null}) declare competition: AsyncBelongsTo<CompetitionModel>;
+  @belongsTo('competition', {
+    async: true,
+    inverse:null,
+  }) declare competition: AsyncBelongsTo<CompetitionModel>;
 
   @hasMany('match',{
     async:false,
