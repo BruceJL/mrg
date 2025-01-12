@@ -1,43 +1,9 @@
 --
--- PostgreSQL database cluster dump
+-- PostgreSQL database dump
 --
 
-SET default_transaction_read_only = off;
-
-SET client_encoding = 'UTF8';
-SET standard_conforming_strings = on;
-
---
--- Roles
---
-
-CREATE ROLE authenticator;
-ALTER ROLE authenticator WITH NOSUPERUSER NOINHERIT NOCREATEROLE NOCREATEDB LOGIN NOREPLICATION NOBYPASSRLS;
-
-CREATE ROLE bruce;
-ALTER ROLE bruce WITH SUPERUSER NOINHERIT NOCREATEROLE NOCREATEDB LOGIN NOREPLICATION NOBYPASSRLS;
-
-CREATE ROLE web_anon;
-ALTER ROLE web_anon WITH NOSUPERUSER NOINHERIT NOCREATEROLE NOCREATEDB LOGIN NOREPLICATION NOBYPASSRLS;
-COMMENT ON ROLE web_anon IS 'web_anon access';
-
-CREATE ROLE python_api;
-ALTER ROLE python_api WITH NOSUPERUSER NOINHERIT NOCREATEROLE NOCREATEDB LOGIN NOREPLICATION NOBYPASSRLS;
---
--- Role memberships
---
-
-GRANT web_anon TO authenticator GRANTED BY postgres;
-
-
---
--- Database "mrg" dump
---
-
--- Name: mrg; Type: DATABASE; Schema: -; Owner: postgres
---
-
-\connect mrg
+-- Dumped from database version 16.4 (Debian 16.4-1.pgdg120+1)
+-- Dumped by pg_dump version 16.4 (Debian 16.4-1.pgdg120+1)
 
 SET statement_timeout = 0;
 SET lock_timeout = 0;
@@ -68,10 +34,6 @@ CREATE SCHEMA robots;
 
 ALTER SCHEMA robots OWNER TO postgres;
 
--- Grant Schema permissions
-GRANT usage ON SCHEMA robots to web_anon GRANTED by postgres;
-GRANT usage ON SCHEMA people to web_anon GRANTED by postgres;
-GRANT usage ON SCHEMA robots to python_api GRANTED by postgres;
 --
 -- Name: check_in_status; Type: TYPE; Schema: robots; Owner: postgres
 --
@@ -115,264 +77,6 @@ CREATE TYPE robots.slotting_status AS ENUM (
 
 
 ALTER TYPE robots.slotting_status OWNER TO postgres;
-
-SET default_tablespace = '';
-
-SET default_table_access_method = heap;
-
---
--- Name: coaches; Type: TABLE; Schema: people; Owner: postgres
---
-
-CREATE TABLE people.coaches (
-    id integer NOT NULL,
-    first_name character varying NOT NULL,
-    last_name character varying NOT NULL,
-    school character varying NOT NULL,
-    phone numeric NOT NULL,
-    email character varying NOT NULL
-);
-
-
-ALTER TABLE people.coaches OWNER TO postgres;
-
-
---
--- Name: students; Type: TABLE; Schema: people; Owner: postgres
---
-
-CREATE TABLE people.students (
-    first_name character varying NOT NULL,
-    last_name character varying NOT NULL,
-    coach integer NOT NULL,
-    id integer NOT NULL,
-    birthday date NOT NULL
-);
-
-
-ALTER TABLE people.students OWNER TO postgres;
-
---
--- Name: activity-log; Type: TABLE; Schema: robots; Owner: postgres
---
-
-CREATE TABLE robots."activity-log" (
-    datetime timestamp with time zone DEFAULT CURRENT_TIMESTAMP,
-    volunteer character varying,
-    robot integer NOT NULL,
-    function character varying(11),
-    action character varying,
-    id integer NOT NULL
-);
-
-
-ALTER TABLE robots."activity-log" OWNER TO postgres;
-
---
--- Name: COLUMN "activity-log".datetime; Type: COMMENT; Schema: robots; Owner: postgres
---
-
-COMMENT ON COLUMN robots."activity-log".datetime IS 'Time that activity was recorded.';
-
-
---
--- Name: activity-log_id_seq; Type: SEQUENCE; Schema: robots; Owner: postgres
---
-
-ALTER TABLE robots."activity-log" ALTER COLUMN id ADD GENERATED ALWAYS AS IDENTITY (
-    SEQUENCE NAME robots."activity-log_id_seq"
-    START WITH 1
-    INCREMENT BY 1
-    NO MINVALUE
-    NO MAXVALUE
-    CACHE 1
-);
-
-
---
--- Name: competition; Type: TABLE; Schema: robots; Owner: postgres
---
-
-CREATE TABLE robots.competition (
-    id character(3) NOT NULL,
-    name character(3),
-    "longName" character varying,
-    rings integer NOT NULL,
-    "minRobotsPerRing" integer NOT NULL,
-    "maxRobotsPerRing" integer NOT NULL,
-    checkstring character varying,
-    "registrationTime" timestamp with time zone DEFAULT now() NOT NULL,
-    "measureMass" boolean NOT NULL,
-    "measureSize" boolean NOT NULL,
-    "measureTime" boolean NOT NULL,
-    "measureScratch" boolean,
-    "measureDeadman" boolean NOT NULL,
-    "maxEntries" numeric GENERATED ALWAYS AS (("maxRobotsPerRing" * rings)) STORED,
-    "robotCount" integer DEFAULT 0 NOT NULL,
-    "robotCheckedInCount" integer DEFAULT 0 NOT NULL
-);
-
-
-ALTER TABLE robots.competition OWNER TO postgres;
-
---
--- Name: COLUMN competition."maxEntries"; Type: COMMENT; Schema: robots; Owner: postgres
---
-
-COMMENT ON COLUMN robots.competition."maxEntries" IS 'Maxmum allowed number of robots for this competition';
-
-
---
--- Name: COLUMN competition."robotCount"; Type: COMMENT; Schema: robots; Owner: postgres
---
-
-COMMENT ON COLUMN robots.competition."robotCount" IS 'Number of robots registered in this competition';
-
-
---
--- Name: COLUMN competition."robotCheckedInCount"; Type: COMMENT; Schema: robots; Owner: postgres
---
-
-COMMENT ON COLUMN robots.competition."robotCheckedInCount" IS 'Number of robots checked in.';
-
-
---
--- Name: measurement; Type: TABLE; Schema: robots; Owner: postgres
---
-
-CREATE TABLE robots.measurement (
-    robot integer NOT NULL,
-    datetime timestamp with time zone DEFAULT CURRENT_TIMESTAMP,
-    result boolean,
-    type character varying(32),
-    volunteer character varying(50),
-    id integer NOT NULL
-);
-
-
-ALTER TABLE robots.measurement OWNER TO postgres;
-
---
--- Name: COLUMN measurement.datetime; Type: COMMENT; Schema: robots; Owner: postgres
---
-
-COMMENT ON COLUMN robots.measurement.datetime IS 'Time that measurement was recorded.';
-
-
---
--- Name: measurement_id_seq; Type: SEQUENCE; Schema: robots; Owner: postgres
---
-
-ALTER TABLE robots.measurement ALTER COLUMN id ADD GENERATED ALWAYS AS IDENTITY (
-    SEQUENCE NAME robots.measurement_id_seq
-    START WITH 1
-    INCREMENT BY 1
-    NO MINVALUE
-    NO MAXVALUE
-    CACHE 1
-);
-
-
---
--- Name: ringAssignment; Type: TABLE; Schema: robots; Owner: postgres
---
-
-CREATE TABLE robots."ringAssignment" (
-    competition character(3),
-    robot integer NOT NULL,
-    ring integer NOT NULL,
-    letter character(1),
-    placed integer,
-    id integer NOT NULL
-);
-
-
-ALTER TABLE robots."ringAssignment" OWNER TO postgres;
-
---
--- Name: ring-assignment_id_seq; Type: SEQUENCE; Schema: robots; Owner: postgres
---
-
-ALTER TABLE robots."ringAssignment" ALTER COLUMN id ADD GENERATED ALWAYS AS IDENTITY (
-    SEQUENCE NAME robots."ring-assignment_id_seq"
-    START WITH 1
-    INCREMENT BY 1
-    NO MINVALUE
-    NO MAXVALUE
-    CACHE 1
-);
-
-
---
--- Name: robot; Type: TABLE; Schema: robots; Owner: postgres
---
-
-CREATE TABLE robots.robot (
-    name character varying(100) NOT NULL,
-    competition character varying(50) NOT NULL,
-    driver1 character varying(50) NOT NULL,
-    driver1gr character varying(50) DEFAULT 0 NOT NULL,
-    driver2 character varying(50),
-    driver2gr character varying(50),
-    driver3 character varying(50),
-    driver3gr character varying(50),
-    school character varying(150),
-    coach character varying(100),
-    email character varying(100) NOT NULL,
-    ph character varying(16) NOT NULL,
-    invoiced numeric(4,2) DEFAULT 0 NOT NULL,
-    paid numeric(4,2) DEFAULT 0 NOT NULL,
-    late integer DEFAULT 0 NOT NULL,
-    "checkInStatus" robots.check_in_status DEFAULT 'UNKNOWN'::robots.check_in_status NOT NULL,
-    "paymentType" robots.payment_status DEFAULT 'UNPAID'::robots.payment_status NOT NULL,
-    registered timestamp without time zone DEFAULT now() NOT NULL,
-    participated boolean DEFAULT false NOT NULL,
-    id integer NOT NULL,
-    "slottedStatus" robots.slotting_status DEFAULT 'UNSEEN'::robots.slotting_status NOT NULL,
-    measured boolean DEFAULT false NOT NULL
-);
-
-
-ALTER TABLE robots.robot OWNER TO postgres;
-
---
--- Name: COLUMN robot."slottedStatus"; Type: COMMENT; Schema: robots; Owner: postgres
---
-
-COMMENT ON COLUMN robots.robot."slottedStatus" IS 'Current Slotted status of robot';
-
-
---
--- Name: COLUMN robot.measured; Type: COMMENT; Schema: robots; Owner: postgres
---
-
-COMMENT ON COLUMN robots.robot.measured IS 'Had the robot been successfully measured.';
-
-
---
--- Name: robot_id_seq; Type: SEQUENCE; Schema: robots; Owner: postgres
---
-
-ALTER TABLE robots.robot ALTER COLUMN id ADD GENERATED ALWAYS AS IDENTITY (
-    SEQUENCE NAME robots.robot_id_seq
-    START WITH 1
-    INCREMENT BY 1
-    NO MINVALUE
-    NO MAXVALUE
-    CACHE 1
-);
-
-
---
--- Name: total; Type: TABLE; Schema: robots; Owner: postgres
---
-
-CREATE TABLE robots.total (
-    count bigint
-);
-
-
-ALTER TABLE robots.total OWNER TO postgres;
 
 --
 -- Name: count_competition_robots(); Type: FUNCTION; Schema: robots; Owner: postgres
@@ -588,32 +292,495 @@ $$;
 
 ALTER FUNCTION robots.update_slotted_status() OWNER TO postgres;
 
--- Grant tables access to python_api
-GRANT SELECT,UPDATE,DELETE,INSERT ON ALL TABLES IN SCHEMA robots TO python_api;
+SET default_tablespace = '';
+
+SET default_table_access_method = heap;
+
+--
+-- Name: coaches; Type: TABLE; Schema: people; Owner: postgres
+--
+
+CREATE TABLE people.coaches (
+    id integer NOT NULL,
+    first_name character varying NOT NULL,
+    last_name character varying NOT NULL,
+    school character varying NOT NULL,
+    phone numeric NOT NULL,
+    email character varying NOT NULL
+);
+
+
+ALTER TABLE people.coaches OWNER TO postgres;
+
+--
+-- Name: students; Type: TABLE; Schema: people; Owner: postgres
+--
+
+CREATE TABLE people.students (
+    first_name character varying NOT NULL,
+    last_name character varying NOT NULL,
+    coach integer NOT NULL,
+    id integer NOT NULL,
+    birthday date NOT NULL
+);
+
+
+ALTER TABLE people.students OWNER TO postgres;
+
+--
+-- Name: activity-log; Type: TABLE; Schema: robots; Owner: postgres
+--
+
+CREATE TABLE robots."activity-log" (
+    datetime timestamp with time zone DEFAULT CURRENT_TIMESTAMP,
+    volunteer character varying,
+    robot integer NOT NULL,
+    function character varying(11),
+    action character varying,
+    id integer NOT NULL
+);
+
+
+ALTER TABLE robots."activity-log" OWNER TO postgres;
+
+--
+-- Name: COLUMN "activity-log".datetime; Type: COMMENT; Schema: robots; Owner: postgres
+--
+
+COMMENT ON COLUMN robots."activity-log".datetime IS 'Time that activity was recorded.';
+
+
+--
+-- Name: activity-log_id_seq; Type: SEQUENCE; Schema: robots; Owner: postgres
+--
+
+ALTER TABLE robots."activity-log" ALTER COLUMN id ADD GENERATED ALWAYS AS IDENTITY (
+    SEQUENCE NAME robots."activity-log_id_seq"
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1
+);
+
+
+--
+-- Name: competition; Type: TABLE; Schema: robots; Owner: postgres
+--
+
+CREATE TABLE robots.competition (
+    id character(3) NOT NULL,
+    name character(3),
+    "longName" character varying,
+    rings integer NOT NULL,
+    "minRobotsPerRing" integer NOT NULL,
+    "maxRobotsPerRing" integer NOT NULL,
+    checkstring character varying,
+    "registrationTime" timestamp with time zone DEFAULT now() NOT NULL,
+    "measureMass" boolean NOT NULL,
+    "measureSize" boolean NOT NULL,
+    "measureTime" boolean NOT NULL,
+    "measureScratch" boolean,
+    "measureDeadman" boolean NOT NULL,
+    "maxEntries" numeric GENERATED ALWAYS AS (("maxRobotsPerRing" * rings)) STORED,
+    "robotCount" integer DEFAULT 0 NOT NULL,
+    "robotCheckedInCount" integer DEFAULT 0 NOT NULL
+);
+
+
+ALTER TABLE robots.competition OWNER TO postgres;
+
+--
+-- Name: COLUMN competition."maxEntries"; Type: COMMENT; Schema: robots; Owner: postgres
+--
+
+COMMENT ON COLUMN robots.competition."maxEntries" IS 'Maxmum allowed number of robots for this competition';
+
+
+--
+-- Name: COLUMN competition."robotCount"; Type: COMMENT; Schema: robots; Owner: postgres
+--
+
+COMMENT ON COLUMN robots.competition."robotCount" IS 'Number of robots registered in this competition';
+
+
+--
+-- Name: COLUMN competition."robotCheckedInCount"; Type: COMMENT; Schema: robots; Owner: postgres
+--
+
+COMMENT ON COLUMN robots.competition."robotCheckedInCount" IS 'Number of robots checked in.';
+
+
+--
+-- Name: match; Type: TABLE; Schema: robots; Owner: postgres
+--
+
+CREATE TABLE robots.match (
+    competitor1 integer NOT NULL,
+    competitor2 integer NOT NULL,
+    id integer NOT NULL,
+    round1winner smallint,
+    round2winner smallint,
+    round3winner smallint,
+    tournament integer NOT NULL
+);
+
+
+ALTER TABLE robots.match OWNER TO postgres;
+
+--
+-- Name: COLUMN match.competitor1; Type: COMMENT; Schema: robots; Owner: postgres
+--
+
+COMMENT ON COLUMN robots.match.competitor1 IS 'First competitor in the match';
+
+
+--
+-- Name: COLUMN match.competitor2; Type: COMMENT; Schema: robots; Owner: postgres
+--
+
+COMMENT ON COLUMN robots.match.competitor2 IS 'Second competitor in the match';
+
+
+--
+-- Name: COLUMN match.id; Type: COMMENT; Schema: robots; Owner: postgres
+--
+
+COMMENT ON COLUMN robots.match.id IS 'match primary key';
+
+
+--
+-- Name: COLUMN match.round1winner; Type: COMMENT; Schema: robots; Owner: postgres
+--
+
+COMMENT ON COLUMN robots.match.round1winner IS 'Winner of round 1';
+
+
+--
+-- Name: COLUMN match.round2winner; Type: COMMENT; Schema: robots; Owner: postgres
+--
+
+COMMENT ON COLUMN robots.match.round2winner IS 'Winner of round 2';
+
+
+--
+-- Name: COLUMN match.round3winner; Type: COMMENT; Schema: robots; Owner: postgres
+--
+
+COMMENT ON COLUMN robots.match.round3winner IS 'Winner of round 3';
+
+
+--
+-- Name: COLUMN match.tournament; Type: COMMENT; Schema: robots; Owner: postgres
+--
+
+COMMENT ON COLUMN robots.match.tournament IS 'Tournament this match belongs to';
+
+
+--
+-- Name: match_id_seq; Type: SEQUENCE; Schema: robots; Owner: postgres
+--
+
+ALTER TABLE robots.match ALTER COLUMN id ADD GENERATED ALWAYS AS IDENTITY (
+    SEQUENCE NAME robots.match_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1
+);
+
+
+--
+-- Name: measurement; Type: TABLE; Schema: robots; Owner: postgres
+--
+
+CREATE TABLE robots.measurement (
+    robot integer NOT NULL,
+    datetime timestamp with time zone DEFAULT CURRENT_TIMESTAMP,
+    result boolean,
+    type character varying(32),
+    volunteer character varying(50),
+    id integer NOT NULL
+);
+
+
+ALTER TABLE robots.measurement OWNER TO postgres;
+
+--
+-- Name: COLUMN measurement.datetime; Type: COMMENT; Schema: robots; Owner: postgres
+--
+
+COMMENT ON COLUMN robots.measurement.datetime IS 'Time that measurement was recorded.';
+
+
+--
+-- Name: measurement_id_seq; Type: SEQUENCE; Schema: robots; Owner: postgres
+--
+
+ALTER TABLE robots.measurement ALTER COLUMN id ADD GENERATED ALWAYS AS IDENTITY (
+    SEQUENCE NAME robots.measurement_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1
+);
+
+
+--
+-- Name: ringAssignment; Type: TABLE; Schema: robots; Owner: postgres
+--
+
+CREATE TABLE robots."ringAssignment" (
+    robot integer NOT NULL,
+    letter character(1),
+    rank integer,
+    id integer NOT NULL,
+    tournament integer NOT NULL
+);
+
+
+ALTER TABLE robots."ringAssignment" OWNER TO postgres;
+
+--
+-- Name: COLUMN "ringAssignment".robot; Type: COMMENT; Schema: robots; Owner: postgres
+--
+
+COMMENT ON COLUMN robots."ringAssignment".robot IS 'Robot this entry represents';
+
+
+--
+-- Name: COLUMN "ringAssignment".letter; Type: COMMENT; Schema: robots; Owner: postgres
+--
+
+COMMENT ON COLUMN robots."ringAssignment".letter IS 'Artibrary letter assigned to the competitor when slotted.';
+
+
+--
+-- Name: COLUMN "ringAssignment".rank; Type: COMMENT; Schema: robots; Owner: postgres
+--
+
+COMMENT ON COLUMN robots."ringAssignment".rank IS 'Ranking of competitor in this tournament';
+
+
+--
+-- Name: COLUMN "ringAssignment".id; Type: COMMENT; Schema: robots; Owner: postgres
+--
+
+COMMENT ON COLUMN robots."ringAssignment".id IS 'Unique id of this row';
+
+
+--
+-- Name: COLUMN "ringAssignment".tournament; Type: COMMENT; Schema: robots; Owner: postgres
+--
+
+COMMENT ON COLUMN robots."ringAssignment".tournament IS 'tournament owning this object.';
+
+
+--
+-- Name: ring-assignment_id_seq; Type: SEQUENCE; Schema: robots; Owner: postgres
+--
+
+ALTER TABLE robots."ringAssignment" ALTER COLUMN id ADD GENERATED ALWAYS AS IDENTITY (
+    SEQUENCE NAME robots."ring-assignment_id_seq"
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1
+);
+
+
+--
+-- Name: robot; Type: TABLE; Schema: robots; Owner: postgres
+--
+
+CREATE TABLE robots.robot (
+    name character varying(100) NOT NULL,
+    competition character varying(50) NOT NULL,
+    driver1 character varying(50) NOT NULL,
+    driver1gr character varying(50) DEFAULT 0 NOT NULL,
+    driver2 character varying(50),
+    driver2gr character varying(50),
+    driver3 character varying(50),
+    driver3gr character varying(50),
+    school character varying(150),
+    coach character varying(100),
+    email character varying(100) NOT NULL,
+    ph character varying(16) NOT NULL,
+    invoiced numeric(4,2) DEFAULT 0 NOT NULL,
+    paid numeric(4,2) DEFAULT 0 NOT NULL,
+    late integer DEFAULT 0 NOT NULL,
+    "checkInStatus" robots.check_in_status DEFAULT 'UNKNOWN'::robots.check_in_status NOT NULL,
+    "paymentType" robots.payment_status DEFAULT 'UNPAID'::robots.payment_status NOT NULL,
+    registered timestamp without time zone DEFAULT now() NOT NULL,
+    participated boolean DEFAULT false NOT NULL,
+    id integer NOT NULL,
+    "slottedStatus" robots.slotting_status DEFAULT 'UNSEEN'::robots.slotting_status NOT NULL,
+    measured boolean DEFAULT false NOT NULL
+);
+
+
+ALTER TABLE robots.robot OWNER TO postgres;
+
+--
+-- Name: COLUMN robot."slottedStatus"; Type: COMMENT; Schema: robots; Owner: postgres
+--
+
+COMMENT ON COLUMN robots.robot."slottedStatus" IS 'Current Slotted status of robot';
+
+
+--
+-- Name: COLUMN robot.measured; Type: COMMENT; Schema: robots; Owner: postgres
+--
+
+COMMENT ON COLUMN robots.robot.measured IS 'Had the robot been successfully measured.';
+
+
+--
+-- Name: robot_id_seq; Type: SEQUENCE; Schema: robots; Owner: postgres
+--
+
+ALTER TABLE robots.robot ALTER COLUMN id ADD GENERATED ALWAYS AS IDENTITY (
+    SEQUENCE NAME robots.robot_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1
+);
+
+
+--
+-- Name: tournament; Type: TABLE; Schema: robots; Owner: postgres
+--
+
+CREATE TABLE robots.tournament (
+    ring integer NOT NULL,
+    judge character varying,
+    timer character varying,
+    competition character(3) NOT NULL,
+    id integer NOT NULL
+);
+
+
+ALTER TABLE robots.tournament OWNER TO postgres;
+
+--
+-- Name: COLUMN tournament.ring; Type: COMMENT; Schema: robots; Owner: postgres
+--
+
+COMMENT ON COLUMN robots.tournament.ring IS 'ring number';
+
+
+--
+-- Name: COLUMN tournament.judge; Type: COMMENT; Schema: robots; Owner: postgres
+--
+
+COMMENT ON COLUMN robots.tournament.judge IS 'Judge''s name';
+
+
+--
+-- Name: COLUMN tournament.timer; Type: COMMENT; Schema: robots; Owner: postgres
+--
+
+COMMENT ON COLUMN robots.tournament.timer IS 'Timer''s name';
+
+
+--
+-- Name: COLUMN tournament.competition; Type: COMMENT; Schema: robots; Owner: postgres
+--
+
+COMMENT ON COLUMN robots.tournament.competition IS 'competition';
+
+
+--
+-- Name: COLUMN tournament.id; Type: COMMENT; Schema: robots; Owner: postgres
+--
+
+COMMENT ON COLUMN robots.tournament.id IS 'primary key';
+
+
+--
+-- Data for Name: coaches; Type: TABLE DATA; Schema: people; Owner: postgres
+--
+
+COPY people.coaches (id, first_name, last_name, school, phone, email) FROM stdin;
+\.
+
+
+--
+-- Data for Name: students; Type: TABLE DATA; Schema: people; Owner: postgres
+--
+
+COPY people.students (first_name, last_name, coach, id, birthday) FROM stdin;
+\.
+
+
+--
+-- Data for Name: activity-log; Type: TABLE DATA; Schema: robots; Owner: postgres
+--
+
+COPY robots."activity-log" (datetime, volunteer, robot, function, action, id) FROM stdin;
+\.
+
 
 --
 -- Data for Name: competition; Type: TABLE DATA; Schema: robots; Owner: postgres
 --
 
 COPY robots.competition (id, name, "longName", rings, "minRobotsPerRing", "maxRobotsPerRing", checkstring, "registrationTime", "measureMass", "measureSize", "measureTime", "measureScratch", "measureDeadman", "robotCount", "robotCheckedInCount") FROM stdin;
-SSL	SSL	Super Scramble Light	2	4	8	i	2023-02-06 11:36:42.201776-06	t	t	f	f	f	19	0
-DRA	DRA	Drag Race Autonomous	1	2	2	i	2023-02-06 11:36:42.201776-06	f	t	f	t	f	5	3
-LFK	LFK	Line Follower - Kit	1	1	1	i	2023-02-06 11:36:42.201776-06	f	t	f	f	f	0	0
-LMA	LMA	Line Maze Autonomous	1	1	1	i	2023-02-06 11:36:42.201776-06	f	t	f	t	f	2	0
-MSR	MSR	Mini Sumo Rookie	4	4	8	i	2023-02-06 11:36:42.201776-06	t	f	f	t	f	15	13
-PST	PST	Prarie Sumo Tethered	4	4	8	i	2023-02-06 11:36:42.201776-06	t	t	f	t	f	18	7
-PSA	PSA	Prarie Sumo Autonomous	4	4	8	i	2023-02-06 11:36:42.201776-06	t	t	t	t	f	6	5
-SSH	SSH	Super Scramble Heavy	1	4	8	i	2023-02-06 11:36:42.201776-06	t	t	f	t	f	3	1
-MS2	MS2	Mini Sumo 2	4	4	8	i	2023-02-06 11:36:42.201776-06	t	f	f	t	f	9	9
-MS1	MS1	Mini Sumo 1	8	4	8	i	2023-02-06 12:16:13.069706-06	t	f	f	t	f	10	9
-TPM	TPM	Tractor Pull	1	4	10	i	2023-02-06 11:36:42.201776-06	t	t	t	f	t	7	1
-MSA	MSA	Mini Sumo Autonomous	8	4	8	i	2023-02-06 11:36:42.201776-06	t	f	t	t	f	16	14
-JC1	JC1	Judges' Choice	4	4	8	i	2023-02-06 11:36:42.201776-06	f	f	f	f	f	2	1
-RC1	RC1	Robo Critter	1	1	1	i	2023-02-06 11:36:42.201776-06	f	f	f	f	f	8	2
-MS3	MS3	Mini Sumo 3	8	4	8	i	2023-02-06 11:36:42.201776-06	t	f	f	t	f	18	10
-SSR	SSR	Super Scramble Rookie	5	2	2	i	2023-02-06 11:36:42.201776-06	t	t	f	f	f	5	5
-LFS	LFS	Line Follower - Scratch	4	4	8	i	2023-02-06 11:36:42.201776-06	f	t	f	f	f	46	6
-NXT	NXT	Lego Challenge	4	4	8	i	2023-02-06 11:36:42.201776-06	f	f	f	f	f	6	12
+SSL	SSL	Super Scramble Light	2	4	8	i	2023-02-06 17:36:42.201776+00	t	t	f	f	f	19	0
+LFK	LFK	Line Follower - Kit	1	1	1	i	2023-02-06 17:36:42.201776+00	f	t	f	f	f	0	0
+LMA	LMA	Line Maze Autonomous	1	1	1	i	2023-02-06 17:36:42.201776+00	f	t	f	t	f	2	0
+SSH	SSH	Super Scramble Heavy	1	4	8	i	2023-02-06 17:36:42.201776+00	t	t	f	t	f	3	1
+TPM	TPM	Tractor Pull	1	4	10	i	2023-02-06 17:36:42.201776+00	t	t	t	f	t	1	1
+DRA	DRA	Drag Race Autonomous	1	2	2	i	2023-02-06 17:36:42.201776+00	f	t	f	t	f	3	3
+PST	PST	Prarie Sumo Tethered	4	4	8	i	2023-02-06 17:36:42.201776+00	t	t	f	t	f	7	7
+LFS	LFS	Line Follower - Scratch	4	4	8	i	2023-02-06 17:36:42.201776+00	f	t	f	f	f	9	6
+MS2	MS2	Mini Sumo 2	4	4	8	i	2023-02-06 17:36:42.201776+00	t	f	f	t	f	9	9
+SSR	SSR	Super Scramble Rookie	5	2	2	i	2023-02-06 17:36:42.201776+00	t	t	f	f	f	5	5
+JC1	JC1	Judges' Choice	4	4	8	i	2023-02-06 17:36:42.201776+00	f	f	f	f	f	1	1
+RC1	RC1	Robo Critter	1	1	1	i	2023-02-06 17:36:42.201776+00	f	f	f	f	f	2	2
+MS1	MS1	Mini Sumo 1	8	4	8	i	2023-02-06 18:16:13.069706+00	t	f	f	t	f	7	9
+NXT	NXT	Lego Challenge	4	4	8	i	2023-02-06 17:36:42.201776+00	f	f	f	f	f	14	12
+MSR	MSR	Mini Sumo Rookie	4	4	8	i	2023-02-06 17:36:42.201776+00	t	f	f	t	f	14	13
+MS3	MS3	Mini Sumo 3	8	4	8	i	2023-02-06 17:36:42.201776+00	t	f	f	t	f	10	10
+PSA	PSA	Prarie Sumo Autonomous	4	4	8	i	2023-02-06 17:36:42.201776+00	t	t	t	t	f	5	5
+MSA	MSA	Mini Sumo Autonomous	8	4	8	i	2023-02-06 17:36:42.201776+00	t	f	t	t	f	14	14
+\.
+
+
+--
+-- Data for Name: match; Type: TABLE DATA; Schema: robots; Owner: postgres
+--
+
+COPY robots.match (competitor1, competitor2, id, round1winner, round2winner, round3winner, tournament) FROM stdin;
+\.
+
+
+--
+-- Data for Name: measurement; Type: TABLE DATA; Schema: robots; Owner: postgres
+--
+
+COPY robots.measurement (robot, datetime, result, type, volunteer, id) FROM stdin;
+\.
+
+
+--
+-- Data for Name: ringAssignment; Type: TABLE DATA; Schema: robots; Owner: postgres
+--
+
+COPY robots."ringAssignment" (robot, letter, rank, id, tournament) FROM stdin;
+\.
+
+
+--
+-- Data for Name: tournament; Type: TABLE DATA; Schema: robots; Owner: postgres
+--
+
+COPY robots.tournament (ring, judge, timer, competition, id) FROM stdin;
 \.
 
 
@@ -622,6 +789,13 @@ NXT	NXT	Lego Challenge	4	4	8	i	2023-02-06 11:36:42.201776-06	f	f	f	f	f	6	12
 --
 
 SELECT pg_catalog.setval('robots."activity-log_id_seq"', 257, true);
+
+
+--
+-- Name: match_id_seq; Type: SEQUENCE SET; Schema: robots; Owner: postgres
+--
+
+SELECT pg_catalog.setval('robots.match_id_seq', 1, false);
 
 
 --
@@ -635,7 +809,7 @@ SELECT pg_catalog.setval('robots.measurement_id_seq', 190, true);
 -- Name: ring-assignment_id_seq; Type: SEQUENCE SET; Schema: robots; Owner: postgres
 --
 
-SELECT pg_catalog.setval('robots."ring-assignment_id_seq"', 119, true);
+SELECT pg_catalog.setval('robots."ring-assignment_id_seq"', 133, true);
 
 
 --
@@ -678,6 +852,14 @@ ALTER TABLE ONLY robots.competition
 
 
 --
+-- Name: match match_pk; Type: CONSTRAINT; Schema: robots; Owner: postgres
+--
+
+ALTER TABLE ONLY robots.match
+    ADD CONSTRAINT match_pk PRIMARY KEY (id);
+
+
+--
 -- Name: measurement measurement_pk; Type: CONSTRAINT; Schema: robots; Owner: postgres
 --
 
@@ -699,6 +881,14 @@ ALTER TABLE ONLY robots."ringAssignment"
 
 ALTER TABLE ONLY robots.robot
     ADD CONSTRAINT robot_pk PRIMARY KEY (id);
+
+
+--
+-- Name: tournament tournament_pk; Type: CONSTRAINT; Schema: robots; Owner: postgres
+--
+
+ALTER TABLE ONLY robots.tournament
+    ADD CONSTRAINT tournament_pk PRIMARY KEY (id);
 
 
 --
@@ -768,19 +958,35 @@ ALTER TABLE ONLY robots.robot
 
 
 --
+-- Name: match match_robot_fk_1; Type: FK CONSTRAINT; Schema: robots; Owner: postgres
+--
+
+ALTER TABLE ONLY robots.match
+    ADD CONSTRAINT match_robot_fk_1 FOREIGN KEY (competitor1) REFERENCES robots.robot(id);
+
+
+--
+-- Name: match match_robot_fk_2; Type: FK CONSTRAINT; Schema: robots; Owner: postgres
+--
+
+ALTER TABLE ONLY robots.match
+    ADD CONSTRAINT match_robot_fk_2 FOREIGN KEY (competitor2) REFERENCES robots.robot(id);
+
+
+--
+-- Name: match match_tournament_fk; Type: FK CONSTRAINT; Schema: robots; Owner: postgres
+--
+
+ALTER TABLE ONLY robots.match
+    ADD CONSTRAINT match_tournament_fk FOREIGN KEY (tournament) REFERENCES robots.tournament(id);
+
+
+--
 -- Name: measurement measurement_fk; Type: FK CONSTRAINT; Schema: robots; Owner: postgres
 --
 
 ALTER TABLE ONLY robots.measurement
     ADD CONSTRAINT measurement_fk FOREIGN KEY (robot) REFERENCES robots.robot(id);
-
-
---
--- Name: ringAssignment ring_assignment_comp_fk; Type: FK CONSTRAINT; Schema: robots; Owner: postgres
---
-
-ALTER TABLE ONLY robots."ringAssignment"
-    ADD CONSTRAINT ring_assignment_comp_fk FOREIGN KEY (competition) REFERENCES robots.competition(id);
 
 
 --
@@ -792,16 +998,33 @@ ALTER TABLE ONLY robots."ringAssignment"
 
 
 --
+-- Name: ringAssignment ringassignment_tournament_fk; Type: FK CONSTRAINT; Schema: robots; Owner: postgres
+--
+
+ALTER TABLE ONLY robots."ringAssignment"
+    ADD CONSTRAINT ringassignment_tournament_fk FOREIGN KEY (tournament) REFERENCES robots.tournament(id);
+
+
+--
+-- Name: SCHEMA people; Type: ACL; Schema: -; Owner: postgres
+--
+
+GRANT USAGE ON SCHEMA people TO web_anon;
+
+
+--
 -- Name: SCHEMA robots; Type: ACL; Schema: -; Owner: postgres
 --
 
 GRANT USAGE ON SCHEMA robots TO web_anon;
+GRANT USAGE ON SCHEMA robots TO python_api;
 
 
 --
 -- Name: TABLE "activity-log"; Type: ACL; Schema: robots; Owner: postgres
 --
 
+GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE robots."activity-log" TO python_api;
 GRANT SELECT,INSERT,UPDATE ON TABLE robots."activity-log" TO web_anon;
 
 
@@ -809,6 +1032,7 @@ GRANT SELECT,INSERT,UPDATE ON TABLE robots."activity-log" TO web_anon;
 -- Name: TABLE competition; Type: ACL; Schema: robots; Owner: postgres
 --
 
+GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE robots.competition TO python_api;
 GRANT SELECT,UPDATE ON TABLE robots.competition TO web_anon;
 
 
@@ -816,6 +1040,7 @@ GRANT SELECT,UPDATE ON TABLE robots.competition TO web_anon;
 -- Name: TABLE measurement; Type: ACL; Schema: robots; Owner: postgres
 --
 
+GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE robots.measurement TO python_api;
 GRANT SELECT,INSERT ON TABLE robots.measurement TO web_anon;
 
 
@@ -823,6 +1048,7 @@ GRANT SELECT,INSERT ON TABLE robots.measurement TO web_anon;
 -- Name: TABLE "ringAssignment"; Type: ACL; Schema: robots; Owner: postgres
 --
 
+GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE robots."ringAssignment" TO python_api;
 GRANT SELECT ON TABLE robots."ringAssignment" TO web_anon;
 
 
@@ -830,9 +1056,11 @@ GRANT SELECT ON TABLE robots."ringAssignment" TO web_anon;
 -- Name: TABLE robot; Type: ACL; Schema: robots; Owner: postgres
 --
 
+GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE robots.robot TO python_api;
 GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE robots.robot TO web_anon;
 
 
 --
 -- PostgreSQL database dump complete
 --
+
