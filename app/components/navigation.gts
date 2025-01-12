@@ -37,7 +37,7 @@ export default class NavigationController extends Component {
             <LinkTo @route="competitions.show" @model="LFS">LFS - Line Follower (Scratch)</LinkTo>
             <LinkTo @route="competitions.show" @model="LFK">LFK - Line Follower (Kit)</LinkTo>
             <LinkTo @route="competitions.show" @model="LMA">LMA - Line Maze Autonomous</LinkTo>
-            <LinkTo @route="competitions.show" @model="DRA">DRA - Drag Race Atuonomous</LinkTo>
+            <LinkTo @route="competitions.show" @model="DRA">DRA - Drag Race Autonomous</LinkTo>
             <LinkTo @route="competitions.show" @model="TPM">TPM - Tractor Pull</LinkTo>
             <LinkTo @route="competitions.show" @model="NXT">NXT - Lego Challenge</LinkTo>
             <LinkTo @route="competitions.show" @model="JC1">JC1 - Judges Choice</LinkTo>
