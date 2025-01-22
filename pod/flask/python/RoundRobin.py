@@ -40,37 +40,6 @@ class RoundRobinTournament(object):
         self.event_entries: list[EventEntry] = []
         self.matches: list[RoundRobinMatch] = []
 
-    def to_json(self):
-        return {
-            "type": "tournament",
-            "id": self.name,
-            "attributes": {
-                "ring": self.ring,
-                "event": self.event.id,
-                "judge": self.judge if self.judge else "No Judge",
-                "start-time": self.start_time,
-            },
-        }
-
-    def get_ranking(self) -> "tuple":
-        ranking = {}
-        for event_entry in self.event_entries:
-            ranking[event_entry.entry.id] = 0
-        for match in self.matches:
-            if match.round1winner == 1:
-                ranking[match.contestant1.entry.id] += 1
-            elif match.round1winner == 2:
-                ranking[match.contestant2.entry.id] += 1
-            if match.round2winner == 1:
-                ranking[match.contestant1.entry.id] += 1
-            elif match.round2winner == 2:
-                ranking[match.contestant2.entry.id] += 1
-
-        # sort the ranking
-        ranking = sorted(ranking.items(), key=lambda item: item[1], reverse=True)
-
-        return ranking
-
     def add_entry(
         self,
         entry: Entry,
@@ -160,21 +129,10 @@ class RoundRobinTournament(object):
 
 
 class RoundRobinMatch(object):
-    def __init__(self, id, contestant1: EventEntry, contestant2):
+    def __init__(self, id, competitor1: EventEntry, competitor2):
         self.id = id
-        self.contestant1 = contestant1
-        self.contestant2 = contestant2
-        self.round1winner: int = 0  # 1 = contestant1, 2 = contestant2, 0 = not played
+        self.competitor1 = competitor1
+        self.competitor2 = competitor2
+        self.round1winner: int = 0  # 1 = competitor1, 2 = competitor2, 0 = not played
         self.round2winner: int = 0
-
-    def to_json(self):
-        return {
-            "type": "match",
-            "id": self.id,
-            "attributes": {
-                "contestant1": self.contestant1.entry.id,
-                "contestant2": self.contestant2.entry.id,
-                "round1winner": self.round1winner,
-                "round2winner": self.round2winner,
-            },
-        }
+        self.round3winner: int = 0

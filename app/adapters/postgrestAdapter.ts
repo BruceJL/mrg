@@ -56,10 +56,10 @@ export default class PostgrestAdapter extends MinimumInterfaceAdapter {
     if (includes === undefined && id === undefined) {
       return '';
     }
-    let s = '?';
+    let s = '';
 
     if (id !== undefined) {
-      s = s + 'id=eq.' + id;
+      s = s + '?id=eq.' + id;
     }
 
     if (includes !== undefined) {
@@ -183,15 +183,20 @@ export default class PostgrestAdapter extends MinimumInterfaceAdapter {
   // Run a query on a given table.
   // url looks like this: people?age=gte.18&student=is.true
   query<K extends keyof ModelRegistry>(
-    _store: Store,
+    store: Store,
     type: ModelRegistry[K],
     query: { [key: string]: object },
     _recordArray: any, //: Collection,
     // options: Object, Spec'd in MinimumInterfaceAdapter, but not Adapter?
   ): RSVP.Promise<any> {
     let url = '';
+    let includes: 'string' | undefined = undefined;
     const s = [];
     for (const key in query) {
+      if (key === 'include') {
+        includes = query[key]
+        continue;
+      }
       const value = query[key];
       if (typeof value == 'boolean') {
         s.push(key + '=is.' + value);
@@ -199,7 +204,10 @@ export default class PostgrestAdapter extends MinimumInterfaceAdapter {
         s.push(key + '=eq.' + value);
       }
     }
-    url = this.prefixURL(type.modelName + url);
+
+    url = this.prefixURL(type.modelName + '?' + s.join('&'));
+    url = url + this.makeQueryString(undefined, includes);
+
     return this._fetch(url);
   }
 
@@ -214,6 +222,7 @@ export default class PostgrestAdapter extends MinimumInterfaceAdapter {
     let url = '';
     const s = [];
     for (const key in query) {
+      console.log(key, query[key]);
       const value = query[key];
       if (typeof value == 'boolean') {
         s.push(key + '=is.' + value);
@@ -221,7 +230,8 @@ export default class PostgrestAdapter extends MinimumInterfaceAdapter {
         s.push(key + '=eq.' + value);
       }
     }
-    url = this.prefixURL(type.modelName + url);
+    url = this.prefixURL(type.modelName+ '?' + s.join('&'));
+
     return this._fetch(url);
   }
 

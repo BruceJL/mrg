@@ -1,7 +1,11 @@
 import Service from '@ember/service';
 import type MatchModel from 'mrg-sign-in/models/match';
+import { service } from '@ember/service';
+import type { Registry as Services } from '@ember/service';
 
 export default class RoundRobinService extends Service {
+  @service declare store: Services['store'];
+
 
   slotCheckedInEntries(competitionId: string, numberRings: number): Promise<Response> {
     const body = { competition: competitionId, number_rings: numberRings };
@@ -13,44 +17,8 @@ export default class RoundRobinService extends Service {
     return postRequest('/api/flask/reset-ring-assignments', body);
   }
 
-  assignJudge(competitionId: string, ringNumber: number, judgeName: string): Promise<Response> {
-    const body = { competition: competitionId, ring: ringNumber, judge: judgeName };
-    return postRequest('/api/flask/assign-judge', body);
-  }
-
-  async getJudges(competitionId: string): Promise<string[]> {
-    const body = { competition: competitionId };
-    const res = await postRequest('/api/flask/get-judges', body);
-    return res.json();
-  }
-
-  async setStartTime(competitionId: string, ringNumber: number, startTime: string): Promise<Response> {
-    const body = { competition: competitionId, ring: ringNumber, start_time: startTime };
-    return postRequest(`/api/flask/tournaments/${competitionId}/${ringNumber}/start-time`, body);
-  }
-
-  async getStartTime(competitionId: string, ringNumber: number): Promise<string> {
-    const url = `/api/flask/tournaments/${competitionId}/${ringNumber}/start-time`;
-    const res = await getRequest(url,{});
-    return res.json();
-  }
-
-  async resetStartTime(competitionId: string, ringNumber: number): Promise<Response> {
-    return deleteRequest(`/api/flask/tournaments/${competitionId}/${ringNumber}/start-time`, {});
-  }
-
-  async updateMatch(match:MatchModel): Promise<Response> {
-    // api route: "/<string:competition>/<int:ring>/matches/<int:match>"
-    // match id format: competitionId-ringNumber-matchNumber
-    const [competitionId, ringNumber, matchNumber] = match.id.split('-');
-    const body = {
-      competition: competitionId,
-      ring: ringNumber,
-      match: matchNumber,
-      round1winner: match.round1winner,
-      round2winner: match.round2winner,
-    };
-    return putRequest(`/api/flask/tournaments/${competitionId}/${ringNumber}/matches/${matchNumber}`, body);
+  getRanking(tournamentId: string): Promise<Response> {
+    return getRequest(`/api/rpc/get_tournament_winners?tournament_id=${tournamentId}`);
   }
 }
 
@@ -64,15 +32,11 @@ async function postRequest(url: string, body: object): Promise<Response> {
   return response;
 }
 
-async function getRequest(url: string, body:object): Promise<Response> {
-  const response = await fetch(url, {
-    method: 'GET',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(body),
-  });
-
+async function getRequest(url: string): Promise<Response> {
+  const response = await fetch(url);
   return response;
 }
+
 async function putRequest(url: string, body: object): Promise<Response> {
   const response = await fetch(url, {
     method: 'PUT',

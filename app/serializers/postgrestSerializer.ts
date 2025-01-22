@@ -23,7 +23,7 @@ export default class PostgresSerializer extends MinimumSerializerInterface {
   //     }
   // }
 
-  private parseIncludedRecord(
+  protected parseIncludedRecord(
     data: Record<string, any>,
     thisType: string,
     parentType: string,
@@ -46,7 +46,7 @@ export default class PostgresSerializer extends MinimumSerializerInterface {
     }
   }
 
-  private parseRecord(
+  protected parseRecord(
     payload: Record<string, any>,
     thisType: string,
     parentType: string,
@@ -128,7 +128,7 @@ export default class PostgresSerializer extends MinimumSerializerInterface {
     return return_data;
   }
 
-  private reformatPayload(
+  protected reformatPayload(
     primaryModelClass: Model,
     payload: Record<string, Record<string, any> | Record<string, unknown>[]>[],
     requestType: string,
@@ -139,7 +139,6 @@ export default class PostgresSerializer extends MinimumSerializerInterface {
       string,
       Record<string, any> | Record<string, unknown>[]
     >[] = [];
-
     // this populates the top level of the JSON:API responce, which does
     // not have a 'relationships' key. 'relationships' only exist as children
     // of data objects.
@@ -207,7 +206,8 @@ export default class PostgresSerializer extends MinimumSerializerInterface {
     id: string,
     requestType: string,
   ): object {
-    return this.reformatPayload(primaryModelClass, payload, requestType);
+    let res = this.reformatPayload(primaryModelClass, payload, requestType);
+    return res;
   }
 
   serialize(

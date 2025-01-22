@@ -1,9 +1,9 @@
 {{this.poll this.refreshData 5000}}
-<h3>{{this.model.competition_id}}  Ring {{this.model.ring_number}} Ranking </h3>
+<h3>{{this.model.tournament.competition.id}}  Ring {{this.model.tournament.ring}} Ranking </h3>
 <ul>
-  {{#each this.ranking as |entry|}}
+  {{#each this.sortedRanking as |entry|}}
     <li>
-      ID: {{get entry '0'}}, Score: {{get entry '1'}}
+      ID: {{entry.competitor_id}}, Score: {{entry.wins}}
     </li>
   {{/each}}
 </ul>

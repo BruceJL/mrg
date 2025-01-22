@@ -1,13 +1,17 @@
-{{this.poll this.refreshData 1000}}
-<h2>{{this.model.competition_id}}_Ring {{this.model.tournament.ring}}_Score_Sheet</h2>
+{{this.poll this.refreshData 5000}}
+<h2>{{this.model.competition.id}}_Ring {{this.model.ring}}_Score_Sheet</h2>
 
 <h3>
-  Judge: {{this.model.tournament.judge}}<br>
+    <label for="judge-{{this.model.ring}}">Judge :</label>
+    <input id="judge-{{this.model.ring}}" type="text" value={{this.model.judge}}
+    autocomplete="off" {{on "change" this.updateJudge}}
+    />
+    <button type="button" {{on "click" this.saveJudge}}>Save</button>
 </h3>
-<Timer @competitionId={{this.model.competition_id}} @tournament={{this.model.tournament}}/>
+<Timer @tournament={{this.model}}/>
 <hr/>
 <h3>Matches</h3>
-{{#each this.model.tournament.matches as |match|}}
+{{#each this.sortedMatches as |match|}}
   <Match @match={{match}} />
 {{/each}}
 {{outlet}}

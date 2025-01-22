@@ -195,19 +195,4 @@
   <div>
     <button type="button" {{on "click" this.resetRingAssignments }}>Reset Ring Assignments</button>
   </div>
-  <hr />
-  <h3>Judge Assignments</h3>
-  {{#each this.judges as |judge index|}}
-  {{#let (add index 1) as |ring|}}
-  <div>
-    <label for="judge-{{ring}}">Ring {{ring}} :</label>
-    <input id="judge-{{ring}}" type="text" value={{judge}}
-    {{on "change" (fn this.updateJudge index)}}
-    autocomplete="off"
-    />
-    <button type="button" {{on "click" (fn this.assignJudge ring)}}>Save</button>
-  </div>
-  <hr/>
-  {{/let}}
-  {{/each}}
 {{/if}}

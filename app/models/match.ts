@@ -3,6 +3,7 @@ import type TournamentModel from './tournament';
 import type RobotModel from './robot';
 
 export default class MatchModel extends Model {
+
   @belongsTo('robot', {
     async: true,
     inverse: null,

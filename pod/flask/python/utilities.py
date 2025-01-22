@@ -9,7 +9,30 @@ from Event import Event
 from Entry import Entry
 
 
-def connect_to_database(username, password):
+def get_db_password():
+    """Extract password from the environment variable file."""
+    try:
+        # Read the content of the password file
+        with open("pod/passwords.txt", "r") as f:
+            lines = f.readlines()
+
+        # Find the line that sets the POSTGRESPWD variable
+        for line in lines:
+            if line.startswith("export FLASKDBPWD="):
+                # Extract the password part after '='
+                password = line.split("=")[1].strip()
+                print(f"Password found in the file: {password}")
+                return password
+
+        # If the password is not found in the file
+        print("Password not found in the file.")
+        return None
+    except Exception as e:
+        print(f"Error reading password from file: {e}")
+        return None
+
+
+def connect_to_database(username, password, db_port):
     try:
         # Connect to the database
         with connect(
@@ -17,6 +40,7 @@ def connect_to_database(username, password):
             dsn="127.0.0.1:mrg",
             user=username,
             password=password,
+            port=db_port,
         ) as conn:
             conn.autocommit = True
             return conn
@@ -140,35 +164,41 @@ def load_ring_assignments_from_database(
     event: Event,
 ) -> None:
 
-    sql = 'SELECT * FROM robots."ringAssignment" ' f"WHERE competition = '{event.id}';"
+    # get all tournaments for the event
+    sql = f"SELECT * FROM robots.tournament WHERE competition = '{event.id}';"
     cursor.execute(sql)
     data = cursor.fetchall()
-    found_entry: Entry | None = None
-    found_row: RingAssignment
 
+    # loop through the tournaments and get corresponding ring assignments by tournament id
     for row in data:
-        found_row = row
-        robot_id: int = row.robot
-        found_entry = None
+        tournament_id: int = row.id
+        ring: int = row.ring
+        q = f'SELECT * FROM robots."ringAssignment" WHERE tournament = {tournament_id};'
+        cursor.execute(q)
+        ring_assignment_data = cursor.fetchall()
 
-        # Associate a robot with the entry
-        for entry in event.entries:
-            if entry.id == robot_id:
-                found_entry = entry
-                break
+        for assignment in ring_assignment_data:
+            found_entry = None
+            # Associate a robot with the entry
+            for entry in event.entries:
+                if entry.id == assignment.robot:
+                    found_entry = entry
+                    break
 
-        assert found_entry is not None, f"No matching robot for id: {entry.id} found."
+            assert (
+                found_entry is not None
+            ), f"No matching robot for id: {entry.id} found."
 
-        event_entry = EventEntry(
-            entry=found_entry,
-            letter=found_row.letter,
-            placed=found_row.placed,
-        )
+            event_entry = EventEntry(
+                entry=found_entry,
+                letter=assignment.letter,
+                placed=assignment.rank,
+            )
 
-        if found_row.ring not in event.round_robin_tournaments:
-            event.create_ring(found_row.ring)
+            if ring not in event.round_robin_tournaments:
+                event.create_ring(ring)
 
-        event.round_robin_tournaments[found_row.ring].event_entries.append(event_entry)
+            event.round_robin_tournaments[ring].event_entries.append(event_entry)
 
 
 def update_round_robin_assignments(
@@ -266,17 +296,31 @@ def update_round_robin_assignments(
 
         ring_assignment_query = (
             'INSERT into robots."ringAssignment" '
-            "(robot, competition, ring, letter) "
+            "(robot, letter, rank, tournament) "
             "VALUES "
         )
 
         participation_query = "UPDATE robots.robot SET participated=TRUE WHERE id in ("
 
         for tournament in event.round_robin_tournaments.values():
+            tournament_query = (
+                'INSERT into robots."tournament" '
+                "(competition, ring, judge, timer) "
+                "VALUES "
+                f"('{event.id}', {tournament.ring}, '', '');"
+            )
+
+            logging.debug(tournament_query)
+            cursor.execute(tournament_query)
+            # get tournamnet id
+            q = f"SELECT id FROM robots.tournament WHERE competition = '{event.id}' AND ring = {tournament.ring};"
+            cursor.execute(q)
+            tournament_id = cursor.fetchone()[0]
+
             for event_entry in tournament.event_entries:
                 ring_assignment_query += (
-                    f"('{event_entry.entry.id}', '{event.id}', "
-                    f"{tournament.ring}, '{event_entry.letter}'),"
+                    f"('{event_entry.entry.id}', '{event_entry.letter}', "
+                    f"{event_entry.placed}, {tournament_id}),"
                 )
 
                 participation_query += f"{event_entry.entry.id},"
@@ -291,9 +335,9 @@ def update_round_robin_assignments(
 
         logging.debug(ring_assignment_query)
         logging.debug(participation_query)
+
         cursor.execute(ring_assignment_query)
         cursor.execute(participation_query)
-
     # There are already existing assignments.
     else:
         logging.debug("Amending ring assignments for " + event.id)
@@ -367,14 +411,27 @@ def update_round_robin_assignments(
 
                 event_entry = smallest_tournament.add_entry(entry)
 
-                s = (
-                    'INSERT into robots."ringAssignment" '
-                    "(robot, competition, ring, letter) "
-                    "VALUES "
-                    f"('{event_entry.entry.id}', '{event.id}', "
-                    f"'{smallest_tournament.ring}', '{event_entry.letter}');"
+                # get tournament id
+                q = (
+                    "SELECT id FROM robots.tournament "
+                    f"WHERE competition = '{event.id}' "
+                    f"AND ring = {smallest_tournament.ring};"
                 )
 
+                logging.debug(q)
+
+                cursor.execute(q)
+                tournament_id = cursor.fetchone()[0]
+
+                s = (
+                    'INSERT into robots."ringAssignment" '
+                    "(robot, letter, rank, tournament) "
+                    "VALUES "
+                    f"('{event_entry.entry.id}', '{event_entry.letter}', "
+                    f"'{event_entry.placed}', {tournament_id});"
+                )
+
+                logging.debug(s)
                 cursor.execute(s)
 
                 s = (
@@ -387,10 +444,27 @@ def update_round_robin_assignments(
         logging.debug("All done amending " + event.id)
 
 
-def reset_round_robin_tournaments(event: Event) -> list[str]:
+def reset_round_robin_tournaments(
+    cursor: Cursor,
+    event: Event,
+):
     sql = []
-    s = 'DELETE from robots."ringAssignment" ' + f"WHERE competition='{event.id}';"
-    sql.append(s)
+    # get all tournaments_id for the event
+    q = f"SELECT id FROM robots.tournament WHERE competition = '{event.id}';"
+    cursor.execute(q)
+    data = cursor.fetchall()
+    logging.debug(f"Resetting {event.id}, with {len(data)} tournaments.")
+
+    for row in data:
+        tournament_id = row.id
+        s = (
+            'DELETE from robots."ringAssignment" '
+            + f"WHERE tournament={tournament_id};"
+        )
+        sql.append(s)
+
+        s = "DELETE from robots.match " + f"WHERE tournament={tournament_id};"
+        sql.append(s)
 
     # Clear all participated flags.
     s = (
@@ -399,7 +473,9 @@ def reset_round_robin_tournaments(event: Event) -> list[str]:
     )
     sql.append(s)
 
-    # clear out the object data.
-    # self.round_robin_tournaments = {}
+    # Clear all tournament data.
+    s = f"DELETE from robots.tournament WHERE competition='{event.id}';"
+    sql.append(s)
 
-    return sql
+    for q in sql:
+        cursor.execute(q)

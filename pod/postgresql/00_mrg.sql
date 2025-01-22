@@ -2,6 +2,29 @@
 -- PostgreSQL database dump
 --
 
+--
+-- Roles
+--
+
+CREATE ROLE authenticator;
+ALTER ROLE authenticator WITH NOSUPERUSER NOINHERIT NOCREATEROLE NOCREATEDB LOGIN NOREPLICATION NOBYPASSRLS;
+
+CREATE ROLE bruce;
+ALTER ROLE bruce WITH SUPERUSER NOINHERIT NOCREATEROLE NOCREATEDB LOGIN NOREPLICATION NOBYPASSRLS;
+
+CREATE ROLE web_anon;
+ALTER ROLE web_anon WITH NOSUPERUSER NOINHERIT NOCREATEROLE NOCREATEDB LOGIN NOREPLICATION NOBYPASSRLS;
+COMMENT ON ROLE web_anon IS 'web_anon access';
+
+CREATE ROLE python_api;
+ALTER ROLE python_api WITH NOSUPERUSER NOINHERIT NOCREATEROLE NOCREATEDB LOGIN NOREPLICATION NOBYPASSRLS;
+--
+-- Role memberships
+--
+
+GRANT web_anon TO authenticator GRANTED BY postgres;
+
+
 -- Dumped from database version 16.4 (Debian 16.4-1.pgdg120+1)
 -- Dumped by pg_dump version 16.4 (Debian 16.4-1.pgdg120+1)
 
@@ -490,7 +513,6 @@ ALTER TABLE robots.match ALTER COLUMN id ADD GENERATED ALWAYS AS IDENTITY (
     CACHE 1
 );
 
-
 --
 -- Name: measurement; Type: TABLE; Schema: robots; Owner: postgres
 --
@@ -666,6 +688,15 @@ CREATE TABLE robots.tournament (
 
 
 ALTER TABLE robots.tournament OWNER TO postgres;
+
+ALTER TABLE robots.tournament ALTER COLUMN id ADD GENERATED ALWAYS AS IDENTITY (
+    SEQUENCE NAME robots.tournament_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1
+);
 
 --
 -- Name: COLUMN tournament.ring; Type: COMMENT; Schema: robots; Owner: postgres
@@ -980,6 +1011,12 @@ ALTER TABLE ONLY robots.match
 ALTER TABLE ONLY robots.match
     ADD CONSTRAINT match_tournament_fk FOREIGN KEY (tournament) REFERENCES robots.tournament(id);
 
+--
+-- Name: match tournament_competition_fk; Type: FK CONSTRAINT; Schema: robots; Owner: postgres
+--
+
+ALTER TABLE ONLY robots.tournament
+    ADD CONSTRAINT tournament_competition_fk FOREIGN KEY (competition) REFERENCES robots.competition(id);
 
 --
 -- Name: measurement measurement_fk; Type: FK CONSTRAINT; Schema: robots; Owner: postgres
@@ -1058,6 +1095,50 @@ GRANT SELECT ON TABLE robots."ringAssignment" TO web_anon;
 
 GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE robots.robot TO python_api;
 GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE robots.robot TO web_anon;
+
+GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE robots.tournament TO python_api;
+GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE robots.tournament TO web_anon;
+
+GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE robots.match TO python_api;
+GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE robots.match TO web_anon;
+
+
+
+-- FUNCTIONS
+CREATE OR REPLACE FUNCTION robots.get_tournament_winners(tournament_id INT)
+RETURNS TABLE (competitor_id INT, wins INT) AS $$
+BEGIN
+  RETURN QUERY
+  SELECT
+    c.competitor_id AS competitor_id,
+    COALESCE(COUNT(match_winners.id), 0)::integer AS wins
+  FROM (
+    -- Get all unique competitors (from both competitor1 and competitor2)
+    SELECT DISTINCT unnest(array[m.competitor1, m.competitor2]) AS competitor_id
+    FROM robots.match m
+    WHERE m.tournament = tournament_id
+  ) AS c
+  LEFT JOIN (
+    -- Determine the winner for each match
+    SELECT
+      m.id,
+      CASE
+        WHEN (COUNT(CASE WHEN m.round1winner = 1 THEN 1 END) +
+              COUNT(CASE WHEN m.round2winner = 1 THEN 1 END) +
+              COUNT(CASE WHEN m.round3winner = 1 THEN 1 END)) >= 2 THEN m.competitor1
+        WHEN (COUNT(CASE WHEN m.round1winner = 2 THEN 1 END) +
+              COUNT(CASE WHEN m.round2winner = 2 THEN 1 END) +
+              COUNT(CASE WHEN m.round3winner = 2 THEN 1 END)) >= 2 THEN m.competitor2
+        ELSE NULL -- No winner (if it was a tie or no matches)
+      END AS winner
+    FROM robots.match m
+    WHERE m.tournament = tournament_id
+    GROUP BY m.id
+  ) AS match_winners
+  ON c.competitor_id = match_winners.winner
+  GROUP BY c.competitor_id;
+END;
+$$ LANGUAGE plpgsql;
 
 
 --
