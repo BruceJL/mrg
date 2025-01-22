@@ -1,66 +1,94 @@
 import Component from '@glimmer/component';
 import { action } from '@ember/object';
-import type { Registry as Services } from '@ember/service';
-import { service } from '@ember/service';
-import RoundRobinService from '../services/round-robin';
 import {fn} from '@ember/helper';
 import {on} from '@ember/modifier';
+import {tracked} from '@glimmer/tracking';
+
+  // Convert a date to UTC time
+  function toUTC(date:Date):Date {
+    return new Date(date.getTime() + date.getTimezoneOffset() * 60000);
+  }
 
 export default class TimerComponent extends Component {
-  @service declare store: Services['store'];
-  @service('round-robin') declare rrService: RoundRobinService;
+  @tracked currentTime:Date = new Date();
 
   constructor(owner, args) {
     super(owner, args);
+    this._startAutoUpdate();
+  }
+
+  get currentTimeUTC():Date | null {
+    return this.currentTime ? toUTC(this.currentTime) : null;
   }
 
   get elapsedTime() {
 
-    if (!this.startTime) {
+    if (!this.startTimeUTC) {
       return '00:00:00';
     }
 
-    const currentTime = new Date();
-      const seconds = Math.floor((currentTime - new Date(this.startTime)) / 1000);
+    const seconds = Math.floor((this.currentTimeUTC - this.startTimeUTC) / 1000);
 
-      // convert to date format with hours, minutes and seconds
-      const date = new Date(null);
-      date.setSeconds(seconds);
-      return date.toISOString().substr(11, 8);
+    const date = new Date(null);
+    date.setSeconds(seconds);
+    return date.toISOString().substr(11, 8);
   }
 
-  get startTime() {
-    return this.args.tournament.startTime
+  get startTimeUTC():Date | null {
+    const timer = this.args.tournament?.timer;
+    return timer ? toUTC(new Date(timer)) : null;
   }
 
   @action
-  async startTimer(competitionId, ring) {
-    try {
-      if (this.startTime) {
-        console.log('Resuming timer from:', this.startTime);
-      } else {
-        const newTime = new Date();
-        await this.rrService.setStartTime(competitionId, ring, newTime);
-        console.log('Setting a new start time:', newTime);
-      }
-    } catch (error) {
-      console.error('Error starting timer:', error);
+  startTimer(tournament) {
+    if (!this.startTimeUTC) {
+      const newTime = new Date();
+      tournament.timer = newTime;
+      tournament.save();
+      this.currentTime = newTime;
+    }
+
+    this._startAutoUpdate();
+
+  }
+
+  @action
+  stopTimer() {
+    this._stopAutoUpdate();
+  }
+
+  @action
+  resetTimer(tournament) {
+    tournament.timer = '';
+    tournament.save();
+  }
+
+  private _startAutoUpdate() {
+    if (!this._interval) {
+      this._interval = window.setInterval(() => {
+        this.currentTime = new Date();
+      }, 1000);
     }
   }
 
-  @action
-  resetTimer(competitionId, ring) {
-    this.rrService.resetStartTime(competitionId, ring);
+  private _stopAutoUpdate() {
+    if (this._interval) {
+      clearInterval(this._interval);
+      this._interval = null;
+    }
+  }
+
+  willDestroy() {
+    super.willDestroy(...arguments);
+    this._stopAutoUpdate();
   }
 
   <template>
     <div>
       <h3 >Timer: {{this.elapsedTime}}</h3>
-      {{#if this.startTime}}
-      <button type="button" {{on "click" (fn this.resetTimer @competitionId @tournament.ring)}}>Reset</button>
-      {{else}}
-      <button type="button" {{on "click" (fn this.startTimer @competitionId @tournament.ring)}}>Start</button>
-      {{/if}}
+      <button type="button" {{on "click" (fn this.startTimer @tournament)}}>Start</button>
+      <button type="button" {{on "click" (fn this.stopTimer @tournament)}}>Stop</button>
+      <button type="button" {{on "click" (fn this.resetTimer @tournament)}}>Reset</button>
     </div>
   </template>
 }

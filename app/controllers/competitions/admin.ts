@@ -118,7 +118,6 @@ export default class CompetitionAdminController extends Controller {
   }
 
   @tracked number_rings: number = 0;
-  @tracked judges:string[] = [];
 
   // Slot all checked in competitors to rings
   @action
@@ -133,9 +132,6 @@ export default class CompetitionAdminController extends Controller {
     } else {
       alert('Failed to slot checked in rings');
     }
-
-    this.loadCurrentJudges();
-
   }
 
   // Reset the ring assignment (clear all rings).
@@ -149,32 +145,5 @@ export default class CompetitionAdminController extends Controller {
     }else {
       alert('Failed to reset ring assignments');
     }
-
-    this.loadCurrentJudges();
   }
-
-  @action
-  async assignJudge(ringNumber: number) {
-
-    if (ringNumber > this.judges.length) {
-      console.error('Invalid ring number');
-    }
-
-    var judge = this.judges[ringNumber - 1] || "No Judge";
-
-    const msg = `Assigning ${judge} to ring ${ringNumber}`;
-    console.log(msg);
-    this.rrService.assignJudge(this.model.id, ringNumber, judge);
-  }
-
-  @action
-  async loadCurrentJudges() {
-    this.judges = await this.rrService.getJudges(this.model.id);
-  }
-
-  @action
-  updateJudge(index:number, event: Event) {
-    this.judges[index] = event.target.value;
-  }
-
 }

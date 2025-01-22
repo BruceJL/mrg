@@ -1,22 +1,25 @@
 import Route from '@ember/routing/route';
-import type CompetitionsTournamentRankController from 'mrg-sign-in/controllers/competitions/tournament/rank';
-import type Transition from '@ember/routing/transition';
+import type TournamentModel from 'mrg-sign-in/models/tournament';
+import { service } from '@ember/service';
+import type { Registry as Services } from '@ember/service';
+import RoundRobinService from 'mrg-sign-in/services/round-robin';
+import RSVP from 'rsvp';
 
-type Model = {
-  competition_id: string;
-  ring_number: number;
-}
+export type Resolved<P> = P extends Promise<infer T> ? T : P;
+export type ModelFrom<R extends Route> = Resolved<ReturnType<R['model']>>;
 
 export default class CompetitionsTournamentRankRoute extends Route {
-  model(params:any): Model {
-    return {
-      competition_id: params.competition_id,
-      ring_number: params.ring_number,
-    };
-  }
+  @service declare store: Services['store'];
+  @service('round-robin') declare rrService: RoundRobinService;
 
-  setupController(controller:CompetitionsTournamentRankController, model: Model, transition:Transition): void {
-    super.setupController(controller, model, transition);
-    controller.loadRanking(model.competition_id, model.ring_number);
+  async model(params:any){
+
+    const tournament:TournamentModel = await this.store.queryRecord('tournament', {"competition": params.competition_id, "ring": params.ring_number});
+
+    const res = await this.rrService.getRanking(tournament.id);
+    return RSVP.hash({
+      tournament: tournament,
+      ranking: res.json()
+    });
   }
 }

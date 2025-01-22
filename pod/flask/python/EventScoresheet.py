@@ -351,9 +351,9 @@ def make_odf_score_sheets(
         for j in range(0, len(tournament.matches)):
             logging.debug(
                 "building entry for match: "
-                + tournament.matches[j].contestant1.entry.robotName
+                + tournament.matches[j].competitor1.entry.robotName
                 + " vs "
-                + tournament.matches[j].contestant2.entry.robotName
+                + tournament.matches[j].competitor2.entry.robotName
             )
             if j % 2 == 0:
                 # Only add a new row for every 2nd competition
@@ -397,7 +397,7 @@ def make_odf_score_sheets(
             )
             tc.addElement(
                 P(
-                    text=tournament.matches[j].contestant1.letter,
+                    text=tournament.matches[j].competitor1.letter,
                     stylename=robot_name_paragraph_style_name,
                 )
             )
@@ -423,7 +423,7 @@ def make_odf_score_sheets(
             )
             tc.addElement(
                 P(
-                    text=tournament.matches[j].contestant1.entry.robotName,
+                    text=tournament.matches[j].competitor1.entry.robotName,
                     stylename=robot_name_paragraph_style_name,
                 )
             )
@@ -459,7 +459,7 @@ def make_odf_score_sheets(
             )
             tc.addElement(
                 P(
-                    text=tournament.matches[j].contestant2.entry.robotName,
+                    text=tournament.matches[j].competitor2.entry.robotName,
                     stylename=robot_name_paragraph_style_name,
                 )
             )
@@ -477,7 +477,7 @@ def make_odf_score_sheets(
             )
             tc.addElement(
                 P(
-                    text=tournament.matches[j].contestant2.letter,
+                    text=tournament.matches[j].competitor2.letter,
                     stylename=robot_name_paragraph_style_name,
                 )
             )

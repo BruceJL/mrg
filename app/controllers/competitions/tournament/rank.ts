@@ -1,24 +1,19 @@
-import { action } from '@ember/object';
 import RefreshedController from '../../RefreshedController';
-import { tracked } from '@glimmer/tracking';
+import CompetitionsTournamentRankRoute from '../../../routes/competitions/tournament/rank';
+import type { ModelFrom } from '../../../routes/competitions/tournament/rank';
 
-
+type Ranking = {
+  competitor_id: number,
+  wins: number
+}
 
 export default class CompetitionsTournamentRankController extends RefreshedController {
+  declare model: ModelFrom<CompetitionsTournamentRankRoute>;
 
-  @tracked ranking = [];
-
-  @action
-  async loadRanking(competitionId:string, ringNumber:number){
-
-    console.log(`Fetching ranking for competition ${competitionId} and ring ${ringNumber}`);
-    const response = await fetch(`/api/flask/tournaments/${competitionId}/${ringNumber}/rank`, {
-      method: 'GET',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-    });
-
-    this.ranking = await response.json();
+  get sortedRanking(): Array<Ranking> {
+    const res = this.model.ranking
+    .slice()
+    .sort((a:Ranking, b:Ranking) => (b.wins - a.wins));
+    return res;
   }
 }

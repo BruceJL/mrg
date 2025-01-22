@@ -12,6 +12,7 @@ from utilities import (
     load_ring_assignments_from_database,
     update_round_robin_assignments,
     reset_round_robin_tournaments,
+    get_db_password,
 )
 from RobocritterCertificate import make_odf_certificate
 from VolunteerCertificate import make_odf_volunteer_certificate
@@ -31,142 +32,12 @@ app = Flask(__name__)
 api = Api(app)
 
 ns_mrg = Namespace("mrg", description="")
-ns_tournament = Namespace("ring", description="Tournaments related operations")
 api.add_namespace(ns_mrg, path="/")
-api.add_namespace(ns_tournament, path="/tournaments")
-
 
 # Set up the database connection
 DB_USERNAME = os.environ.get("DB_USERNAME")
 DB_PASSWORD = os.environ.get("DB_PASSWORD")
-DB_CONNECTION = connect_to_database(DB_USERNAME, DB_PASSWORD)
-
-eventlist = []
-
-
-"""
-Endpoints for ns_tournament
-"""
-
-
-@ns_tournament.route("/<string:competition>/<int:ring>/rank", strict_slashes=False)
-class TournamentRanking(Resource):
-    def get(self, competition, ring):
-        event = eventlist[competition]
-        tournament = event.round_robin_tournaments[int(ring)]
-
-        ranking = tournament.get_ranking()
-        return jsonify(ranking)
-
-
-@ns_tournament.route(
-    "/<string:competition>/<int:ring>/start-time", strict_slashes=False
-)
-class TournamentTime(Resource):
-    def post(self, competition, ring):
-        data = request.get_json()
-        event = eventlist[competition]
-
-        tournament = event.round_robin_tournaments[int(ring)]
-        tournament.start_time = data.get("start_time")
-
-        logging.debug(
-            f"set start time for tournament {tournament.name} to {tournament.start_time}"
-        )
-
-        return 200
-
-    def get(self, competition, ring):
-        event = eventlist[competition]
-        tournament = event.round_robin_tournaments[int(ring)]
-        return jsonify(tournament.start_time)
-
-    def delete(self, competition, ring):
-        event = eventlist[competition]
-        tournament = event.round_robin_tournaments[int(ring)]
-        tournament.start_time = ""
-        return 200
-
-
-@ns_tournament.route("/<string:competition>/<int:ring>", strict_slashes=False)
-class Tournament(Resource):
-    def get(self, competition, ring):
-
-        event = eventlist[competition]
-
-        if ring > len(event.round_robin_tournaments):
-            msg = f"Ring number {ring} is out of range for the number of rings in the competition : {len(event.round_robin_tournaments)}"
-            logging.debug(msg)
-            return {"message": msg}, 404
-
-        tournament = event.round_robin_tournaments[int(ring)]
-        tournament_data = tournament.to_json()
-
-        # Fetch matches associated with this tournament
-        matches = tournament.matches
-
-        data = tournament_data
-        data["relationships"] = {
-            "matches": {
-                "data": [{"type": "match", "id": str(match.id)} for match in matches]
-            },
-            "competition": {"data": {"type": "competition", "id": event.id}},
-        }
-
-        res = {"data": data, "included": []}
-
-        return jsonify(res)
-
-
-@ns_tournament.route("/<string:competition>/<int:ring>/matches", strict_slashes=False)
-class TournamentMatches(Resource):
-    def get(self, competition, ring):
-        event = eventlist[competition]
-        tournament = event.round_robin_tournaments[int(ring)]
-
-        matches = []
-        for match in tournament.matches:
-            matches.append(match.to_json())
-
-        res = {"data": matches}
-
-        return jsonify(res)
-
-
-@ns_tournament.route(
-    "/<string:competition>/<int:ring>/matches/<int:match>", strict_slashes=False
-)
-class TournamentMatch(Resource):
-    def get(self, competition, ring, match):
-        event = eventlist[competition]
-        tournament = event.round_robin_tournaments[int(ring)]
-        match = tournament.matches[int(match)]
-
-        res = {"data": match.to_json()}
-        return jsonify(res)
-
-    def put(self, competition, ring, match: str):
-
-        # Get JSON data from PUT request body
-        data = request.get_json()
-        round1winner = data.get("round1winner")
-        round2winner = data.get("round2winner")
-
-        logging.debug("PUT request to /tournaments/<competition>/<ring>/<match>")
-        logging.debug(
-            f"Competition: {competition}, Ring: {ring}, Match: {match}, Round1 Winner: {round1winner}, Round2 Winner: {round2winner}"
-        )
-
-        event = eventlist[competition]
-        tournament = event.round_robin_tournaments[int(ring)]
-        match = tournament.matches[int(match) - 1]
-        match.round1winner = round1winner
-        match.round2winner = round2winner
-        logging.debug(
-            f"Match {match.id} updated with winners {round1winner} and {round2winner}"
-        )
-        return 200
-
+DB_CONNECTION = connect_to_database(DB_USERNAME, DB_PASSWORD, 5432)
 
 """
 Endpoints for ns_mrg
@@ -220,7 +91,7 @@ class EventCertificate(Resource):
         # Get the current competition
         cursor = get_cursor()
 
-        events = eventlist
+        events = get_event_list_from_database(cursor)
         event = events[competition]
 
         winners = []
@@ -267,7 +138,7 @@ class ScoreSheet(Resource):
 
         cursor = get_cursor()
 
-        events = eventlist
+        events = get_event_list_from_database(cursor)
         event = events[competition]
 
         event.entries.clear()
@@ -308,7 +179,7 @@ class LabelSheet(Resource):
 
         cursor = get_cursor()
 
-        events = eventlist
+        events = get_event_list_from_database(cursor)
         event = events[competition]
 
         get_event_entries_from_database(cursor, event)
@@ -369,7 +240,7 @@ class SlotCheckedInEntries(Resource):
 
         cursor = get_cursor()
 
-        events = eventlist
+        events = get_event_list_from_database(cursor)
         event = events[competition]
         event.rings = number_rings
 
@@ -391,6 +262,25 @@ class SlotCheckedInEntries(Resource):
 
         event.rebuild_matches()
 
+        # save match data to the database
+        match_query = (
+            'INSERT into robots."match" '
+            "(competitor1, competitor2, tournament, round1winner,round2winner, round3winner) "
+            "VALUES "
+        )
+
+        for tournament in event.round_robin_tournaments.values():
+            # get tournament id by competition and ring
+            q = f"SELECT id FROM robots.tournament WHERE competition = '{event.id}' AND ring = {tournament.ring}"
+            cursor.execute(q)
+            tournament_id = cursor.fetchone()[0]
+            for match in tournament.matches:
+                match_query += f"({match.competitor1.entry.id}, {match.competitor2.entry.id}, {tournament_id}, 0, 0, 0),"
+
+        match_query = match_query[:-1] + ";"
+        logging.debug(match_query)
+        cursor.execute(match_query)
+
         return 200
 
 
@@ -405,15 +295,9 @@ class ResetCompetitionRingAssignments(Resource):
 
         cursor = get_cursor()
 
-        events = eventlist
+        events = get_event_list_from_database(cursor)
         event = events[competition]
-
-        # Clear out all ring assignements.
-        query = reset_round_robin_tournaments(event)
-        for q in query:
-            cursor.execute(q)
-        event.round_robin_tournaments = {}
-
+        reset_round_robin_tournaments(cursor, event)
         return 200
 
 
@@ -463,49 +347,9 @@ class VolunteerCertificate(Resource):
         return response
 
 
-# Assign a judge to a ring(ring) of a given competition
-@ns_mrg.route("/assign-judge")
-class AssignJudge(Resource):
-    def post(self):
-        data = request.get_json()
-        competition = data.get("competition")
-        ring = int(data.get("ring"))
-        judge = data.get("judge")
-
-        events = eventlist
-        event = events[competition]
-
-        assert ring < len(event.round_robin_tournaments) + 1, logging.debug(
-            f"Tournament number {ring} is out of range for the number of rings in the competition : {len(event.round_robin_tournaments) + 1}"
-        )
-
-        event.round_robin_tournaments[ring].judge = judge
-
-        return 200
-
-
-# Get all the judges for a given competition
-@ns_mrg.route("/get-judges")
-class GetJudges(Resource):
-    def post(self):
-        data = request.get_json()
-        competition = data.get("competition")
-
-        events = eventlist
-        event = events[competition]
-
-        return jsonify(event.get_judges())
-
-
 """
 Functions
 """
-
-
-def setup_events():
-    cursor = get_cursor()
-    global eventlist
-    eventlist = get_event_list_from_database(cursor)
 
 
 # Get the cursor to interact with the database
@@ -513,7 +357,10 @@ def get_cursor():
     global DB_CONNECTION
     if DB_CONNECTION is None or DB_CONNECTION.closed:
         logging.debug("=== Reconnecting to the database====")
-        DB_CONNECTION = connect_to_database(DB_USERNAME, DB_PASSWORD)
+        if app.testing:
+            DB_CONNECTION = connect_to_database("python_api", get_db_password(), 5431)
+        else:
+            DB_CONNECTION = connect_to_database(DB_USERNAME, DB_PASSWORD, 5432)
     return DB_CONNECTION.cursor()
 
 
@@ -548,5 +395,4 @@ def convert_odt_to_pdf(
 
 
 if __name__ == "__main__":
-    setup_events()
     app.run(debug=DEBUGMODE)
