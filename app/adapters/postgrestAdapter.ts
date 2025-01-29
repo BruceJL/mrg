@@ -205,7 +205,15 @@ export default class PostgrestAdapter extends MinimumInterfaceAdapter {
       }
     }
 
-    url = this.prefixURL(type.modelName + '?' + s.join('&'));
+    let modelName = type.modelName;
+
+    if (type.modelName.includes('-')) {
+      // remove the dash and capitalize the next letter
+      const parts = type.modelName.split('-');
+      modelName = parts[0] + parts[1].charAt(0).toUpperCase() + parts[1].slice(1);
+    }
+
+    url = this.prefixURL(modelName + '?' + s.join('&'));
     url = url + this.makeQueryString(undefined, includes);
 
     return this._fetch(url);

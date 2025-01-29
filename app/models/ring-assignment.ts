@@ -1,15 +1,9 @@
-import Model, { belongsTo, attr } from '@ember-data/model';
+import Model, { belongsTo, attr , type AsyncBelongsTo} from '@ember-data/model';
 
-import type CompetitionModel from './competition';
 import type RobotModel from './robot';
 import type TournamentModel from './tournament';
 
 export default class RingAssignmentModel extends Model {
-  @belongsTo('competition', {
-    async: false,
-    inverse: 'ring-assignment',
-  })
-  declare competition: CompetitionModel;
 
   @belongsTo('robot', {
     async: false,
