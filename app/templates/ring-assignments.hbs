@@ -7,13 +7,15 @@
     <th>Driver</th>
   </thead>
   <tbody>
-    {{#each this.sortedAssignments as |item|}}
+    {{#each this.model as |tournament|}}
+      {{#each tournament.ringAssignments as |rignAssignment|}}
       <tr>
-        <td>{{item.robot.name}}</td>
-        <td>{{item.ring}}</td>
-        <td>{{item.letter}}</td>
-        <td>{{item.robot.driver1}}</td>
+        <td>{{rignAssignment.robot.name}}</td>
+        <td>{{tournament.ring}}</td>
+        <td>{{rignAssignment.letter}}</td>
+        <td>{{rignAssignment.robot.driver1}}</td>
       </tr>
+      {{/each}}
     {{/each}}
   </tbody>
 </table>
