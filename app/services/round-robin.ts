@@ -1,18 +1,16 @@
 import Service from '@ember/service';
-import type MatchModel from 'mrg-sign-in/models/match';
 import { service } from '@ember/service';
 import type { Registry as Services } from '@ember/service';
 
 export default class RoundRobinService extends Service {
   @service declare store: Services['store'];
 
-
   slotCheckedInEntries(competitionId: string, numberRings: number): Promise<Response> {
     const body = { competition: competitionId, number_rings: numberRings };
     return postRequest('/api/flask/slot-checked-in-entries', body);
   }
 
-  resetRingAssignments(competitionId: string): Promise<Response> {
+  resetringAssignment(competitionId: string): Promise<Response> {
     const body = { competition: competitionId };
     return postRequest('/api/flask/reset-ring-assignments', body);
   }

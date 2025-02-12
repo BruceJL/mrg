@@ -6,6 +6,7 @@ export default class CompetitionModel extends Model {
   @attr('string') declare name: string;
   @attr('string') declare longName: string;
   @attr('number') declare rings: number;
+  @attr('number') declare slottedRings: number;
 
   @attr('number') declare maxRobotsPerRing: number;
   @attr('number') declare minRobotsPerRing: number;

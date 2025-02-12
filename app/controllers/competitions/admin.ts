@@ -117,12 +117,14 @@ export default class CompetitionAdminController extends Controller {
     await this.fileDownloadService.downloadFile('/api/flask/generate-scoresheet', body, filename);
   }
 
-  @tracked number_rings: number = 0;
+  @tracked number_rings: number = this.model.slottedRings;
 
   // Slot all checked in competitors to rings
   @action
   async slotCheckedInRings(event: SubmitEvent) {
     event.preventDefault();
+    this.model.slottedRings = this.number_rings;
+    await this.model.save();
 
     const response = await this.rrService.slotCheckedInEntries(this.model.id, this.number_rings);
 
@@ -136,8 +138,10 @@ export default class CompetitionAdminController extends Controller {
 
   // Reset the ring assignment (clear all rings).
   @action
-  async resetRingAssignments() {
-    const response = await this.rrService.resetRingAssignments(this.model.id);
+  async resetringAssignment() {
+    const response = await this.rrService.resetringAssignment(this.model.id);
+    this.model.slottedRings = 0;
+    await this.model.save();
 
     if (response.ok) {
       alert('Successfully reset ring assignments');

@@ -1,9 +1,22 @@
 {{this.poll this.refreshData 5000}}
-<h3>{{this.model.tournament.competition.id}}  Ring {{this.model.tournament.ring}} Ranking </h3>
-<ul>
-  {{#each this.sortedRanking as |entry|}}
-    <li>
-      ID: {{entry.competitor_id}}, Score: {{entry.wins}}
-    </li>
-  {{/each}}
-</ul>
+<div class="ranking-container">
+  <h3>{{this.model.tournament.competition.id}}-Ring-{{this.model.tournament.ring}}-Ranking </h3>
+<table class="ranking-table">
+<thead>
+      <tr>
+        <th>Rank</th>
+        <th>Name</th>
+        <th>Score</th>
+      </tr>
+    </thead>
+    <tbody>
+      {{#each this.sortedRanking as |entry index|}}
+        <tr>
+          <td>{{add index 1}}</td>
+          <td>{{entry.robot.name}}</td>
+          <td>{{entry.wins}}</td>
+        </tr>
+      {{/each}}
+    </tbody>
+</table>
+</div>

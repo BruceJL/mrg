@@ -1,11 +1,8 @@
 import RefreshedController from '../../RefreshedController';
 import CompetitionsTournamentRankRoute from '../../../routes/competitions/tournament/rank';
 import type { ModelFrom } from '../../../routes/competitions/tournament/rank';
+import type { Ranking } from '../../../routes/competitions/tournament/rank';
 
-type Ranking = {
-  competitor_id: number,
-  wins: number
-}
 
 export default class CompetitionsTournamentRankController extends RefreshedController {
   declare model: ModelFrom<CompetitionsTournamentRankRoute>;

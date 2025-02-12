@@ -1,0 +1,26 @@
+{{this.poll this.refreshData 5000}}
+<h2 class="tournament-header">{{this.model.competition.id}}-Ring {{this.model.ring}}-Score_Sheet</h2>
+
+<div class="judge-timer-container">
+  <h3 class="judge-container">
+    <label for="judge-{{this.model.ring}}">Judge :</label>
+    <input
+      id="judge-{{this.model.ring}}"
+      type="text"
+      value={{this.model.judge}}
+      autocomplete="off"
+      {{on "change" this.updateJudge}}
+    />
+    <button type="button" {{on "click" this.saveJudge}}>Save</button>
+  </h3>
+  <Timer @tournament={{this.model}} />
+</div>
+
+<hr/>
+<div class="tournament-match-container">
+{{#each this.sortedMatches as |match|}}
+  <Match @match={{match}} />
+{{/each}}
+</div>
+
+{{outlet}}
