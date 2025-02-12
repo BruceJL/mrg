@@ -191,8 +191,22 @@
     </div>
   </form>
   <hr />
-  <h3>Reset Competition RingAssignments</h3>
+  <h3>Live Score Board</h3>
+  {{#each (range 1 this.model.slottedRings) as |ring|}}
+    <li>
+      <LinkTo @route="competitions.tournament.live-score" @models={{array this.model.id ring}}>{{this.model.id}}-Ring-{{ring}}-Live-Score</LinkTo>
+    </li>
+  {{/each}}
+  <hr/>
+    <h3>Live Ranking</h3>
+  {{#each (range 1 this.model.slottedRings) as |ring|}}
+    <li>
+      <LinkTo @route="competitions.tournament.rank" @models={{array this.model.id ring}}>{{this.model.id}}-Ring-{{ring}}-Live-Ranking</LinkTo>
+    </li>
+  {{/each}}
+  <hr/>
+  <h3>Reset Competition ringAssignment</h3>
   <div>
-    <button type="button" {{on "click" this.resetRingAssignments }}>Reset Ring Assignments</button>
+    <button type="button" {{on "click" this.resetringAssignment }}>Reset Ring Assignments</button>
   </div>
 {{/if}}

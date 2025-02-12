@@ -407,7 +407,8 @@ CREATE TABLE robots.competition (
     "measureDeadman" boolean NOT NULL,
     "maxEntries" numeric GENERATED ALWAYS AS (("maxRobotsPerRing" * rings)) STORED,
     "robotCount" integer DEFAULT 0 NOT NULL,
-    "robotCheckedInCount" integer DEFAULT 0 NOT NULL
+    "robotCheckedInCount" integer DEFAULT 0 NOT NULL,
+    "slottedRings" integer DEFAULT 0 NOT NULL
 );
 
 
@@ -761,25 +762,25 @@ COPY robots."activity-log" (datetime, volunteer, robot, function, action, id) FR
 -- Data for Name: competition; Type: TABLE DATA; Schema: robots; Owner: postgres
 --
 
-COPY robots.competition (id, name, "longName", rings, "minRobotsPerRing", "maxRobotsPerRing", checkstring, "registrationTime", "measureMass", "measureSize", "measureTime", "measureScratch", "measureDeadman", "robotCount", "robotCheckedInCount") FROM stdin;
-SSL	SSL	Super Scramble Light	2	4	8	i	2023-02-06 17:36:42.201776+00	t	t	f	f	f	19	0
-LFK	LFK	Line Follower - Kit	1	1	1	i	2023-02-06 17:36:42.201776+00	f	t	f	f	f	0	0
-LMA	LMA	Line Maze Autonomous	1	1	1	i	2023-02-06 17:36:42.201776+00	f	t	f	t	f	2	0
-SSH	SSH	Super Scramble Heavy	1	4	8	i	2023-02-06 17:36:42.201776+00	t	t	f	t	f	3	1
-TPM	TPM	Tractor Pull	1	4	10	i	2023-02-06 17:36:42.201776+00	t	t	t	f	t	1	1
-DRA	DRA	Drag Race Autonomous	1	2	2	i	2023-02-06 17:36:42.201776+00	f	t	f	t	f	3	3
-PST	PST	Prarie Sumo Tethered	4	4	8	i	2023-02-06 17:36:42.201776+00	t	t	f	t	f	7	7
-LFS	LFS	Line Follower - Scratch	4	4	8	i	2023-02-06 17:36:42.201776+00	f	t	f	f	f	9	6
-MS2	MS2	Mini Sumo 2	4	4	8	i	2023-02-06 17:36:42.201776+00	t	f	f	t	f	9	9
-SSR	SSR	Super Scramble Rookie	5	2	2	i	2023-02-06 17:36:42.201776+00	t	t	f	f	f	5	5
-JC1	JC1	Judges' Choice	4	4	8	i	2023-02-06 17:36:42.201776+00	f	f	f	f	f	1	1
-RC1	RC1	Robo Critter	1	1	1	i	2023-02-06 17:36:42.201776+00	f	f	f	f	f	2	2
-MS1	MS1	Mini Sumo 1	8	4	8	i	2023-02-06 18:16:13.069706+00	t	f	f	t	f	7	9
-NXT	NXT	Lego Challenge	4	4	8	i	2023-02-06 17:36:42.201776+00	f	f	f	f	f	14	12
-MSR	MSR	Mini Sumo Rookie	4	4	8	i	2023-02-06 17:36:42.201776+00	t	f	f	t	f	14	13
-MS3	MS3	Mini Sumo 3	8	4	8	i	2023-02-06 17:36:42.201776+00	t	f	f	t	f	10	10
-PSA	PSA	Prarie Sumo Autonomous	4	4	8	i	2023-02-06 17:36:42.201776+00	t	t	t	t	f	5	5
-MSA	MSA	Mini Sumo Autonomous	8	4	8	i	2023-02-06 17:36:42.201776+00	t	f	t	t	f	14	14
+COPY robots.competition (id, name, "longName", rings, "minRobotsPerRing", "maxRobotsPerRing", checkstring, "registrationTime", "measureMass", "measureSize", "measureTime", "measureScratch", "measureDeadman", "robotCount", "robotCheckedInCount","slottedRings") FROM stdin;
+SSL	SSL	Super Scramble Light	2	4	8	i	2023-02-06 17:36:42.201776+00	t	t	f	f	f	19	0	0
+LFK	LFK	Line Follower - Kit	1	1	1	i	2023-02-06 17:36:42.201776+00	f	t	f	f	f	0	0	0
+LMA	LMA	Line Maze Autonomous	1	1	1	i	2023-02-06 17:36:42.201776+00	f	t	f	t	f	2	0	0
+SSH	SSH	Super Scramble Heavy	1	4	8	i	2023-02-06 17:36:42.201776+00	t	t	f	t	f	3	1	0
+TPM	TPM	Tractor Pull	1	4	10	i	2023-02-06 17:36:42.201776+00	t	t	t	f	t	1	1	0
+DRA	DRA	Drag Race Autonomous	1	2	2	i	2023-02-06 17:36:42.201776+00	f	t	f	t	f	3	3	0
+PST	PST	Prarie Sumo Tethered	4	4	8	i	2023-02-06 17:36:42.201776+00	t	t	f	t	f	7	7	0
+LFS	LFS	Line Follower - Scratch	4	4	8	i	2023-02-06 17:36:42.201776+00	f	t	f	f	f	9	6	0
+MS2	MS2	Mini Sumo 2	4	4	8	i	2023-02-06 17:36:42.201776+00	t	f	f	t	f	9	9	0
+SSR	SSR	Super Scramble Rookie	5	2	2	i	2023-02-06 17:36:42.201776+00	t	t	f	f	f	5	5	0
+JC1	JC1	Judges' Choice	4	4	8	i	2023-02-06 17:36:42.201776+00	f	f	f	f	f	1	1	0
+RC1	RC1	Robo Critter	1	1	1	i	2023-02-06 17:36:42.201776+00	f	f	f	f	f	2	2	0
+MS1	MS1	Mini Sumo 1	8	4	8	i	2023-02-06 18:16:13.069706+00	t	f	f	t	f	7	9	0
+NXT	NXT	Lego Challenge	4	4	8	i	2023-02-06 17:36:42.201776+00	f	f	f	f	f	14	12	0
+MSR	MSR	Mini Sumo Rookie	4	4	8	i	2023-02-06 17:36:42.201776+00	t	f	f	t	f	14	13	0
+MS3	MS3	Mini Sumo 3	8	4	8	i	2023-02-06 17:36:42.201776+00	t	f	f	t	f	10	10	0
+PSA	PSA	Prarie Sumo Autonomous	4	4	8	i	2023-02-06 17:36:42.201776+00	t	t	t	t	f	5	5	0
+MSA	MSA	Mini Sumo Autonomous	8	4	8	i	2023-02-06 17:36:42.201776+00	t	f	t	t	f	14	14	0
 \.
 
 

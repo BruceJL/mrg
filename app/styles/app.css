@@ -1,5 +1,5 @@
 #container {
-  width: 1000px;
+  width: 50px;
   margin: auto;
 }
 
@@ -120,10 +120,6 @@ nav li a {
 }
 
 /* Change the link color to #111 (black) on hover */
-nav li a:hover {
-  background-color: #111;
-}
-
 nav li a,
 .dropbtn {
   display: inline-block;
@@ -131,6 +127,10 @@ nav li a,
   text-align: center;
   padding: 14px 16px;
   text-decoration: none;
+}
+
+nav li a:hover {
+  background-color: #111;
 }
 
 nav li a:hover,
@@ -169,4 +169,97 @@ nav li.dropdown-right {
 
 .dropdown:hover .dropdown-content {
   display: block;
+}
+
+/* Tournament */
+.judge-timer-container {
+  display: flex;
+  align-items: center;
+  gap: 1vw;
+  font-size: 2.5vw;
+}
+
+.judge-container {
+  margin: auto;
+  display: flex;
+  align-items: center;
+  gap: 1vw;
+}
+
+.judge-container label {
+  white-space: nowrap;
+}
+
+.judge-container input {
+  padding: 0.5vw;
+  font-size: 2.5vw;
+}
+
+.judge-timer-container button {
+  padding: 0.5vw;
+  font-size: 1.5vw;
+}
+
+.timer-container {
+  display: flex;
+  align-items: center;
+  margin: auto;
+  gap: 1vw;
+}
+
+.tournament-header {
+  text-align: center;
+  font-size: 4vw;
+}
+
+.tournament-match-container {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.tournament-match {
+  border: 1px solid black;
+  font-size: 2.5vw;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 80%;
+}
+
+.tournament-match:nth-child(even) {
+  background-color: lightgrey;
+}
+
+.tournament-match table {
+  table-layout: fixed;
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.tournament-match table td {
+  text-align: center;
+  border: 1px solid black;
+  padding: 5px;
+}
+
+.ranking-container {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.ranking-table {
+  width: 100%;
+  margin: 2rem auto;
+  max-width: 90%;
+  background-color: #cdcfd1;
+  text-align: center;
+  border: #111 solid 1px;
+  border-collapse: collapse;
+}
+
+.ranking-table th, .ranking-table td {
+  border: 1px solid black;
+  border-collapse: collapse;
 }

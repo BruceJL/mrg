@@ -1,7 +1,8 @@
 // app/models/tournament.ts
 import Model, { attr, belongsTo, hasMany,type AsyncBelongsTo, type SyncHasMany} from '@ember-data/model';
 import type CompetitionModel from './competition';
-import type Match from './match'
+import type MatchModel from './match'
+import type RingAssignmentModel from './ring-assignment';
 
 export default class TournamentModel extends Model {
   @attr('number') declare ring: number;
@@ -16,6 +17,10 @@ export default class TournamentModel extends Model {
   @hasMany('match',{
     async:false,
     inverse:null,
-  }) declare matches: SyncHasMany<Match>;
+  }) declare matches: SyncHasMany<MatchModel>;
 
+  @hasMany('ring-assignment', {
+      async: false,
+      inverse: null,
+    }) declare ringAssignments: SyncHasMany<RingAssignmentModel>;
 }

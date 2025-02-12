@@ -1,7 +1,7 @@
 import type MatchModel from 'mrg-sign-in/models/match';
 import RefreshedController from '../../RefreshedController';
-import type { ModelFrom } from '../../../routes/competitions/tournament/tournament';
-import type CompetitionsTournamentRoute from '../../../routes/competitions/tournament/tournament';
+import type { ModelFrom } from '../../../routes/competitions/tournament/live-score';
+import type CompetitionsTournamentRoute from '../../../routes/competitions/tournament/live-score';
 import { action } from '@ember/object';
 import { tracked } from '@glimmer/tracking';
 

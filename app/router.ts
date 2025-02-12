@@ -25,7 +25,7 @@ Router.map(function () {
       path: '/:competition_id/admin',
     });
     this.route('tournament', function() {
-      this.route('tournament', {
+      this.route('live-score', {
         path: '/:competition_id/:ring_number'
       })
       this.route('rank',{
