@@ -14,11 +14,16 @@ export default class RingAssignmentRoute extends Route {
       'competition': params.competition_id,
     });
 
+    // Fetch robots for the competition
+    await this.store.query('robot', {
+      'competition': params.competition_id,
+    });
+
     tournaments.forEach(async (tournament) => {
+
       // Fetch ring assignments for each tournament
       const ringAssignments = await this.store.query('ringAssignment', {
         'tournament': tournament.id,
-        'include': 'robot',
       });
 
       const sortedRingAssignments = Object.values(ringAssignments).sort((a, b) => {
