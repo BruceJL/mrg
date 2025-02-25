@@ -1,4 +1,4 @@
-import { module, test } from 'qunit';
+import { module, test, skip } from 'qunit';
 
 module('Unit | Validator | robot', function () {
   test('it exists', function (assert) {
