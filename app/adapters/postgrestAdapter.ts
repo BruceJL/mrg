@@ -56,10 +56,10 @@ export default class PostgrestAdapter extends MinimumInterfaceAdapter {
     if (includes === undefined && id === undefined) {
       return '';
     }
-    let s = '';
+    let s = '?';
 
     if (id !== undefined) {
-      s = s + '?id=eq.' + id;
+      s = s + 'id=eq.' + id;
     }
 
     if (includes !== undefined) {
@@ -190,13 +190,8 @@ export default class PostgrestAdapter extends MinimumInterfaceAdapter {
     // options: Object, Spec'd in MinimumInterfaceAdapter, but not Adapter?
   ): RSVP.Promise<any> {
     let url = '';
-    let includes: 'string' | undefined = undefined;
     const s = [];
     for (const key in query) {
-      if (key === 'include') {
-        includes = query[key]
-        continue;
-      }
       const value = query[key];
       if (typeof value == 'boolean') {
         s.push(key + '=is.' + value);
@@ -214,7 +209,6 @@ export default class PostgrestAdapter extends MinimumInterfaceAdapter {
     }
 
     url = this.prefixURL(modelName + '?' + s.join('&'));
-    url = url + this.makeQueryString(undefined, includes);
 
     return this._fetch(url);
   }

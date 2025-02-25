@@ -1,4 +1,4 @@
-import Model, { belongsTo, attr , type AsyncBelongsTo} from '@ember-data/model';
+import Model, { belongsTo, attr} from '@ember-data/model';
 
 import type RobotModel from './robot';
 import type TournamentModel from './tournament';
