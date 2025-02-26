@@ -2,7 +2,7 @@
 <hr>
 
 <p>Competition
-  <select id="competition" {{on "change" (val (fn this.updateCompetition this.model.robot))}}>
+  <select id="competition" {{on "change" (fn this.updateCompetition this.model.robot)}}>
     <option value="" selected={{eq @this.model.robot.competition.id ""}} disabled={{true}}>
       Select competition
     </option>

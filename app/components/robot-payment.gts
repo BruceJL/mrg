@@ -6,7 +6,6 @@ import RobotModel from 'mrg-sign-in/models/robot';
 import type { Registry as Services } from '@ember/service';
 import { on } from '@ember/modifier';
 import { fn } from '@ember/helper';
-import { val } from '../helpers/val'
 import { eq } from 'ember-truth-helpers';
 import { notEq } from 'ember-truth-helpers';
 
@@ -60,8 +59,9 @@ export default class RobotCheckinController extends Component<ComponentSignature
 
   @action
   selectPaymentType(
-    value: 'UNPAID' | 'CASH' | 'CREDIT CARD' | 'CHEQUE' | 'INVOICED',
+    event: Event,
   ): void {
+    const value = (event.target as HTMLInputElement).value;
     if (value === 'INVOICED' && this.robot.paid > 0.0) {
       alert(
         'This entry is marked as PAID. Please refund the money before' +
@@ -101,7 +101,7 @@ export default class RobotCheckinController extends Component<ComponentSignature
           <td>
             <select
               aria-label="Select Payment Type"
-              {{on "change" (val @fn this.selectPaymentType)}}
+              {{on "change" this.selectPaymentType}}
               disabled={{this.paymentSelectDisabled}}
             >
               <option value="" selected={{eq @data.paymentType null}} disabled={{true}}>
