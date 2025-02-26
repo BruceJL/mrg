@@ -30,14 +30,15 @@ export default class RobotEditController extends Controller {
   }
 
   @action
-  updateCompetition(r: RobotModel, event: string) {
+  updateCompetition(r: RobotModel, event: Event) {
+    const competitionId = (event.target as HTMLInputElement).value;
     const ok = confirm(
       'Changing the competition of this entry will cause the registration' +
         ' of the entry to be reset to the current time, moving this entry to ' +
         ' the end of the stand-by queue. Are you Sure?',
     );
     if (ok) {
-      this.store.findRecord('competition', event).then((c) => {
+      this.store.findRecord('competition', competitionId).then((c) => {
         r.registered = 'now()';
         r.competition = c;
         r.save();
