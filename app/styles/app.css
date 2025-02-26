@@ -9,6 +9,13 @@ h1 {
   font-size: 24px;
 }
 
+.certificate-form {
+  width: 50%;
+  margin: 20px auto;
+  padding: 10px;
+  border: 3px solid black;
+}
+
 p {
   font-family: Arial;
   font-size: 16px;
@@ -259,7 +266,8 @@ nav li.dropdown-right {
   border-collapse: collapse;
 }
 
-.ranking-table th, .ranking-table td {
+.ranking-table th,
+.ranking-table td {
   border: 1px solid black;
   border-collapse: collapse;
 }
