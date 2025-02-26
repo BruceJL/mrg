@@ -1,12 +1,6 @@
 {{!-- app/templates/robocritter-certificate.hbs --}}
-<form
-  {{on "submit" this.downloadCertificate}}
-  style="
-  width: 50%;
-  margin: 20px auto;
-  padding: 10px;
-  border: 3px solid black;"
->
+<h2>Robocritter Certificate</h2>
+<form class="certificate-form" {{on "submit" this.downloadCertificate}}>
   <div>
     <label for="player">Player Name:</label>
     <Input
