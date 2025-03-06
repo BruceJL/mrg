@@ -4,37 +4,28 @@ import {
   validateFormat,
 } from 'ember-changeset-validations/validators';
 
-export default class RobotValidation {
-  name: validateLength;
-  school: validateLength;
-  driver1: validatePresence;
-  coach: validatePresence;
-  ph: validateFormat;
-  email: validateFormat;
+export default {
+  name:[
+    validateLength({
+      min: 1,
+      max: 28,
+    }),
+    validatePresence(true),
+  ],
 
-  constructor() {
-    this.name = [
-      validateLength({
-        min: 1,
-        max: 28,
-      }),
-      validatePresence(true),
-    ];
+  school: validateLength({
+    max: 150,
+  }),
 
-    this.school = validateLength({
-      max: 150,
-    });
+  driver1: validatePresence(true),
 
-    this.driver1 = validatePresence(true);
+  coach: validatePresence(true),
 
-    this.coach = validatePresence(true);
+  ph: validateFormat({
+    type: 'phone',
+  }),
 
-    this.ph = validateFormat({
-      type: 'phone',
-    });
-
-    this.email = validateFormat({
-      type: 'email',
-    });
-  }
-}
+  email: validateFormat({
+    type: 'email',
+  })
+};

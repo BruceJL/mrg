@@ -255,6 +255,18 @@ export default class PostgrestAdapter extends MinimumInterfaceAdapter {
     });
   }
 
+  deleteRecord<K extends keyof ModelRegistry>(
+    store: Store,
+    type: ModelRegistry[K],
+    snapshot: Snapshot,
+  ): RSVP.Promise<any> {
+    let s = type.modelName + '?id=eq.' + snapshot.id;
+    s = this.prefixURL(s);
+    return this._fetch(s, {
+      method: 'DELETE',
+    });
+  }
+
   prefixURL(modelName: string) {
     const url: Array<string> = [];
     const host = this.host;

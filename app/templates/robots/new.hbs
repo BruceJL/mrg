@@ -1,7 +1,6 @@
-&nbsp;
-<p>Adding a new Entry!</p>
-{{#let (changeset this.model.robot this.RobotValidation) as |c|}}
-  <RobotDetail @changeset={{c}} @competitions={{this.model.competitions}} />
+<h2>Adding a new Entry for: {{this.model.competition.name}}</h2>
+{{#let (changeset this.model this.RobotValidation) as |c|}}
+  <RobotDetail @changeset={{c}}/>
   <button disabled={{c.isInvalid}} type="button" {{on "click" (fn this.save c)}}>
     Save Changes
   </button>

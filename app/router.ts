@@ -42,7 +42,6 @@ Router.map(function () {
     path: 'checkin/:competition_id',
   });
 
-  this.route('robot');
   this.route('log');
   this.route('robocritter-certificate');
   this.route('documents');

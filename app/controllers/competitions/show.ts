@@ -23,7 +23,9 @@ export default class CompetitionShowController extends RefreshedController {
     const competitionId = this.model.id;
 
     returnRobots = returnRobots.filter((robot: RobotModel) => {
-      return robot.competition.name === competitionId;
+      if (robot.competition){
+        return robot.competition.name === competitionId;
+      }
     });
 
     if (robotFilter && robotFilter.length > 1) {

@@ -1,20 +1,27 @@
-import { hash } from 'rsvp';
 import { service } from '@ember/service';
-import Route from '@ember/routing/route';
 import type { Registry as Services } from '@ember/service';
+import Route from '@ember/routing/route';
+import RobotModel from 'mrg-sign-in/models/robot';
 
 export default class RobotsNewRoute extends Route {
   @service declare store: Services['store'];
 
-  async model(params: any) {
+  setUpRobot(robot: RobotModel) {
+    robot.name = "N/A";
+    robot.driver1 = "N/A";
+    robot.coach = "N/A";
+    robot.email = "N/A";
+    robot.ph = "N/A";
+  }
+
+  async model(params: any):Promise<RobotModel> {
     const store = this.store;
     const robot = await store.createRecord('robot');
-    const competitions = await store.findAll('competition');
-    robot.competition = store.peekRecord('competition', params.competition);
+    robot.competition =  await store.findRecord('competition', params.competition);
 
-    return hash({
-      competitions: competitions,
-      robot: robot,
-    });
+    this.setUpRobot(robot); // set default values to trigger changeset validation
+
+    return robot;
   }
+
 }
