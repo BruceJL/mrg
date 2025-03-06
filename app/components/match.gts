@@ -4,7 +4,7 @@ import type { Registry as Services } from '@ember/service';
 import { service } from '@ember/service';
 import { on } from '@ember/modifier';
 import { fn} from '@ember/helper';
-import eq from '../helpers/eq';
+import { eq } from 'ember-truth-helpers';
 import MatchModel from '../models/match';
 
 

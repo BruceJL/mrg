@@ -11,11 +11,14 @@ export interface ComponentSignature {
 }
 
 export default class RobotDetailComponent extends Component<ComponentSignature> {
+
   @action
   handleChange(changeset: EmberChangeset, name: string, event: Event) {
     const value = (event.target as HTMLInputElement).value;
     changeset[name] = value;
   }
+
+
   <template>
     <h3>Registration Details</h3>
     <table class="form">
@@ -25,7 +28,7 @@ export default class RobotDetailComponent extends Component<ComponentSignature> 
           <td>
             <input
               aria-label="Robot Name"
-              class={{if (@changeset.error.name) "full-width-error" "full-width"}}
+              class={{if @changeset.error.name "full-width-error" "full-width"}}
               value={{@changeset.name}}
               {{on "change"  (fn this.handleChange @changeset "name")}}
               autocomplete="off"
@@ -37,7 +40,7 @@ export default class RobotDetailComponent extends Component<ComponentSignature> 
           <td>
             <input
               aria-label="Driver 1 Name"
-              class={{if (@changeset.error.driver1) "full-width-error" "full-width"}}
+              class={{if @changeset.error.driver1 "full-width-error" "full-width"}}
               value={{@changeset.driver1}}
               {{on "change"  (fn this.handleChange @changeset "driver1")}}
               autocomplete="off"

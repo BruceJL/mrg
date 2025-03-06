@@ -4,15 +4,25 @@ import { service } from '@ember/service';
 import type { Registry as Services } from '@ember/service';
 import { EmberChangeset } from 'ember-changeset';
 import CompetitionModel from 'mrg-sign-in/models/competition';
-
-import RobotValidation from '../../validations/robot';
 import RobotModel from 'mrg-sign-in/models/robot';
+import RobotValidation from '../../validations/robot';
 
 export default class RobotEditController extends Controller {
   @service router!: Services['router'];
   @service declare store: Services['store'];
 
-  RobotValidation = new RobotValidation();
+  RobotValidation = RobotValidation;
+
+  @action
+  deleteRobot(robot: RobotModel) {
+    const ok = confirm('Are you sure you want to delete this entry?');
+
+    if (!ok) return;
+
+    robot.deleteRecord();
+    robot.save();
+    this.router.transitionTo('robots.index');
+  }
 
   @action
   done(competition: CompetitionModel) {
@@ -21,7 +31,12 @@ export default class RobotEditController extends Controller {
 
   @action
   save(changeset: EmberChangeset) {
-    return changeset.save();
+    if (changeset.isValid) {
+      return changeset.save();
+    }else{
+      alert('Invalid Rrobot Entry');
+      return;
+    }
   }
 
   @action
