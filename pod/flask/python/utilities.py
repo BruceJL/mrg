@@ -443,6 +443,9 @@ def update_round_robin_assignments(
 
         logging.debug("All done amending " + event.id)
 
+    # update slotted rings number in the competition database
+    q = f'UPDATE robots.competition SET "slottedRings" = {event.rings} WHERE id = \'{event.id}\';'
+    cursor.execute(q)
 
 def reset_round_robin_tournaments(
     cursor: Cursor,

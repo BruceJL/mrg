@@ -131,8 +131,7 @@ export default class CompetitionAdminController extends Controller {
     if (response.ok) {
       alert('Successfully slotted checked in rings');
       console.log('Successfully slotted checked in rings');
-      this.model.slottedRings = this.number_rings;
-      await this.model.save();
+      window.location.reload();
     } else {
       alert('Failed to slot checked in rings');
       console.log('Failed to slot checked in rings');
