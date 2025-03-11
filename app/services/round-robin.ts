@@ -10,7 +10,7 @@ export default class RoundRobinService extends Service {
     return postRequest('/api/flask/slot-checked-in-entries', body);
   }
 
-  resetringAssignment(competitionId: string): Promise<Response> {
+  resetRingAssignment(competitionId: string): Promise<Response> {
     const body = { competition: competitionId };
     return postRequest('/api/flask/reset-ring-assignments', body);
   }

@@ -19,7 +19,7 @@ export default class RobotsNewRoute extends Route {
     const robot = await store.createRecord('robot');
     robot.competition =  await store.findRecord('competition', params.competition);
 
-    this.setUpRobot(robot); // set default values to trigger changeset validation
+    this.setUpRobot(robot); // set default values to remind user of required fields
 
     return robot;
   }

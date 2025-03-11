@@ -20,4 +20,12 @@ module.exports = {
       ].filter(Boolean),
     },
   },
+  proxies: {
+    '/api': {
+      target: 'http://localhost',
+    },
+    '/api/flask': {
+      target: 'http://localhost',
+    },
+  },
 };

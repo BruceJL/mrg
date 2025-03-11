@@ -8,12 +8,20 @@ import Controller from '@ember/controller';
 import RobotValidation from '../../validations/robot';
 import { EmberChangeset } from 'ember-changeset';
 import CompetitionModel from 'mrg-sign-in/models/competition';
+import type RobotModel from 'mrg-sign-in/models/robot';
 
 export default class RobotNewController extends Controller {
   @service router!: Services['router'];
   @service declare store: Services['store'];
   queryParams = ['competition'];
   RobotValidation = RobotValidation;
+
+  @action
+  unload(changeset: EmberChangeset) {
+    const robot:RobotModel = changeset.get('data');
+    robot.unloadRecord();
+    window.history.back();
+  }
 
   @action
   save(changeset: EmberChangeset) {
