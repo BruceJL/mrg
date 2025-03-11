@@ -1,4 +1,7 @@
 <h3 data-test-header>{{this.model.longName}}</h3>
+{{#unless this.model.length }}
+  <p>No ring assignments</p>
+{{/unless}}
 <table data-test-table class="list">
   <thead>
     <th>Name</th>
