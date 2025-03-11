@@ -174,7 +174,9 @@
     <button data-test-button="Download Score Sheet (libreoffice)" type="button" {{on "click" (fn this.downloadScoreSheet false)}}>Download Score Sheet (libreoffice)</button>
   </div>
   <hr />
+
   <h3>Slot Checked In Entries</h3>
+  <p>(set number of rings to 0 will use the maximum number of rings with a zero remainder)</p>
   <form aria-label="Slot checked in entries" {{on "submit" this.slotCheckedInRings}}>
     <div>
       <label for="number_rings">Number of Rings:</label>
