@@ -1,14 +1,14 @@
 {{!-- app/templates/robocritter-certificate.hbs --}}
 <h2>Robocritter Certificate</h2>
-<form class="certificate-form" {{on "submit" this.downloadCertificate}}>
+<form class="certificate-form" {{on "input" this.handleInput}}>
   <div>
     <label for="player">Player Name:</label>
-    <Input
-      @type="text"
+    <input
+      type="text"
       id="player"
       placeholder="Enter your name"
       size="30"
-      @value = {{this.player}}
+      name="player"
       autocomplete="off"
       required
     />
@@ -16,12 +16,12 @@
   <br />
   <div>
     <label for="robot">Robot Name:</label>
-    <Input
-      @type="text"
+    <input
+      type="text"
       id="robot"
       placeholder="Enter your robot's name"
       size="30"
-      @value={{this.robot}}
+      name="robot"
       autocomplete="off"
       required
     />
@@ -29,10 +29,10 @@
   <br />
   <div>
     <label for="minutes">Minutes:</label>
-    <Input
-      @type="number"
+    <input
+      type="number"
       id="minutes"
-      @value={{this.minutes}}
+      name="minutes"
       autocomplete="off"
       min="0"
       max="59"
@@ -42,10 +42,10 @@
   <br />
   <div>
     <label for="seconds">Seconds:</label>
-    <Input
-      @type="number"
+    <input
+      type="number"
       id="seconds"
-      @value={{this.seconds}}
+      name="seconds"
       autocomplete="off"
       min="0"
       max="59"
@@ -54,5 +54,10 @@
 
   </div>
   <br />
-  <div><button type="submit">Download Certificate</button></div>
+  <div>
+    <button type="button"
+    {{on "click" (fn this.downloadCertificate true)}}>Download Certificate (PDF)</button>
+    <button type="button"
+    {{on "click" (fn this.downloadCertificate false)}}>Download Certificate (libreoffice)</button>
+  </div>
 </form>

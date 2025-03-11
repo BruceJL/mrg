@@ -2,26 +2,44 @@ import Controller from '@ember/controller';
 import { action } from '@ember/object';
 import { tracked } from '@glimmer/tracking';
 
+type RobotCritterInputObject = {
+  player: string;
+  robot: string;
+  minutes: string;
+  seconds: string;
+}
+
 export default class RobocritterCertificateController extends Controller {
-  @tracked minutes = 0;
-  @tracked seconds = 0;
-  @tracked player: string = '';
-  @tracked robot: string = '';
+  @tracked userInput: RobotCritterInputObject = {
+    player: '',
+    robot: '',
+    minutes: '',
+    seconds: '',
+  }
 
   @action
-  async downloadCertificate(event: SubmitEvent) {
+  handleInput(event:Event) {
+    const formData = new FormData(event.currentTarget as HTMLFormElement);
+    this.userInput = Object.fromEntries(formData.entries()) as RobotCritterInputObject;
+    console.log(this.userInput);
+  }
+
+  @action
+  async downloadCertificate(pdf: boolean, event: SubmitEvent) {
     event.preventDefault();
+    console.log(pdf);
+
     const response = await fetch('/api/flask/generate-robotcritter-certificate', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify({
-        player: this.player,
-        robot: this.robot,
-        minutes: this.minutes,
-        seconds: this.seconds,
-      }),
+      body: JSON.stringify(
+        {
+          ...this.userInput,
+          pdf: pdf
+        }
+      ),
     });
 
     if (response.ok) {
@@ -29,7 +47,15 @@ export default class RobocritterCertificateController extends Controller {
       const url = window.URL.createObjectURL(blob);
       const a = document.createElement('a');
       a.href = url;
-      a.download = this.player + '_' + this.robot + '_certificate.odg';
+
+      let filename = this.userInput.player + '_' + this.userInput.robot;
+
+      if (pdf) {
+        a.download = filename + '_certificate.pdf';
+      }else{
+        a.download = filename + '_certificate.odg';
+      }
+
       document.body.appendChild(a);
       a.click();
       a.remove();
