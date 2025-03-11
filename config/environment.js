@@ -34,6 +34,9 @@ module.exports = function (environment) {
   if (environment === 'test') {
     // Testem prefers this...
     ENV.locationType = 'none';
+    ENV.APP = {
+      API_NAMESPACE: 'api',
+    };
 
     // keep test console output quieter
     ENV.APP.LOG_ACTIVE_GENERATION = false;

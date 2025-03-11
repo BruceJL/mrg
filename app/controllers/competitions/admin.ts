@@ -9,6 +9,7 @@ import { service } from '@ember/service';
 import FileDownloadService from 'mrg-sign-in/services/file-download';
 import RoundRobinService from 'mrg-sign-in/services/round-robin';
 import CompetitionAdminRoute from 'mrg-sign-in/routes/competitions/admin';
+import { waitFor } from '@ember/test-waiters';
 
 
 export default class CompetitionAdminController extends Controller {
@@ -121,32 +122,41 @@ export default class CompetitionAdminController extends Controller {
 
   // Slot all checked in competitors to rings
   @action
+  @waitFor
   async slotCheckedInRings(event: SubmitEvent) {
-    event.preventDefault();
-    this.model.slottedRings = this.number_rings;
-    await this.model.save();
+    event.preventDefault()
 
     const response = await this.rrService.slotCheckedInEntries(this.model.id, this.number_rings);
 
     if (response.ok) {
       alert('Successfully slotted checked in rings');
       console.log('Successfully slotted checked in rings');
+      this.model.slottedRings = this.number_rings;
+      await this.model.save();
     } else {
       alert('Failed to slot checked in rings');
+      console.log('Failed to slot checked in rings');
     }
   }
 
   // Reset the ring assignment (clear all rings).
   @action
-  async resetringAssignment() {
-    const response = await this.rrService.resetringAssignment(this.model.id);
-    this.model.slottedRings = 0;
-    await this.model.save();
+  @waitFor
+  async resetRingAssignment() {
+    console.log('AdminController: resetRingAssignment');
+    const response = await this.rrService.resetRingAssignment(this.model.id);
 
     if (response.ok) {
+
+      console.log('Successfully reset ring assignments');
       alert('Successfully reset ring assignments');
+
       this.number_rings = 0;
+      this.model.slottedRings = 0;
+      await this.model.save();
+
     }else {
+      console.log('Failed to reset ring assignments');
       alert('Failed to reset ring assignments');
     }
   }

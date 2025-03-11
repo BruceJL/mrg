@@ -1,7 +1,7 @@
 import { LinkTo } from '@ember/routing';
 
 <template>
-  <table class="list">
+  <table data-test-table class="list">
     <thead>
       <tr>
         <th>#</th>
@@ -22,7 +22,7 @@ import { LinkTo } from '@ember/routing';
       {{#each @robots as |item|}}
         <tr class={{item.readyToCompete}}>
           <td>{{item.id}}</td>
-          <td><LinkTo @route="robots.edit" @model={{item.id}}>{{item.name}}</LinkTo></td>
+          <td ><LinkTo data-test-link={{item.name}} @route="robots.edit" @model={{item.id}}>{{item.name}}</LinkTo></td>
           <td>{{item.competition.name}}</td>
           <td>{{item.school}}</td>
           <td>{{item.driver1}}</td>

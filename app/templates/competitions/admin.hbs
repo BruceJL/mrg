@@ -1,4 +1,4 @@
-<h2>{{this.model.longName}}</h2>
+<h2 data-test-header>{{this.model.longName}}</h2>
 <h3>Competition Capacity</h3>
 <p>
   {{#let (changeset this.model) as |changeset|}}
@@ -37,8 +37,8 @@
         </tr>
       </tbody>
     </table>
-    <button type="button" {{on "click" (fn this.save changeset)}}>Save</button>
-    <button
+    <button data-test-button="Save" type="button" {{on "click" (fn this.save changeset)}}>Save</button>
+    <button data-test-button="Undo"
       type="button"
       {{on "click" (fn this.rollback changeset)}}
     >Undo</button>
@@ -47,7 +47,7 @@
 <hr />
 <h3>Restart Measurements</h3>
 <p>
-  <button
+  <button data-test-button="Set Measurment Time"
     type="button"
     {{on "click" (fn this.resetMeasurementTime this.model)}}
   >
@@ -158,27 +158,27 @@
       autocomplete="off"
     />
   </div>
-  <div><button type="submit">Download Certificates</button></div>
+  <div><button data-test-button="Download Winners Certificates" type="submit">Download Certificates</button></div>
 </form>
 <hr />
 <h3>Label Sheets</h3>
 <div>
-  <button type="button" {{on "click" (fn this.downloadLabels true)}}>Download Labels (PDF)</button>
-  <button type="button" {{on "click" (fn this.downloadLabels false)}}>Download Labels (libreoffice)</button>
+  <button data-test-button="Download Labels (PDF)" type="button" {{on "click" (fn this.downloadLabels true)}}>Download Labels (PDF)</button>
+  <button data-test-button="Download Labels (libreoffice)" type="button" {{on "click" (fn this.downloadLabels false)}}>Download Labels (libreoffice)</button>
 </div>
 <hr />
 {{#if this.isRoundRobin}}
-  <h3>Score Sheet</h3>
+  <h3 >Score Sheet</h3>
   <div>
-    <button type="button" {{on "click" (fn this.downloadScoreSheet true)}}>Download Score Sheet (PDF)</button>
-    <button type="button" {{on "click" (fn this.downloadScoreSheet false)}}>Download Score Sheet (libreoffice)</button>
+    <button data-test-button="Download Score Sheet (PDF)" type="button" {{on "click" (fn this.downloadScoreSheet true)}}>Download Score Sheet (PDF)</button>
+    <button data-test-button="Download Score Sheet (libreoffice)" type="button" {{on "click" (fn this.downloadScoreSheet false)}}>Download Score Sheet (libreoffice)</button>
   </div>
   <hr />
   <h3>Slot Checked In Entries</h3>
   <form aria-label="Slot checked in entries" {{on "submit" this.slotCheckedInRings}}>
     <div>
       <label for="number_rings">Number of Rings:</label>
-      <Input
+      <Input data-test-input="number_rings"
         id="number_rings"
         @type="number"
         @value={{this.number_rings}}
@@ -187,26 +187,26 @@
       />
     </div>
     <div>
-      <button type="submit">Slot Checked In Entries</button>
+      <button data-test-button="Slot Checked In Entries" type="submit">Slot Checked In Entries</button>
     </div>
   </form>
   <hr />
-  <h3>Live Score Board</h3>
+  <h3 data-test-header="Live Score Board">Live Score Board</h3>
   {{#each (range 1 this.model.slottedRings) as |ring|}}
     <li>
-      <LinkTo @route="competitions.tournament.live-score" @models={{array this.model.id ring}}>{{this.model.id}}-Ring-{{ring}}-Live-Score</LinkTo>
+      <LinkTo data-test-link="live-score-{{ring}}" @route="competitions.tournament.live-score" @models={{array this.model.id ring}}>{{this.model.id}}-Ring-{{ring}}-Live-Score</LinkTo>
     </li>
   {{/each}}
   <hr/>
-    <h3>Live Ranking</h3>
+    <h3 data-test-header="Live Ranking">Live Ranking</h3>
   {{#each (range 1 this.model.slottedRings) as |ring|}}
     <li>
-      <LinkTo @route="competitions.tournament.rank" @models={{array this.model.id ring}}>{{this.model.id}}-Ring-{{ring}}-Live-Ranking</LinkTo>
+      <LinkTo data-test-link="live-ranking-{{ring}}"@route="competitions.tournament.rank" @models={{array this.model.id ring}}>{{this.model.id}}-Ring-{{ring}}-Live-Ranking</LinkTo>
     </li>
   {{/each}}
   <hr/>
   <h3>Reset Competition ringAssignment</h3>
   <div>
-    <button type="button" {{on "click" this.resetringAssignment }}>Reset Ring Assignments</button>
+    <button data-test-button="Reset ringAssignment" type="button" {{on "click" this.resetRingAssignment }}>Reset Ring Assignments</button>
   </div>
 {{/if}}

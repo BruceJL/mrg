@@ -2,7 +2,7 @@
 <h2 class="tournament-header">{{this.model.competition.id}}-Ring {{this.model.ring}}-Score_Sheet</h2>
 
 <div class="judge-timer-container">
-  <h3 class="judge-container">
+  <h3 data-test-header="Judge" class="judge-container">
     <label for="judge-{{this.model.ring}}">Judge :</label>
     <input
       id="judge-{{this.model.ring}}"
@@ -13,7 +13,7 @@
     />
     <button type="button" {{on "click" this.saveJudge}}>Save</button>
   </h3>
-  <Timer @tournament={{this.model}} />
+  <Timer @tournament={{this.model}}/>
 </div>
 
 <hr/>

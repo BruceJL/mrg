@@ -84,7 +84,7 @@ export default class TimerComponent extends Component {
   }
 
   <template>
-    <div class="timer-container">
+    <div data-test-timer class="timer-container" ...attributes>
       <h3 >Timer: {{this.elapsedTime}}</h3>
       <div>
       <button type="button" {{on "click" (fn this.startTimer @tournament)}}>Start</button>

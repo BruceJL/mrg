@@ -1,5 +1,5 @@
 {{this.poll this.refreshData 4000}}
-<h2>{{this.model.longName}}</h2>
+<h2 data-test-header>{{this.model.longName}}</h2>
 <p>
   Total spaces: {{this.model.maxEntries}}<br>
   Competitors Registered: {{this.model.robotCount}}<br>
@@ -8,7 +8,7 @@
   Spaces Not Checked-in: {{this.model.uncheckedinSpaces}}<br>
 
   Measurment Start Time: {{moment-format this.model.registrationTime "LTS"}}<br>
-  <LinkTo @route="robots.new" @query={{hash competition=this.model.name}}>New Entry</LinkTo><br><br>
+  <LinkTo data-test-newEntry @route="robots.new" @query={{hash competition=this.model.name}}>New Entry</LinkTo><br><br>
   Filter by robot name:<input id="Name Filter" value={{this.robotFilter}} /><br>
 </p>
 
