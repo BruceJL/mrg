@@ -16,9 +16,12 @@ from odf.draw import Page, Frame, TextBox, Image
 from odf import teletype
 from pathlib import Path
 from utilities import make_ordinal
+import logging
 
 
 def make_odf_certificate(minutes: int, seconds, player, robot) -> str:
+
+    logging.info(f"Generating certificate for {player} with {robot}")
     doc = make_odf_certificate_odoc(minutes, seconds, player, robot)
     file_name = (
         Path(__file__).parent / f"{player} with {robot}-robotcritter-certificate.odg"

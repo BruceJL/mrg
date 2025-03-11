@@ -53,12 +53,12 @@ class RobotCritterCertificate(Resource):
         data = request.get_json()
         minutes = data.get("minutes")
         seconds = data.get("seconds")
-        place = data.get("place")
+        player = data.get("player")
         robot = data.get("robot")
         pdf = data.get("pdf")
 
         # Generate certificate
-        file_name = make_odf_certificate(minutes, seconds, place, robot)
+        file_name = make_odf_certificate(minutes, seconds, player, robot)
 
         if pdf:
             file_name = convert_odt_to_pdf(file_name)
