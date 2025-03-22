@@ -5,6 +5,8 @@ from Entry import Entry
 
 
 class Event(object):
+    """Represents an Event, e.g. a group of entries (competitors), divided into
+    round-robin tournaments, competeting for the higest ranking."""
 
     def __lt__(self, other):
         return self.competition < other.competition

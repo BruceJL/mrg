@@ -25,6 +25,9 @@ byeEntry = EventEntry(
 
 
 class RoundRobinTournament(object):
+    """A RoundRobinTournament is a grouping of competitors (entries) in a
+    competition. It contains matches in which the competitors compete."""
+
     def __init__(
         self,
         name: str,
@@ -129,6 +132,8 @@ class RoundRobinTournament(object):
 
 
 class RoundRobinMatch(object):
+    """A RoundRobinMatch is a single match in a RoundRobinTournament."""
+
     def __init__(self, id, competitor1: EventEntry, competitor2):
         self.id = id
         self.competitor1 = competitor1
