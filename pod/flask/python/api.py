@@ -1,7 +1,7 @@
 import os
 import subprocess
 import logging
-from flask import Flask, request, send_file, jsonify
+from flask import Flask, request, send_file
 from flask_restx import Resource, Api, Namespace
 from utilities import (
     connect_to_database,
@@ -30,6 +30,7 @@ else:
 
 app = Flask(__name__)
 api = Api(app)
+
 
 ns_mrg = Namespace("mrg", description="")
 api.add_namespace(ns_mrg, path="/")
@@ -275,7 +276,10 @@ class SlotCheckedInEntries(Resource):
             cursor.execute(q)
             tournament_id = cursor.fetchone()[0]
             for match in tournament.matches:
-                match_query += f"({match.competitor1.entry.id}, {match.competitor2.entry.id}, {tournament_id}, 0, 0, 0),"
+                match_query += (
+                    f"({match.competitor1.entry.id}, {match.competitor2.entry.id}, "
+                    f"{tournament_id}, 0, 0, 0),"
+                )
 
         match_query = match_query[:-1] + ";"
         logging.debug(match_query)

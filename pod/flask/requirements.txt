@@ -1,5 +1,7 @@
 odfpy
 flask
-flask-restx
+flask_restx
 flask_cors
 pyGreSQL
+gunicorn
+retrying

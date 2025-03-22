@@ -7,6 +7,7 @@ from RingAssignment import RingAssignment
 from RoundRobin import RoundRobinTournament
 from Event import Event
 from Entry import Entry
+from retrying import retry
 
 
 def get_db_password():
@@ -32,22 +33,27 @@ def get_db_password():
         return None
 
 
+@retry(wait_fixed=2000, stop_max_attempt_number=10)
 def connect_to_database(username, password, db_port):
-    try:
-        # Connect to the database
-        with connect(
-            # localhost cause contacting postgres on ::1
-            dsn="127.0.0.1:mrg",
-            user=username,
-            password=password,
-            port=db_port,
-        ) as conn:
-            conn.autocommit = True
-            return conn
-    except DatabaseError as e:
-        logging.error(f"Database error occurred: {e}")
-    except Exception as e:
-        logging.error(f"An error occurred: {e}")
+    print("Attempting database connection...")
+    # try:
+    # Connect to the database
+    conn = connect(
+        # localhost cause contacting postgres on ::1
+        dsn="127.0.0.1:mrg",
+        user=username,
+        password=password,
+        port=db_port,
+    )
+    conn.autocommit = True
+    print("Conencted!")
+    return conn
+
+
+# except DatabaseError as e:
+#     logging.error(f"Database error occurred: {e}")
+# except Exception as e:
+#     logging.error(f"An error occurred: {e}")
 
 
 # stolen from:
@@ -444,8 +450,9 @@ def update_round_robin_assignments(
         logging.debug("All done amending " + event.id)
 
     # update slotted rings number in the competition database
-    q = f'UPDATE robots.competition SET "slottedRings" = {event.rings} WHERE id = \'{event.id}\';'
+    q = f"UPDATE robots.competition SET \"slottedRings\" = {event.rings} WHERE id = '{event.id}';"
     cursor.execute(q)
+
 
 def reset_round_robin_tournaments(
     cursor: Cursor,
