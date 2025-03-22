@@ -33,6 +33,9 @@ pod/flask/python/*.csv
 # Unnecessary files
 pod/passwords.txt
 pod/postgresql/01_mrg_data.sql
+pod/nginx/ssl/*.crt
+pod/nginx/ssl/*.key
+pod/nginx/ssl/*.pem
 
 # Mac OS
 *.DS_Store

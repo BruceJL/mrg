@@ -14,6 +14,10 @@ export DB_NAME=mrg
 export PODNAME=mrg-check-in
 export POSTGRES_CONTAINER_NAME=postgres
 
+export NGINX_KEY=./nginx/ssl/nginx-selfsigned.key
+export NGINX_CRT=./nginx/ssl/nginx-selfsigned.crt
+export NGINX_PEM=./nginx/ssl/dhparam.pem
+
 # Dump the passwords to a text file. Just in case.
 echo "export POSTGRESPWD=$POSTGRESPWD\nexport POSTGRESTPWD=$POSTGRESTPWD\nexport FLASKDBPWD=$FLASKDBPWD" > ./passwords.txt
 
@@ -25,13 +29,12 @@ podman image prune -f
 
 # Create the new pod
 # Note that the JSON interface (port 3000) can be dropped for production.
-# the postgresql port can be remapped to 5432 after the local postgresql is removed.
-# or removed entirely if you are super confident that you don't neeed direct access.
+# the postgresql port (5432) can be removed entirely if you are super confident
+# that you don't neeed direct DB access.
 podman pod create --name $PODNAME \
   --hostname mrg-check-in \
-  -p 80:80 \
   -p 443:443 \
-  -p 5431:5432 \
+  -p 5432:5432 \
 
 # Setup PostgreSQL, note the 1 volume for data, and the password generated earlier.
 podman container create \
@@ -70,8 +73,15 @@ podman container create \
   -v ./www/:/var/www/:Z \
   docker.io/library/nginx
 
+# Generate SSL Certificates if any are missing, as this takes awhile.
+if [ ! -f "$NGINX_KEY"  ] || [ ! -f "$NGINX_CRT" ] || [ ! -f "$NGINX_PEM" ]; then
+    openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout $NGINX_KEY -out $NGINX_CRT -subj "/C=CA/ST=Manitoba/L=Winnipeg/O=Manitoba Robot Games/OU=IT/CN=mbrobotgames.ca"
+    openssl dhparam -out $NGINX_PEM 4096
+fi
 # Copy the nginx setup into the configuration volume.
-podman cp ./nginx/. nginx:/etc/nginx/templates
+podman cp ./nginx/. nginx:/etc/nginx/
+# rm $NGINX_KEY $NGINX_CRT $NGINX.PEM
+
 
 # Build the flask image.
 podman build \
