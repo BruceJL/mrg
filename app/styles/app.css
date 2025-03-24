@@ -276,3 +276,69 @@ nav li.dropdown-right {
   border: 1px solid black;
   border-collapse: collapse;
 }
+
+/* Scoring Dropdown */
+.scoring-dropdown {
+  position: relative;
+  display: inline-block;
+  margin: 20px 0;
+}
+
+.scoring-dropbtn {
+  background-color: #4CAF50;
+  color: white;
+  padding: 12px 20px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 16px;
+  font-weight: bold;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+}
+
+.scoring-dropbtn:hover {
+  background-color: #45a049;
+}
+
+.scoring-dropdown-content {
+  display: none;
+  position: absolute;
+  background-color: #f9f9f9;
+  min-width: 200px;
+  box-shadow: 0 8px 16px rgba(0,0,0,0.2);
+  z-index: 1;
+  border-radius: 4px;
+  border: 1px solid #ddd;
+}
+
+.scoring-dropdown:hover .scoring-dropdown-content {
+  display: block;
+}
+
+.scoring-dropdown-content .ring-section {
+  padding: 10px;
+  border-bottom: 1px solid #ddd;
+}
+
+.scoring-dropdown-content .ring-section:last-child {
+  border-bottom: none;
+}
+
+.scoring-dropdown-content h4 {
+  margin: 0 0 8px 0;
+  color: #333;
+  font-size: 14px;
+}
+
+.scoring-dropdown-content a {
+  color: #2196F3;
+  padding: 8px 12px;
+  text-decoration: none;
+  display: block;
+  font-size: 14px;
+}
+
+.scoring-dropdown-content a:hover {
+  background-color: #f1f1f1;
+  color: #1976D2;
+}

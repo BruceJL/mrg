@@ -1,18 +1,55 @@
 {{this.poll this.refreshData 4000}}
 <h2 data-test-header>{{this.model.longName}}</h2>
+{{#if this.isRoundRobin}}
+  <hr />
+  <div class="scoring-dropdown">
+    <button type="button" class="scoring-dropbtn">Scoring</button>
+    <div class="scoring-dropdown-content">
+      {{#if this.model.slottedRings}}
+        {{#each (range 1 this.model.slottedRings) as |ring|}}
+          <div class="ring-section">
+            <h4>Ring {{ring}}</h4>
+            <LinkTo
+              data-test-link="live-score-{{ring}}"
+              @route="competitions.tournament.live-score"
+              @models={{array this.model.id ring}}
+            >Live Score</LinkTo>
+            <LinkTo
+              data-test-link="live-ranking-{{ring}}"
+              @route="competitions.tournament.rank"
+              @models={{array this.model.id ring}}
+            >Live Ranking</LinkTo>
+          </div>
+        {{/each}}
+      {{else}}
+        <div class="ring-section">
+          <p>No rings assigned yet. Please assign rings in the admin section.</p>
+        </div>
+      {{/if}}
+    </div>
+  </div>
+  <hr />
+{{/if}}
 <p>
-  Total spaces: {{this.model.maxEntries}}<br>
-  Competitors Registered: {{this.model.robotCount}}<br>
-  Competitors Checked-in: {{this.model.robotCheckedInCount}}<br>
-  Spaces Unclaimed: {{this.model.unclaimedSpaces}}<br>
-  Spaces Not Checked-in: {{this.model.uncheckedinSpaces}}<br>
+  Total spaces:
+  {{this.model.maxEntries}}<br />
+  Competitors Registered:
+  {{this.model.robotCount}}<br />
+  Competitors Checked-in:
+  {{this.model.robotCheckedInCount}}<br />
+  Spaces Unclaimed:
+  {{this.model.unclaimedSpaces}}<br />
+  Spaces Not Checked-in:
+  {{this.model.uncheckedinSpaces}}<br />
 
-  Measurment Start Time: {{moment-format this.model.registrationTime "LTS"}}<br>
-  <LinkTo data-test-newEntry @route="robots.new" @query={{hash competition=this.model.name}}>New Entry</LinkTo><br><br>
-  Filter by robot name:<input id="Name Filter" value={{this.robotFilter}} /><br>
+  Measurment Start Time:
+  {{moment-format this.model.registrationTime "LTS"}}<br />
+  <LinkTo
+    data-test-newEntry
+    @route="robots.new"
+    @query={{hash competition=this.model.name}}
+  >New Entry</LinkTo><br /><br />
+  Filter by robot name:<input id="Name Filter" value={{this.robotFilter}} /><br
+  />
 </p>
-
-<RobotListing
-  @robots={{this.filteredRobotsByName}}
-  @edit-link="robots.edit"
-/>
+<RobotListing @robots={{this.filteredRobotsByName}} @edit-link="robots.edit" />
