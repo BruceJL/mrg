@@ -13,6 +13,12 @@ export default class CompetitionShowController extends RefreshedController {
   @tracked robotFilter = '';
   @tracked model: CompetitionModel;
 
+  get isRoundRobin() {
+    return ['MSR', 'MS1', 'MS2', 'MS3', 'MSA', 'PST', 'PSA'].includes(
+      this.model.id,
+    );
+  }
+
   get filteredRobotsByName(): Array<RobotModel> {
     const robots: Array<RobotModel> = this.store.peekAll('robot').slice();
     const robotFilter = this.robotFilter;
