@@ -185,13 +185,13 @@ CREATE FUNCTION robots.update_measured_status() RETURNS trigger
 		select "competition" into competition_id from robots.robot where id = new.robot;
 
 	    -- Get the competition record associated with this robot;
-	    select * into competition_rec from competition where id = competition_id;
+	    select * into competition_rec from robots.competition where id = competition_id;
 
 	    measured_ok := true;
 
 	    -- Check to see if all the required measurements are satisfied.
 	    if competition_rec."measureMass" then
-	      select * into measurement from measurement
+	      select * into measurement from robots.measurement
 	        where robot = new.robot and type = 'Mass' ORDER by datetime DESC limit 1;
 	      if((not found) or (measurement."result" = false) or (measurement."datetime" < competition_rec."registrationTime")) then
 	         measured_ok := false;
@@ -199,7 +199,7 @@ CREATE FUNCTION robots.update_measured_status() RETURNS trigger
 	    end if;
 
 	    if competition_rec."measureSize" then
-	      select * into measurement from measurement
+	      select * into measurement from robots.measurement
 	        where robot = new.robot and type = 'Size' ORDER by datetime DESC limit 1;
 	      if((not found) or (measurement."result" = false) or (measurement."datetime" < competition_rec."registrationTime")) then
 	         measured_ok := false;
@@ -207,7 +207,7 @@ CREATE FUNCTION robots.update_measured_status() RETURNS trigger
 	    end if;
 
 	    if competition_rec."measureScratch" then
-	      select * into measurement from measurement
+	      select * into measurement from robots.measurement
 	        where robot = new.robot and type = 'Scratch' ORDER by datetime desc limit 1;
 	      if((not found) or (measurement."result" = false) or (measurement."datetime" < competition_rec."registrationTime")) then
 	         measured_ok := false;
@@ -215,7 +215,7 @@ CREATE FUNCTION robots.update_measured_status() RETURNS trigger
 	    end if;
 
 	    if competition_rec."measureTime" then
-	      select * into measurement from measurement
+	      select * into measurement from robots.measurement
 	        where robot = new.robot and type = 'Time' ORDER by datetime desc limit 1;
 	      if((not found) or (measurement."result" = false) or (measurement."datetime" < competition_rec."registrationTime")) then
 	         measured_ok := false;
@@ -223,7 +223,7 @@ CREATE FUNCTION robots.update_measured_status() RETURNS trigger
 	    end if;
 
 	    if competition_rec."measureDeadman" then
-	      select * into measurement from measurement
+	      select * into measurement from robots.measurement
 	        where robot = new.robot and type = 'Deadman' ORDER by datetime desc limit 1;
 	      if((not found) or (measurement."result" = false) or (measurement."datetime" < competition_rec."registrationTime")) then
 	         measured_ok := false;
@@ -254,14 +254,14 @@ DECLARE
    targetStatus robots."slotting_status";
 BEGIN
    SELECT maxEntries INTO maxEntries
-      FROM robot WHERE competition = NEW.competition;
+      FROM robots.robot WHERE competition = NEW.competition;
 
    checkedInOrUnknownCount := 0;
    checkedInCount := 0;
    -- Select all the robots in this competition and order them by regisration time.
    -- The earliest robot first.
    FOR rec IN
-      SELECT * FROM robot WHERE
+      SELECT * FROM robots.robot WHERE
              competition = NEW.competition
          ORDER BY registered ASC
     loop
@@ -302,11 +302,11 @@ BEGIN
       IF rec.id = NEW.id THEN
          NEW."slottedStatus" := targetStatus;
       ELSIF rec."slottedStatus" != targetStatus THEN
-         UPDATE robot set "slottedStatus" = targetStatus WHERE id = rec.id;
+         UPDATE robots.robot set "slottedStatus" = targetStatus WHERE id = rec.id;
       END IF;
    END LOOP;
 
-   UPDATE competition SET "robotCheckedInCount" = checkedInCount WHERE id = NEW.competition;
+   UPDATE robots.competition SET "robotCheckedInCount" = checkedInCount WHERE id = NEW.competition;
 
    RETURN NEW;
 END;
