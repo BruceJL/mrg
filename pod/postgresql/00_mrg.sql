@@ -1024,7 +1024,7 @@ ALTER TABLE ONLY robots.tournament
 --
 
 ALTER TABLE ONLY robots.measurement
-    ADD CONSTRAINT measurement_fk FOREIGN KEY (robot) REFERENCES robots.robot(id);
+    ADD CONSTRAINT measurement_fk FOREIGN KEY (robot) REFERENCES robots.robot(id) ON DELETE CASCADE;
 
 
 --
