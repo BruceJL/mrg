@@ -1,31 +1,51 @@
 <h2>Robot: "{{this.model.robot.name}}"</h2>
-<hr>
+<hr />
 
 <p>Competition
-  <select id="competition" {{on "change" (fn this.updateCompetition this.model.robot)}}>
-    <option value="" selected={{eq @this.model.robot.competition.id ""}} disabled={{true}}>
+  <select
+    id="competition"
+    {{on "change" (fn this.updateCompetition this.model.robot)}}
+  >
+    <option
+      value=""
+      selected={{eq @model.robot.competition.id ""}}
+      disabled={{true}}
+    >
       Select competition
     </option>
     {{#each this.model.competition as |c|}}
-      <option value={{c.id}} selected={{eq this.model.robot.competition.id c.id}}>
+      <option
+        value={{c.id}}
+        selected={{eq this.model.robot.competition.id c.id}}
+      >
         {{c.name}}
       </option>
     {{/each}}
   </select>
 </p>
-<button type="button" {{on "click" (fn this.deleteRobot this.model.robot)}}>Delete Robot</button>
+<button
+  type="button"
+  {{on "click" (fn this.deleteRobot this.model.robot)}}
+>Delete Robot</button>
 {{#let (changeset this.model.robot this.RobotValidation) as |c|}}
-  <RobotDetail @changeset={{c}}/>
+  <RobotDetail @changeset={{c}} />
   <button type="button" {{on "click" (fn this.rollback c)}}>Undo</button>
-  <button disabled={{c.isInvalid}} type="button" {{on "click" (fn this.save c)}}>
+  <button
+    disabled={{c.isInvalid}}
+    type="button"
+    {{on "click" (fn this.save c)}}
+  >
     Save Changes
   </button>
 {{/let}}
-<hr>
+<hr />
 <RobotCheckin @data={{this.model.robot}} />
-<hr>
+<hr />
 <RobotPayment @data={{this.model.robot}} />
-<hr>
+<hr />
 <RobotMeasurement @data={{this.model.robot}} />
-<hr>
-<button type="button" {{on "click" (fn this.done this.model.robot.competition)}}>Done</button>
+<hr />
+<button
+  type="button"
+  {{on "click" (fn this.done this.model.robot.competition)}}
+>Done</button>
