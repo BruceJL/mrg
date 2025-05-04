@@ -77,10 +77,7 @@ export default class CompetitionAdminController extends Controller {
 
   // Download the Winners certificates for the competitions.
   @action
-  async downloadCertificates(pdf: boolean, event: SubmitEvent) {
-
-    event.preventDefault();
-
+  async downloadCertificates(pdf: boolean) {
     const filename = pdf ? `${this.model.id}_certificates.pdf` : `${this.model.id}_certificates.odt`;
     const body = {
       competition: this.model.id,

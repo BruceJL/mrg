@@ -388,7 +388,7 @@ def convert_odt_to_pdf(
         "libreoffice",
         "--headless",
         "--convert-to",
-        "pdf",
+        'pdf:writer_pdf_Export:{"SelectPdfVersion":{"type":"long","value":"2"}}',
         input_file,
     ]
 

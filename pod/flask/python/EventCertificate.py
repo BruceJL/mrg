@@ -101,7 +101,7 @@ def make_odf_winners_certificates_odoc(
     font_styles.addElement(s)
 
     # Big Caslon font
-    big_caslon_font_name = "Big Caslon"
+    big_caslon_font_name = "Big Caslon FB"
     s = FontFace(
         name=big_caslon_font_name,
         fontfamily=big_caslon_font_name,
