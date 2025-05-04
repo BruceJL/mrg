@@ -11,16 +11,6 @@ from odf.style import (
     FontFace,
     GraphicProperties,
 )
-from odf.style import (
-    Style,
-    MasterPage,
-    PageLayout,
-    PageLayoutProperties,
-    TextProperties,
-    ParagraphProperties,
-    FontFace,
-    GraphicProperties,
-)
 from odf.text import P, Span
 from odf.draw import Page, Frame, TextBox, Image
 from odf import teletype
@@ -44,14 +34,11 @@ def make_odf_participation_certificates_odoc(
 
     now = datetime.datetime.now()
     games_iteration: "int" = now.year - 1998
-    games_iteration: "int" = now.year - 1998
 
     document = OpenDocumentDrawing()
 
     drawing_page = "DP1"
     drawing_page_style = Style(
-        family="drawing-page",
-        name=drawing_page,
         family="drawing-page",
         name=drawing_page,
     )
@@ -69,22 +56,11 @@ def make_odf_participation_certificates_odoc(
         printorientation="landscape",
         pageheight="8.5in",
         pagewidth="11in",
-        writingmode="lr-tb",
-        margintop="1.25in",
-        marginbottom="1.25in",
-        marginleft="1.25in",
-        marginright="1.25in",
-        printorientation="landscape",
-        pageheight="8.5in",
-        pagewidth="11in",
     )
     page_layout_style.addElement(page_layout_properties)
     document.automaticstyles.addElement(page_layout_style)
 
     masterpage = MasterPage(
-        stylename=drawing_page,
-        name="Standard",
-        pagelayoutname=page_layout_style,
         stylename=drawing_page,
         name="Standard",
         pagelayoutname=page_layout_style,
@@ -102,13 +78,6 @@ def make_odf_participation_certificates_odoc(
             textareaverticalalign="middle",
         )
     )
-    frame_style.addElement(
-        GraphicProperties(
-            fill="none",
-            stroke="none",
-            textareaverticalalign="middle",
-        )
-    )
     document.styles.addElement(frame_style)
 
     # Font declarations in font-face-decls
@@ -119,8 +88,6 @@ def make_odf_participation_certificates_odoc(
     s = FontFace(
         name=cooper_black_font_name,
         fontfamily=cooper_black_font_name,
-        name=cooper_black_font_name,
-        fontfamily=cooper_black_font_name,
     )
     font_styles.addElement(s)
 
@@ -129,16 +96,12 @@ def make_odf_participation_certificates_odoc(
     s = FontFace(
         name=big_caslon_font_name,
         fontfamily=big_caslon_font_name,
-        name=big_caslon_font_name,
-        fontfamily=big_caslon_font_name,
     )
     font_styles.addElement(s)
 
     # Big Caslon Pro font
     big_caslon_pro_font_name = "Adobe Caslon Pro"
     s = FontFace(
-        name=big_caslon_pro_font_name,
-        fontfamily=big_caslon_pro_font_name,
         name=big_caslon_pro_font_name,
         fontfamily=big_caslon_pro_font_name,
     )
@@ -153,17 +116,8 @@ def make_odf_participation_certificates_odoc(
         name=sponsors_paragraph_style,
         family="paragraph",
         displayname="Big Caslon Pro 12pt",
-        name=sponsors_paragraph_style,
-        family="paragraph",
-        displayname="Big Caslon Pro 12pt",
     )
     s.addElement(ParagraphProperties(textalign="center"))
-    s.addElement(
-        TextProperties(
-            fontname=big_caslon_pro_font_name,
-            fontsize="12pt",
-        )
-    )
     s.addElement(
         TextProperties(
             fontname=big_caslon_pro_font_name,
@@ -178,16 +132,6 @@ def make_odf_participation_certificates_odoc(
         name=big_caslon_pro_12pt_bold,
         family="text",
         displayname="Big Caslon Pro 12pt Bold",
-        name=big_caslon_pro_12pt_bold,
-        family="text",
-        displayname="Big Caslon Pro 12pt Bold",
-    )
-    s.addElement(
-        TextProperties(
-            fontname=big_caslon_pro_font_name,
-            fontsize="12pt",
-            fontweight="bold",
-        )
     )
     s.addElement(
         TextProperties(
@@ -204,16 +148,6 @@ def make_odf_participation_certificates_odoc(
         name=big_caslon_pro_12pt_superscript,
         family="text",
         displayname="Big Caslon Pro 12pt Superscript",
-        name=big_caslon_pro_12pt_superscript,
-        family="text",
-        displayname="Big Caslon Pro 12pt Superscript",
-    )
-    s.addElement(
-        TextProperties(
-            fontname=big_caslon_pro_font_name,
-            fontsize="12pt",
-            textposition="33% 58%",
-        )
     )
     s.addElement(
         TextProperties(
@@ -230,12 +164,8 @@ def make_odf_participation_certificates_odoc(
         name=big_caslon_pro_18pt,
         family="text",
         displayname="Big Caslon Pro 18pt",
-        name=big_caslon_pro_18pt,
-        family="text",
-        displayname="Big Caslon Pro 18pt",
     )
     s.addElement(ParagraphProperties(textalign="center"))
-    s.addElement(TextProperties(fontname=big_caslon_pro_font_name, fontsize="18pt"))
     s.addElement(TextProperties(fontname=big_caslon_pro_font_name, fontsize="18pt"))
     styles.addElement(s)
 
@@ -245,16 +175,6 @@ def make_odf_participation_certificates_odoc(
         name=big_caslon_pro_18pt_superscript,
         family="text",
         displayname="Big Caslon Pro 18pt Superscript",
-        name=big_caslon_pro_18pt_superscript,
-        family="text",
-        displayname="Big Caslon Pro 18pt Superscript",
-    )
-    s.addElement(
-        TextProperties(
-            fontname=big_caslon_pro_font_name,
-            fontsize="18pt",
-            textposition="33% 58%",
-        )
     )
     s.addElement(
         TextProperties(
@@ -271,21 +191,6 @@ def make_odf_participation_certificates_odoc(
         name=winners_paragraph_style,
         family="paragraph",
         displayname="Big Caslon 22pt",
-        name=winners_paragraph_style,
-        family="paragraph",
-        displayname="Big Caslon 22pt",
-    )
-    s.addElement(
-        ParagraphProperties(
-            textalign="center",
-            lineheight="180%",
-        )
-    )
-    s.addElement(
-        TextProperties(
-            fontname=big_caslon_font_name,
-            fontsize="22pt",
-        )
     )
     s.addElement(
         ParagraphProperties(
@@ -307,21 +212,6 @@ def make_odf_participation_certificates_odoc(
         name=competition_paragraph_style,
         family="paragraph",
         displayname="Big Caslon 22pt",
-        name=competition_paragraph_style,
-        family="paragraph",
-        displayname="Big Caslon 22pt",
-    )
-    s.addElement(
-        ParagraphProperties(
-            textalign="center",
-            lineheight="140%",
-        )
-    )
-    s.addElement(
-        TextProperties(
-            fontname=big_caslon_font_name,
-            fontsize="22pt",
-        )
     )
     s.addElement(
         ParagraphProperties(
@@ -343,16 +233,6 @@ def make_odf_participation_certificates_odoc(
         name=big_caslon_22pt_bold,
         family="text",
         displayname="Big Caslon 22pt Bold",
-        name=big_caslon_22pt_bold,
-        family="text",
-        displayname="Big Caslon 22pt Bold",
-    )
-    s.addElement(
-        TextProperties(
-            fontname=big_caslon_font_name,
-            fontsize="22pt",
-            fontweight="bold",
-        )
     )
     s.addElement(
         TextProperties(
@@ -369,15 +249,6 @@ def make_odf_participation_certificates_odoc(
         name=big_caslon_pro_22pt,
         family="text",
         displayname="Big Caslon Pro 22pt",
-        name=big_caslon_pro_22pt,
-        family="text",
-        displayname="Big Caslon Pro 22pt",
-    )
-    s.addElement(
-        TextProperties(
-            fontname=big_caslon_pro_font_name,
-            fontsize="22pt",
-        )
     )
     s.addElement(
         TextProperties(
@@ -393,16 +264,6 @@ def make_odf_participation_certificates_odoc(
         name=big_caslon_pro_22pt_superscript,
         family="text",
         displayname="Big Caslon Pro 22pt",
-        name=big_caslon_pro_22pt_superscript,
-        family="text",
-        displayname="Big Caslon Pro 22pt",
-    )
-    s.addElement(
-        TextProperties(
-            fontname=big_caslon_pro_font_name,
-            fontsize="22pt",
-            textposition="33% 58%",
-        )
     )
     s.addElement(
         TextProperties(
@@ -419,16 +280,6 @@ def make_odf_participation_certificates_odoc(
         name=big_caslon_pro_22pt_bold,
         family="text",
         displayname="Big Caslon Pro 22pt bold",
-        name=big_caslon_pro_22pt_bold,
-        family="text",
-        displayname="Big Caslon Pro 22pt bold",
-    )
-    s.addElement(
-        TextProperties(
-            fontname=big_caslon_pro_font_name,
-            fontsize="22pt",
-            fontweight="bold",
-        )
     )
     s.addElement(
         TextProperties(
@@ -445,17 +296,6 @@ def make_odf_participation_certificates_odoc(
         name=big_caslon_pro_22pt_bold_superscript,
         family="text",
         displayname="Big Caslon Pro 22pt bold superscript",
-        name=big_caslon_pro_22pt_bold_superscript,
-        family="text",
-        displayname="Big Caslon Pro 22pt bold superscript",
-    )
-    s.addElement(
-        TextProperties(
-            fontname=big_caslon_pro_font_name,
-            fontsize="22pt",
-            fontweight="bold",
-            textposition="33% 58%",
-        )
     )
     s.addElement(
         TextProperties(
@@ -473,15 +313,6 @@ def make_odf_participation_certificates_odoc(
         name=cooper_black_22pt,
         family="text",
         displayname="Cooper Black 22pt",
-        name=cooper_black_22pt,
-        family="text",
-        displayname="Cooper Black 22pt",
-    )
-    s.addElement(
-        TextProperties(
-            fontname=cooper_black_font_name,
-            fontsize="22pt",
-        )
     )
     s.addElement(
         TextProperties(
@@ -497,16 +328,6 @@ def make_odf_participation_certificates_odoc(
         name=big_caslon_pro_26pt_bold,
         family="text",
         displayname="Big Caslon Pro 26pt Bold",
-        name=big_caslon_pro_26pt_bold,
-        family="text",
-        displayname="Big Caslon Pro 26pt Bold",
-    )
-    s.addElement(
-        TextProperties(
-            fontname=big_caslon_pro_font_name,
-            fontsize="26pt",
-            fontweight="bold",
-        )
     )
     s.addElement(
         TextProperties(
@@ -523,17 +344,6 @@ def make_odf_participation_certificates_odoc(
         name=big_caslon_pro_26pt_bold_superscript,
         family="text",
         displayname="Big Caslon Pro 26pt Bold",
-        name=big_caslon_pro_26pt_bold_superscript,
-        family="text",
-        displayname="Big Caslon Pro 26pt Bold",
-    )
-    s.addElement(
-        TextProperties(
-            fontname=big_caslon_pro_font_name,
-            fontsize="26pt",
-            fontweight="bold",
-            textposition="33% 58%",
-        )
     )
     s.addElement(
         TextProperties(
@@ -562,9 +372,6 @@ def make_odf_participation_certificates_odoc(
             masterpagename=masterpage,
             name="page-" + str(i),
             stylename=drawing_page,
-            masterpagename=masterpage,
-            name="page-" + str(i),
-            stylename=drawing_page,
         )
         document.drawing.addElement(page)
 
@@ -580,19 +387,9 @@ def make_odf_participation_certificates_odoc(
             height="3.28in",
             x="1.75in",
             y="1.67in",
-            stylename=frame_style,
-            width="2.08in",
-            height="3.28in",
-            x="1.75in",
-            y="1.67in",
         )
 
         winner_frame = Frame(
-            width="6.00in",
-            height="4.00in",
-            x="3.75in",
-            y="1.00in",
-            stylename=frame_style,
             width="6.00in",
             height="4.00in",
             x="3.75in",
@@ -608,21 +405,11 @@ def make_odf_participation_certificates_odoc(
             x="1.25in",
             y="5.00in",
             stylename=frame_style,
-            width="8.50in",
-            height="1.00in",
-            x="1.25in",
-            y="5.00in",
-            stylename=frame_style,
         )
         competition_text_box = TextBox()
         competition_frame.addElement(competition_text_box)
 
         sponsors_frame = Frame(
-            width="6.50in",
-            height="1.34in",
-            x="2.25in",
-            y="6.00in",
-            stylename=frame_style,
             width="6.50in",
             height="1.34in",
             x="2.25in",
@@ -643,29 +430,19 @@ def make_odf_participation_certificates_odoc(
         p = P(
             text="",
             stylename=winners_paragraph_style,
-            text="",
-            stylename=winners_paragraph_style,
         )
 
         # This is to certify that.
         teletype.addTextToElement(p, "This is to certify that\n")
         # competitor name
         p.addElement(Span(stylename=big_caslon_22pt_bold, text=competitorname))
-        p.addElement(Span(stylename=big_caslon_22pt_bold, text=competitorname))
         teletype.addTextToElement(p, "\n")
 
         # from
         p.addElement(Span(stylename=big_caslon_pro_22pt, text="From\n"))
-        p.addElement(Span(stylename=big_caslon_pro_22pt, text="From\n"))
         teletype.addTextToElement(p, "\n")
 
         # School
-        p.addElement(
-            Span(
-                text=schoolname,
-                stylename=big_caslon_pro_26pt_bold,
-            )
-        )
         p.addElement(
             Span(
                 text=schoolname,
@@ -681,20 +458,8 @@ def make_odf_participation_certificates_odoc(
                 stylename=big_caslon_pro_22pt,
             )
         )
-        p.addElement(
-            Span(
-                text="\nparticipated in the design and construction of\n",
-                stylename=big_caslon_pro_22pt,
-            )
-        )
 
         # robot name
-        p.addElement(
-            Span(
-                text=robotname,
-                stylename=big_caslon_pro_26pt_bold,
-            )
-        )
         p.addElement(
             Span(
                 text=robotname,
@@ -708,16 +473,8 @@ def make_odf_participation_certificates_odoc(
         p = P(
             text="",
             stylename=competition_paragraph_style,
-            text="",
-            stylename=competition_paragraph_style,
         )
 
-        p.addElement(
-            Span(
-                text="A Robot(s) which, through his/her ingenuity, gained fame in the",
-                stylename=big_caslon_pro_22pt,
-            )
-        )
         p.addElement(
             Span(
                 text="A Robot(s) which, through his/her ingenuity, gained fame in the",
@@ -727,30 +484,6 @@ def make_odf_participation_certificates_odoc(
         teletype.addTextToElement(p, "\n")
 
         # 2xth annual robot games.
-        p.addElement(
-            Span(
-                text=games_iteration,
-                stylename=big_caslon_pro_22pt_bold,
-            )
-        )
-        p.addElement(
-            Span(
-                text=make_ordinal(games_iteration),
-                stylename=big_caslon_pro_22pt_bold_superscript,
-            )
-        )
-        p.addElement(
-            Span(
-                text=" Annual ",
-                stylename=big_caslon_pro_22pt_bold,
-            )
-        )
-        p.addElement(
-            Span(
-                text="Manitoba Robot Games",
-                stylename=cooper_black_22pt,
-            )
-        )
         p.addElement(
             Span(
                 text=games_iteration,
@@ -796,31 +529,11 @@ def make_odf_participation_certificates_odoc(
                 stylename=big_caslon_pro_18pt,
             )
         )
-        p.addElement(
-            Span(
-                text="held " + calendar.month_name[now.month] + " " + str(now.day),
-                stylename=big_caslon_pro_18pt,
-            )
-        )
-        p.addElement(
-            Span(
-                text=make_ordinal(now.day),
-                stylename=big_caslon_pro_18pt_superscript,
-            )
-        )
-        p.addElement(
-            Span(
-                text=", " + str(now.year) + " at Tec Voc High School",
-                stylename=big_caslon_pro_18pt,
-            )
-        )
 
         competition_text_box.addElement(p)
 
         # Sponsors text box
         p = P(
-            text="",
-            stylename=sponsors_paragraph_style,
             text="",
             stylename=sponsors_paragraph_style,
         )
@@ -832,19 +545,8 @@ def make_odf_participation_certificates_odoc(
                 stylename=big_caslon_pro_12pt_superscript,
             )
         )
-        p.addElement(
-            Span(
-                text=make_ordinal(games_iteration),
-                stylename=big_caslon_pro_12pt_superscript,
-            )
-        )
 
         teletype.addTextToElement(
-            p,
-            " Annual Manitoba Robot Games was made possible by\n"
-            + "SCIENCE COUNCIL MANITOBA\n"
-            + "and the generous support and "
-            + "contributions of: CTTAM, EGM, Emergent BioSolutions, IEEE, ",
             p,
             " Annual Manitoba Robot Games was made possible by\n"
             + "SCIENCE COUNCIL MANITOBA\n"
@@ -858,8 +560,6 @@ def make_odf_participation_certificates_odoc(
         # ))
 
         teletype.addTextToElement(
-            p,
-            ", U of M Faculty of Engineering,\n" + "and the Winnipeg School Division.",
             p,
             ", U of M Faculty of Engineering,\n" + "and the Winnipeg School Division.",
         )
