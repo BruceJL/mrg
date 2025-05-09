@@ -32,7 +32,7 @@ export default class RobotNewController extends Controller {
     if (competitionId.id === 'RC1') {
       changeset.set('invoiced', '5.00');
     } else {
-      changeset.set('invoiced', '20.00');
+      changeset.set('invoiced', '10.00');
     }
 
     const c = this.store.peekRecord('competition', competitionId.id);

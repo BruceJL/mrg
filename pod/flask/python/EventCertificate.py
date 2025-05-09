@@ -40,7 +40,7 @@ def make_odf_winners_certificates_odoc(
 ) -> OpenDocument:
 
     now = datetime.datetime.now()
-    games_iteration: "int" = now.year - 1998
+    games_iteration: "int" = now.year - 1999
 
     competition_name: "str" = event.long_name
 

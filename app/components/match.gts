@@ -31,6 +31,9 @@ export default class MatchComponent extends Component {
         </thead>
         <tbody>
           <tr>
+            {{!-- <td rowspan="3">
+                {{@match.competitor1.letter}}
+            </td> --}}
             <td>
                 <input type="radio" aria-label="Round 1 winner: {{@match.competitor1.name}}" name="{{@match.id}}_round1" value="1" {{on "change" (fn this.updateMatchWinner @match 1 1)}} checked={{eq @match.round1winner 1}}/>
             </td>
@@ -46,6 +49,9 @@ export default class MatchComponent extends Component {
             <td>
                 <input type="radio" aria-label="Round 1 winner: {{@match.competitor2.name}}" name="{{@match.id}}_round1" value="2" {{on "change" (fn this.updateMatchWinner @match 1 2)}} checked={{eq @match.round1winner 2}}/>
             </td>
+            {{!-- <td rowspan="3">
+                {{@match.competitor2.letter}}
+            </td> --}}
           </tr>
           <tr>
             <td>

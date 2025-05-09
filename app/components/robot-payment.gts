@@ -93,7 +93,7 @@ export default class RobotCheckinController extends Component<ComponentSignature
     <table class="form">
       <tbody>
         <tr>
-          <td>Invoiced:</td>
+          <td>Fee:</td>
           <td colspan="2">{{@data.formattedInvoicedDollars}}</td>
         </tr>
         <tr>
@@ -124,22 +124,11 @@ export default class RobotCheckinController extends Component<ComponentSignature
                 {{@data.formattedPaidDollars}}
                 <button type="button" {{on "click" this.refund}}>Refund</button>
               {{else}}
-                <button type="button" {{on "click" (fn this.paid "10")}}>Paid $10.00</button><br>
-                <button type="button" {{on "click" (fn this.paid "20")}}>Paid $20.00</button>
+                <button type="button" {{on "click" (fn this.paid "5")}}>Paid $5.00</button><br>
+                <button type="button" {{on "click" (fn this.paid "10")}}>Paid $10.00</button>
               {{/if}}
             {{/if}}
           </td>
-        </tr>
-        <tr>
-          <td>On-time/Late:</td>
-          <td>
-            {{#if @data.late}}
-              LATE
-            {{else}}
-              ON-TIME
-            {{/if}}
-          </td>
-          <td></td>
         </tr>
       </tbody>
     </table>

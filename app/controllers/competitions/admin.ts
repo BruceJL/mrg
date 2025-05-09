@@ -46,8 +46,8 @@ export default class CompetitionAdminController extends Controller {
   resetMeasurementTime(model: CompetitionModel): void {
     const ok = confirm(
       'This will cause all robot in this competition to be ' +
-        'marked as &quot;not measured&quot; and set the competition ' +
-        "'Measurement Start Time'; to right now. This is useful when " +
+        "marked as 'not measured' and set the competition " +
+        "'Measurement Start Time' to right now. This is useful when " +
         'a reweigh of robots is required.',
     );
 
