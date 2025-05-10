@@ -185,7 +185,8 @@ export default class PostgresSerializer extends MinimumSerializerInterface {
     // populate the 'data' field.
     if (
       requestType === 'findRecord' ||
-      requestType === 'queryRecord' //||
+      requestType === 'queryRecord' ||
+      requestType === 'createRecord' //||
       // payload.length === 1
     ) {
       payload_rtn['data'] = data[0];
