@@ -90,6 +90,9 @@ export default class NavigationController extends Component {
             <LinkTo @route="checkin" @model="PSA">PSA - Prairie Sumo Autonomous</LinkTo>
           </div>
         </li>
+        <li class="dropdown">
+          <LinkTo @route="documents">Documents</LinkTo>
+        </li>
         <li class="dropdown-right">
           <a href="#" {{on "click" this.invalidateSession}}>{{this.session.data.authenticated.fullname}} - LOGOUT</a>
         </li>

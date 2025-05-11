@@ -557,12 +557,12 @@ def make_odf_winners_certificates_odoc(
             " Annual Manitoba Robot Games was made possible by\n"
             + "SCIENCE COUNCIL MANITOBA\n"
             + "and the generous support and "
-            + "contributions of: CTTAM, EGM, Vehicle Technology Center, ",
+            + "contributions of: CTTAM, EGM, Vehicle Technology Center,",
         )
 
         teletype.addTextToElement(
             p,
-            ", U of M Faculty of Engineering,\n" + "and the Winnipeg School Division.",
+            "U of M Price Faculty of Engineering, and the Winnipeg School Division.",
         )
         sponsors_text_box.addElement(p)
 

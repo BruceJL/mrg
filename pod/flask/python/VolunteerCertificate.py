@@ -92,7 +92,7 @@ def make_odf_volunteer_certificate_odoc(
     font_styles.addElement(s)
 
     # Big Caslon font
-    big_caslon_font_name = "Big Caslon"
+    big_caslon_font_name = "Big Caslon FB"
     s = FontFace(
         name=big_caslon_font_name,
         fontfamily=big_caslon_font_name,
@@ -511,7 +511,7 @@ def make_odf_volunteer_certificate_odoc(
         " Annual Manitoba Robot Games was made possible by\n"
         + "SCIENCE COUNCIL MANITOBA\n"
         + "and the generous support and "
-        + "contributions of: CTTAM, EGM, Emergent BioSolutions, IEEE, ",
+        + "contributions of: CTTAM, EGM, Vehicle Technology Center,",
     )
 
     # p.addElement(Span(
@@ -521,7 +521,7 @@ def make_odf_volunteer_certificate_odoc(
 
     teletype.addTextToElement(
         p,
-        ", U of M Faculty of Engineering,\n" + "and the Winnipeg School Division.",
+        "U of M Price Faculty of Engineering, and the Winnipeg School Division.",
     )
     sponsors_text_box.addElement(p)
 
