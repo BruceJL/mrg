@@ -557,7 +557,7 @@ def make_odf_winners_certificates_odoc(
             " Annual Manitoba Robot Games was made possible by\n"
             + "SCIENCE COUNCIL MANITOBA\n"
             + "and the generous support and "
-            + "contributions of: CTTAM, EGM, Emergent BioSolutions, IEEE, ",
+            + "contributions of: CTTAM, EGM, Vehicle Technology Center, ",
         )
 
         teletype.addTextToElement(
