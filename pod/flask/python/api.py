@@ -330,6 +330,37 @@ class ParticipationCertificate(Resource):
         return response
 
 
+# Generate participation certificates for all competitors in a given competition.
+@ns_mrg.route("/generate-event-participation-certificates")
+class EventParticipationCertificate(Resource):
+    def post(self):
+        data = request.get_json()
+        competition = data.get("competition")
+        pdf = data.get("pdf")
+
+        cursor = get_cursor()
+
+        # get the event
+        events = get_event_list_from_database(cursor)
+        event = events[competition]
+
+        # get all the entries for a given event.
+        get_event_entries_from_database(cursor, event)
+        entries = event.entries
+
+        file_name = make_odf_participation_certificates(competitors=entries)
+
+        if pdf:
+            file_name = convert_odt_to_pdf(file_name)
+
+        response = send_file(file_name, as_attachment=True, download_name=file_name)
+
+        # Remove the file after sending
+        os.remove(file_name)
+
+        return response
+
+
 # Generate volunteer certificate for a given volunteer
 @ns_mrg.route("/generate-volunteer-certificate")
 class VolunteerCertificate(Resource):

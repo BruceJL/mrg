@@ -12,9 +12,9 @@
   >Download Robot Labels (libreoffice)</button>
 </div>
 <hr />
-<h3 data-test-header="Participation Certificates">Participation Certificates</h3>
+<h3 data-test-header="Participation Certificates">Participation Certificates for all Participants</h3>
 <p>
-  Note: Certificates are only available for participants who have checked in.
+  Note: Participation Certificates are only available for participants who have checked in.
 </p>
 <div>
   <button
@@ -27,18 +27,45 @@
   >Download Participation Certificates (libreoffice)</button>
 </div>
 <hr />
+
+<h3 data-test-header="Event Participation Certificates">Participation Certificates for an Event</h3>
+<div>
+  <label for="event_id">Event ID (ex:LFS):</label>
+  <input
+    id="event_id"
+    type="text"
+    placeholder="Event ID"
+    {{on "input" this.updateEventId}}
+  >
+
+  <div>
+    <button
+      type="button"
+      {{on "click" (fn this.downloadEventParticipationCertificates true)}}
+    >
+      Download Participation Certificates for an Event (PDF)
+    </button>
+    <button
+      type="button"
+      {{on "click" (fn this.downloadEventParticipationCertificates false)}}
+    >
+      Download Participation Certificates for an Event (libreoffice)
+    </button>
+  </div>
+</div>
+<hr />
 <h3 data-test-header="Volunteer Certificate">Volunteer Certificate</h3>
 <div>
   <div>
     <label for="name">Volunteer Name:</label>
-    <Input
-      @type="text"
+    <input
+      type="text"
       id="name"
       placeholder="Enter name"
       size="30"
-      @value={{this.volunteer_name}}
       autocomplete="off"
       required
+      {{on "input" this.updateVolunteerName}}
     />
   </div>
   <br />
@@ -46,14 +73,14 @@
     type="button"
     {{on
       "click"
-      (fn this.downloadVolunteerCertificate this.volunteer_name true)
+      (fn this.downloadVolunteerCertificate true)
     }}
   >Download Volunteer Certificate (PDF)</button>
   <button
     type="button"
     {{on
       "click"
-      (fn this.downloadVolunteerCertificate this.volunteer_name false)
+      (fn this.downloadVolunteerCertificate false)
     }}
   >Download Volunteer Certificate (libreoffice)</button>
 </div>
