@@ -3,6 +3,7 @@ import subprocess
 import logging
 from flask import Flask, request, send_file
 from flask_restx import Resource, Api, Namespace
+from Entry import Entry
 from utilities import (
     connect_to_database,
     get_event_list_from_database,
@@ -18,8 +19,9 @@ from RobocritterCertificate import make_odf_certificate
 from VolunteerCertificate import make_odf_volunteer_certificate
 from EventScoresheet import make_odf_score_sheets
 from EventCertificate import make_odf_winners_certificates
-from EventLabels import make_odf5160_labels, make_odf5160_all_event_labels
+from EventLabels import make_odf5160_labels, make_odf5160_all_event_labels_with_extra
 from ParticipationCertificate import make_odf_participation_certificates
+
 
 DEBUGMODE = True
 
@@ -201,7 +203,7 @@ class LabelSheet(Resource):
         return response
 
 
-# Make labels for robots in all events at once
+# Make labels for robots in all events at once with extra blank labels(max(3,10% of entries)) for each event
 @ns_mrg.route("/generate-all-label-sheets")
 class AllLabelSheets(Resource):
     def post(self):
@@ -211,7 +213,7 @@ class AllLabelSheets(Resource):
         cursor = get_cursor()
         entries = get_all_entries_from_database(cursor)
 
-        file_name = make_odf5160_all_event_labels(entries)
+        file_name = make_odf5160_all_event_labels_with_extra(entries)
 
         if pdf:
             file_name = convert_odt_to_pdf(file_name)

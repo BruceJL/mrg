@@ -17,6 +17,45 @@ from odf.text import P
 from datetime import date
 import math
 from Entry import Entry
+from collections import defaultdict
+
+
+# Generate labels for all events at once with extra blank labels(max(3,10% of entries)) for each event
+def make_odf5160_all_event_labels_with_extra(
+    entries: list[Entry],
+) -> str:
+
+    file_name = f"all({len(entries)})_labels.odt"
+
+    # Group entries by competition
+    grouped_entries = defaultdict(list)
+    for entry in entries:
+        grouped_entries[entry.competition].append(entry)
+
+    for event, event_entries in grouped_entries.items():
+        count = len(event_entries)
+        num_extras = max(0, max(3, int(0.1 * count)))
+        for _ in range(num_extras):
+            event_entries.append(
+                Entry(
+                    competition=event,
+                    id=-1,
+                    robotName="_______________",
+                    driver1="__________________",
+                    school="___________________",
+                )
+            )
+
+    all_entries = sorted(
+        [entry for sublist in grouped_entries.values() for entry in sublist],
+        key=lambda x: (x.competition, x.robotName),
+    )
+
+    doc = make_odf5160_labels_odt(
+        entries=all_entries,
+    )
+    doc.save(file_name)
+    return file_name
 
 
 # Generate labels for all events at once
@@ -665,7 +704,9 @@ def make_odf5160_labels_odt(
         tc.addElement(
             make_label(
                 competition=entries[j].competition,
-                robot_id=entries[j].id,
+                robot_id=(
+                    entries[j].id if entries[j].id != -1 else "______"
+                ),  # -1 means a dummy entry(blank label)
                 robot_name=entries[j].robotName,
                 driver_name=entries[j].driver1,
                 school_name=entries[j].school,
