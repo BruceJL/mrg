@@ -33,8 +33,7 @@ def make_odf_volunteer_certificate_odoc(
 ) -> OpenDocument:
 
     now = datetime.datetime.now()
-    games_iteration: "int" = now.year - 1998
-
+    games_iteration: "int" = now.year - 1999
     document = OpenDocumentDrawing()
 
     drawing_page = "DP1"
@@ -511,7 +510,7 @@ def make_odf_volunteer_certificate_odoc(
         " Annual Manitoba Robot Games was made possible by\n"
         + "SCIENCE COUNCIL MANITOBA\n"
         + "and the generous support and "
-        + "contributions of: CTTAM, EGM, Vehicle Technology Center,",
+        + "contributions of: CTTAM, EGM, Vehicle Technology Center,\n",
     )
 
     # p.addElement(Span(

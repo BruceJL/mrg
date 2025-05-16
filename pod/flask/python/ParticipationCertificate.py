@@ -23,7 +23,7 @@ def make_odf_participation_certificates(
     competitors: list[Entry],
 ) -> str:
     doc = make_odf_participation_certificates_odoc(competitors)
-    filename = Path(__file__).parent / f"participation_certificates.odg"
+    filename = Path(__file__).parent / "participation_certificates.odg"
     doc.save(filename)
     return str(filename)
 
@@ -33,7 +33,7 @@ def make_odf_participation_certificates_odoc(
 ) -> OpenDocument:
 
     now = datetime.datetime.now()
-    games_iteration: "int" = now.year - 1998
+    games_iteration: "int" = now.year - 1999
 
     document = OpenDocumentDrawing()
 
@@ -551,7 +551,7 @@ def make_odf_participation_certificates_odoc(
             " Annual Manitoba Robot Games was made possible by\n"
             + "SCIENCE COUNCIL MANITOBA\n"
             + "and the generous support and "
-            + "contributions of: CTTAM, EGM, Emergent BioSolutions, IEEE, ",
+            + "contributions of: CTTAM, EGM, Vehicle Technology Center,\n",
         )
 
         # p.addElement(Span(
@@ -561,7 +561,7 @@ def make_odf_participation_certificates_odoc(
 
         teletype.addTextToElement(
             p,
-            ", U of M Faculty of Engineering,\n" + "and the Winnipeg School Division.",
+            "U of M Price Faculty of Engineering, and the Winnipeg School Division.",
         )
         sponsors_text_box.addElement(p)
 
