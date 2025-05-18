@@ -20,7 +20,7 @@ export default class CompetitionAdminController extends Controller {
   @service('round-robin') declare rrService: RoundRobinService;
 
   get isRoundRobin() {
-    return ['MSR', 'MS1', 'MS2', 'MS3', 'MSA', 'PST', 'PSA'].includes(
+    return ['MSR', 'MS1', 'MS2', 'MS3', 'MSA', 'PST', 'PSA', 'SSH', 'SSL', 'SSR', 'DRA'].includes(
       this.model.id,
     );
   }
