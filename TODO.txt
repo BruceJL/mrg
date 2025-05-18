@@ -14,5 +14,14 @@
 - Update registration page to reflect that slotting has occurred for a given competition.
 - Create a script that will automatically scroll long lists when displayed in “Viewer” mode. e.g. a view only console for competitors to check ring assignments, etc.s
 - Refactor Adpater/Serializer into a Handler. Use the new warp drive patterns.
-
-
+- Competitions that don't require measurement aren't marked as green when other remaining requirments are met.
+- Add 'Debit' to the payment types.
+- Create a page to show the total of each tyoe of payment for the day (e.g. Cash, cheque, debit, etc.)
+- Build the ability to produce double knockout tornamement bracket sheets based upon placing of robots.
+- Build the ability to show and mark winners of double knockout torunaments through the web interface.
+- Build the ability to display double knockout tournaments on the webpage.
+- Move participation certificate generation to the admin page for each competition.
+- Work quadlet script generation into buildpod.sh
+- Rename "Invoiced" to "fee" in the database for clarity.
+- Inline workflow documentation.
+- Ember version bump

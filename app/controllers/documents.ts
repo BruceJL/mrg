@@ -18,7 +18,22 @@ async function processReponse(response: Response, file_name: string){
 
 export default class DocumentsController extends Controller {
     @tracked volunteer_name:string = "";
-    
+    @tracked eventId = '';
+
+    @action
+    updateEventId(event:Event) {
+      if (event.target) {
+        this.eventId = (event.target as HTMLInputElement).value;
+      }
+    }
+
+    @action
+    updateVolunteerName(event:Event) {
+      if (event.target) {
+        this.volunteer_name = (event.target as HTMLInputElement).value;
+      }
+    }
+
     @action
     async downloadParticipationCertificates( pdf:boolean) {
     const response = await fetch('/api/flask/generate-participation-certificates', {
@@ -46,14 +61,41 @@ export default class DocumentsController extends Controller {
     }
 
     @action
-    async downloadVolunteerCertificate(name:string ,pdf:boolean) {
+    async downloadEventParticipationCertificates(pdf:boolean) {
+    const response = await fetch('/api/flask/generate-event-participation-certificates', {
+        method: 'POST',
+        headers: {
+        'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+        competition: this.eventId,
+        pdf: pdf,
+        }),
+    });
+
+    let filename = "";
+    if(true === pdf){
+        filename = this.eventId + "_participation_certificates.pdf";
+    }else{
+        filename = this.eventId + "_participation_certificates.odg";
+    }
+
+    if (response.ok) {
+        processReponse(response, filename);
+    } else {
+        alert('Failed to download event participation certificates');
+    }
+    }
+
+    @action
+    async downloadVolunteerCertificate(pdf:boolean) {
     const response = await fetch('/api/flask/generate-volunteer-certificate', {
         method: 'POST',
         headers: {
         'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-        volunteer: name,
+        volunteer: this.volunteer_name,
         pdf: pdf,
         }),
     });

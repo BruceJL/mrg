@@ -154,9 +154,13 @@ def get_event_entries_from_database(
         + f"'{event.id}' ORDER BY registered;"
     )
 
+    logging.debug(sql)
+
     cursor.execute(sql)
 
     data = cursor.fetchall()
+
+    logging.debug(f"Found {len(data)} entries for {event.id}")
 
     for row in data:
         if row.name != "":

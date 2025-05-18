@@ -35,7 +35,7 @@ export default class RobotModel extends Model {
 
   // Check-in information
   @attr('number', {
-    // amount the entry was invoiced.
+    // dollar amount the entry was invoiced.
     defaultValue: 0,
   })
   declare invoiced: number;
