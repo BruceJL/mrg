@@ -195,11 +195,11 @@ export default class PostgresSerializer extends MinimumSerializerInterface {
     }
 
     // only include the 'included' key if there is at least one item.
-    if (included.length === 1) {
-      payload_rtn['included'] = included[0];
-    } else if (included.length > 1) {
+    // Ember expects the included field in a JSON:API response to be an array of resource objects, even if there's only one related record.
+    if (included.length >= 1) {
       payload_rtn['included'] = included;
     }
+
     //debugger;
     return payload_rtn;
   }
