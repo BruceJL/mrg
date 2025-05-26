@@ -1079,7 +1079,7 @@ GRANT SELECT,UPDATE ON TABLE robots.competition TO web_anon;
 --
 
 GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE robots.measurement TO python_api;
-GRANT SELECT,INSERT ON TABLE robots.measurement TO web_anon;
+GRANT SELECT,INSERT,UPDATE ON TABLE robots.measurement TO web_anon;
 
 
 --

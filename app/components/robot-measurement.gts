@@ -69,24 +69,16 @@ export interface ComponentSignature {
 export default class RobotMeasurementComponent extends Component<ComponentSignature> {
   @service declare store: Services['store'];
 
-  constructor(owner: unknown, args: ComponentSignature['Args']) {
-    super(owner, args);
-    this.competition = args.data.competition;
-    this.measurement = args.data.measurement;
-  }
-
   @tracked Mass = false;
   @tracked Size = false;
   @tracked Scratch = false;
   @tracked Time = false;
   @tracked Deadman = false;
-  @tracked competition;
-  @tracked measurement;
 
   @action
   PopulateRadioBoxes(model: RobotModel): void {
     console.log('PopulateRadioBoxes fired');
-    const registrationTime = this.competition.registrationTime;
+    const registrationTime = this.args.data.competition.registrationTime;
     this.Mass = isMeasured(model.measurement, 'Mass', registrationTime, true);
     this.Size = isMeasured(model.measurement, 'Size', registrationTime, true);
     this.Scratch = isMeasured(
@@ -104,8 +96,9 @@ export default class RobotMeasurementComponent extends Component<ComponentSignat
     );
   }
 
+  // Returns the robot's measurements in reverse order — most recent first
   get reversedMeasurments(): RobotMeasurementModel[] {
-    return this.measurement.slice().reverse();
+    return this.args.data.measurement.slice().reverse();
   }
 
   // This function is called by the radio boxes on the page to populate
@@ -132,7 +125,7 @@ export default class RobotMeasurementComponent extends Component<ComponentSignat
   }
 
   requiredMeasurementsfn(): Array<string> {
-    const comp = this.competition;
+    const comp = this.args.data.competition;
     const measurements = [];
 
     if (comp !== undefined) {
@@ -180,8 +173,9 @@ export default class RobotMeasurementComponent extends Component<ComponentSignat
       robot.reload();
     });
   }
+
   <template>
-    <h3>Measurement Information</h3>
+    <h3 id="measurement-info">Measurement Information</h3>
     <p><b>Measured:</b> {{@data.formattedMeasured}}</p>
     <table class="form" >
       <thead>
