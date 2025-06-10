@@ -35,7 +35,7 @@
     id="event_id"
     type="text"
     placeholder="Event ID"
-    {{on "input" this.updateEventId}}
+    {{on "change" this.updateEventId}}
   >
 
   <div>
@@ -65,7 +65,7 @@
       size="30"
       autocomplete="off"
       required
-      {{on "input" this.updateVolunteerName}}
+      {{on "change" this.updateVolunteerName}}
     />
   </div>
   <br />

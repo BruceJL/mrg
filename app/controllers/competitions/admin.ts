@@ -10,6 +10,7 @@ import FileDownloadService from 'mrg-sign-in/services/file-download';
 import RoundRobinService from 'mrg-sign-in/services/round-robin';
 import CompetitionAdminRoute from 'mrg-sign-in/routes/competitions/admin';
 import { waitFor } from '@ember/test-waiters';
+import type { Registry as Services } from '@ember/service';
 
 
 export default class CompetitionAdminController extends Controller {
@@ -18,11 +19,83 @@ export default class CompetitionAdminController extends Controller {
 
   @service('file-download') declare fileDownloadService: FileDownloadService;
   @service('round-robin') declare rrService: RoundRobinService;
+  @service declare store: Services['store'];
 
   get isRoundRobin() {
     return ['MSR', 'MS1', 'MS2', 'MS3', 'MSA', 'PST', 'PSA', 'SSH', 'SSL', 'SSR', 'DRA'].includes(
       this.model.id,
     );
+  }
+
+
+  private async findRobotById(id: string) {
+    try {
+      const robot = await this.store.findRecord('robot', id, { include: 'competition' });
+      return robot;
+    } catch (e) {
+      return null;
+    }
+  }
+
+  private async getRobotbyId(id: string) {
+    const robot = await this.findRobotById(id);
+    if (!robot) {
+      this.showFlashError(`Could not find robot with ID ${id}`);
+      return null;
+    }
+    return robot;
+  }
+
+  @tracked flashMessage = '';
+
+  @action
+  showFlashError(message: string, duration = 2000) {
+    this.flashMessage = message;
+
+    // Automatically clear the flash after the duration
+    setTimeout(() => {
+      this.flashMessage = '';
+    }, duration);
+  }
+
+  @tracked deleteRobotId = '';
+
+  @action
+  updateDeleteRobotId(event: Event) {
+    if (event.target) {
+      const value = (event.target as HTMLInputElement).value;
+      this.deleteRobotId = value;
+    }
+  }
+
+  @action
+  async deleteRobot() {
+
+    if (!this.deleteRobotId){
+      this.showFlashError('Please enter a robot ID');
+      return;
+    }
+
+    const robot = await this.getRobotbyId(this.deleteRobotId);
+
+    if (!robot) return;
+
+    // Confirm with user before deleting
+    const ok = confirm(
+      `Are you sure you want to delete ${robot.name} (Id: ${robot.id}) in competition ${robot.competition.name}?`
+    );
+    if (!ok) return;
+
+
+    robot.deleteRecord();
+
+    try {
+      await robot.save();
+      this.showFlashError(`Robot ${robot.name} deleted successfully`);
+      this.deleteRobotId = '';
+    } catch (e: any) {
+      this.showFlashError(`Failed to delete robot: ${e.message || e}`);
+    }
   }
 
   @action
@@ -75,9 +148,29 @@ export default class CompetitionAdminController extends Controller {
   @tracked place2: string = '';
   @tracked place3: string = '';
 
+  @action
+  updatePlace(place: 'place1' | 'place2' | 'place3', event: Event) {
+    const value = (event.target as HTMLInputElement).value;
+    this[place] = value;
+  }
+
   // Download the Winners certificates for the competitions.
   @action
   async downloadCertificates(pdf: boolean) {
+
+    const required = [this.place1, this.place2, this.place3].some((v) => !!v);
+    if (!required) {
+      this.showFlashError('Please enter at least one robot ID');
+      return;
+    }
+
+    const promises = [this.place1, this.place2, this.place3]
+      .filter((v) => !!v)
+      .map((id) => this.getRobotbyId(id));
+
+    const robots = await Promise.all(promises);
+    if (robots.includes(null)) return;
+
     const filename = pdf ? `${this.model.id}_certificates.pdf` : `${this.model.id}_certificates.odt`;
     const body = {
       competition: this.model.id,
@@ -116,6 +209,11 @@ export default class CompetitionAdminController extends Controller {
   }
 
   @tracked number_rings: number = this.model.slottedRings;
+
+  @action
+  updateNumberRings(event: Event) {
+    this.number_rings = parseInt((event.target as HTMLInputElement).value);
+  }
 
   // Slot all checked in competitors to rings
   @action

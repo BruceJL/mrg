@@ -14,17 +14,6 @@ export default class RobotEditController extends Controller {
   RobotValidation = RobotValidation;
 
   @action
-  deleteRobot(robot: RobotModel) {
-    const ok = confirm('Are you sure you want to delete this entry?');
-
-    if (!ok) return;
-
-    robot.deleteRecord();
-    robot.save();
-    this.router.transitionTo('robots.index');
-  }
-
-  @action
   done(competition: CompetitionModel) {
     this.router.transitionTo('competitions.show', competition);
   }
