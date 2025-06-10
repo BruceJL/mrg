@@ -342,3 +342,12 @@ nav li.dropdown-right {
   background-color: #f1f1f1;
   color: #1976D2;
 }
+
+.text-red {
+  color: red;
+}
+
+.mx-2 {
+  margin-left: 0.5rem;
+  margin-right: 0.5rem;
+}

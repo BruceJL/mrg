@@ -23,7 +23,7 @@ export default class RingAssignmentRoute extends Route {
         tournament: tournament.id,
       });
 
-      const sortedRingAssignments = Object.values(ringAssignments).sort(
+      const sortedRingAssignments = ringAssignments.slice().sort(
         (a, b) => {
           return a.robot.name.localeCompare(b.robot.name);
         },
