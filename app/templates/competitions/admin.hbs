@@ -1,9 +1,10 @@
+{{this.poll this.refreshData 5000}}
 <h2 data-test-header>{{this.model.longName}}</h2>
-  {{#if this.flashMessage}}
-    <div class="flash-error">
-      {{this.flashMessage}}
-    </div>
-  {{/if}}
+{{#if this.flashMessageService.message}}
+  <div class="{{if (eq this.flashMessageService.type 'success') 'flash-success' 'flash-error'}}">
+    {{this.flashMessageService.message}}
+  </div>
+{{/if}}
 {{!-- Competition Capacity --}}
 <div>
   <h3>Competition Capacity</h3>
@@ -148,45 +149,47 @@
 <hr />
 
 {{!-- Winners Certificates --}}
-{{!-- Winners Certificates --}}
 <div>
   <h3>Winners Certificates</h3>
   <form aria-label="Download Winners Certificates" {{on "submit" (fn this.downloadCertificates true)}}>
     <div>
-      <label for="place1">1st place Robot's ID:</label>
-      <input
-        type="text"
+      <label for="place1">1st place Robot:</label>
+      <select
         id="place1"
-        placeholder="Ex:403"
-        size="10"
         value={{this.place1}}
-        autocomplete="off"
         {{on "change" (fn this.updatePlace "place1")}}
-      />
+      >
+        <option value="" selected={{eq this.place1 ""}}>Select Robot</option>
+        {{#each this.model.sortedRobots as |robot|}}
+          <option value={{robot.id}} selected={{eq this.place1 robot.id}}>{{robot.name}}</option>
+        {{/each}}
+      </select>
 
-      <label for="place2">2nd place Robot's ID:</label>
-      <input
-        type="text"
+      <label for="place2">2nd place Robot:</label>
+      <select
         id="place2"
-        placeholder="Ex:398"
-        size="10"
         value={{this.place2}}
-        autocomplete="off"
         {{on "change" (fn this.updatePlace "place2")}}
         disabled={{not this.place1}}
-      />
+      >
+        <option value="" selected={{eq this.place2 ""}}>Select Robot</option>
+        {{#each this.model.sortedRobots as |robot|}}
+          <option value={{robot.id}} selected={{eq this.place2 robot.id}}>{{robot.name}}</option>
+        {{/each}}
+      </select>
 
-      <label for="place3">3rd place Robot's ID:</label>
-      <input
-        type="text"
+      <label for="place3">3rd place Robot:</label>
+      <select
         id="place3"
-        placeholder="Ex:410"
-        size="10"
         value={{this.place3}}
-        autocomplete="off"
         {{on "change" (fn this.updatePlace "place3")}}
         disabled={{not this.place2}}
-      />
+      >
+        <option value="" selected={{eq this.place3 ""}}>Select Robot</option>
+        {{#each this.model.sortedRobots as |robot|}}
+          <option value={{robot.id}} selected={{eq this.place3 robot.id}}>{{robot.name}}</option>
+        {{/each}}
+      </select>
     </div>
 
     <div>
@@ -222,13 +225,22 @@
   </div>
 </div>
 
+<hr />
+
 {{!-- Robot Deletion --}}
 <div>
   <h3>Robot Deletion</h3>
 
   <div>
-    <label for="delete_robot_id">Robot ID:</label>
-    <input type="text" id="delete_robot_id" placeholder="Ex: 403" value={{this.deleteRobotId}} autocomplete="off" {{on "change" this.updateDeleteRobotId}}/>
+    <label for="delete_robot_id">Robot:</label>
+    <select id="delete_robot_id" {{on "change" this.updateDeleteRobotId}}>
+      <option value="">Select a robot</option>
+      {{#each this.model.sortedRobots as |robot|}}
+        <option value={{robot.id}} selected={{eq this.deleteRobotId robot.id}}>
+          {{robot.name}}
+        </option>
+      {{/each}}
+    </select>
     <button data-test-button="Delete Robot by ID" type="button" {{on "click" this.deleteRobot}}>Delete</button>
   </div>
 </div>

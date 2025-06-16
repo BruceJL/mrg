@@ -1,6 +1,6 @@
 import { action } from '@ember/object';
 import { debug } from '@ember/debug';
-import Controller from '@ember/controller';
+import RefreshedController from '../RefreshedController';
 import CompetitionModel from 'mrg-sign-in/models/competition';
 import { EmberChangeset } from 'ember-changeset';
 import { tracked } from '@glimmer/tracking';
@@ -8,54 +8,27 @@ import type { ModelFrom } from '../../routes/competitions/admin';
 import { service } from '@ember/service';
 import FileDownloadService from 'mrg-sign-in/services/file-download';
 import RoundRobinService from 'mrg-sign-in/services/round-robin';
+import RobotService from 'mrg-sign-in/services/robot-service';
+import FlashMessageService from 'mrg-sign-in/services/flash-message';
 import CompetitionAdminRoute from 'mrg-sign-in/routes/competitions/admin';
 import { waitFor } from '@ember/test-waiters';
 import type { Registry as Services } from '@ember/service';
 
 
-export default class CompetitionAdminController extends Controller {
+export default class CompetitionAdminController extends RefreshedController {
 
   declare model: ModelFrom<CompetitionAdminRoute>;
 
   @service('file-download') declare fileDownloadService: FileDownloadService;
   @service('round-robin') declare rrService: RoundRobinService;
+  @service('robot-service') declare robotService: RobotService;
+  @service('flash-message') declare flashMessageService: FlashMessageService;
   @service declare store: Services['store'];
 
   get isRoundRobin() {
     return ['MSR', 'MS1', 'MS2', 'MS3', 'MSA', 'PST', 'PSA', 'SSH', 'SSL', 'SSR', 'DRA'].includes(
       this.model.id,
     );
-  }
-
-
-  private async findRobotById(id: string) {
-    try {
-      const robot = await this.store.findRecord('robot', id, { include: 'competition' });
-      return robot;
-    } catch (e) {
-      return null;
-    }
-  }
-
-  private async getRobotbyId(id: string) {
-    const robot = await this.findRobotById(id);
-    if (!robot) {
-      this.showFlashError(`Could not find robot with ID ${id}`);
-      return null;
-    }
-    return robot;
-  }
-
-  @tracked flashMessage = '';
-
-  @action
-  showFlashError(message: string, duration = 2000) {
-    this.flashMessage = message;
-
-    // Automatically clear the flash after the duration
-    setTimeout(() => {
-      this.flashMessage = '';
-    }, duration);
   }
 
   @tracked deleteRobotId = '';
@@ -70,31 +43,22 @@ export default class CompetitionAdminController extends Controller {
 
   @action
   async deleteRobot() {
-
-    if (!this.deleteRobotId){
-      this.showFlashError('Please enter a robot ID');
+    if (!this.deleteRobotId) {
+      this.flashMessageService.show('Please select a robot to delete', 'error');
       return;
     }
 
-    const robot = await this.getRobotbyId(this.deleteRobotId);
-
+    const robot = await this.robotService.getRobotById(this.deleteRobotId, this.model.id);
     if (!robot) return;
 
-    // Confirm with user before deleting
     const ok = confirm(
       `Are you sure you want to delete ${robot.name} (Id: ${robot.id}) in competition ${robot.competition.name}?`
     );
     if (!ok) return;
 
-
-    robot.deleteRecord();
-
-    try {
-      await robot.save();
-      this.showFlashError(`Robot ${robot.name} deleted successfully`);
+    const deleted = await this.robotService.deleteRobot(robot);
+    if (deleted) {
       this.deleteRobotId = '';
-    } catch (e: any) {
-      this.showFlashError(`Failed to delete robot: ${e.message || e}`);
     }
   }
 
@@ -157,21 +121,23 @@ export default class CompetitionAdminController extends Controller {
   // Download the Winners certificates for the competitions.
   @action
   async downloadCertificates(pdf: boolean) {
-
     const required = [this.place1, this.place2, this.place3].some((v) => !!v);
     if (!required) {
-      this.showFlashError('Please enter at least one robot ID');
+      this.flashMessageService.show('Please Select Robots', 'error');
       return;
     }
 
     const promises = [this.place1, this.place2, this.place3]
       .filter((v) => !!v)
-      .map((id) => this.getRobotbyId(id));
+      .map((id) => this.robotService.getRobotById(id, this.model.id));
 
     const robots = await Promise.all(promises);
     if (robots.includes(null)) return;
 
-    const filename = pdf ? `${this.model.id}_certificates.pdf` : `${this.model.id}_certificates.odt`;
+    const filename = pdf
+      ? `${this.model.id}_certificates.pdf`
+      : `${this.model.id}_certificates.odt`;
+
     const body = {
       competition: this.model.id,
       place1: this.place1,
@@ -180,7 +146,16 @@ export default class CompetitionAdminController extends Controller {
       pdf,
     };
 
-    await this.fileDownloadService.downloadFile('/api/flask/generate-event-certificates', body, filename);
+    const success = await this.fileDownloadService.downloadFile(
+      '/api/flask/generate-event-certificates',
+      body,
+      filename
+    );
+
+    this.flashMessageService.show(
+      success ? 'Certificates downloaded successfully' : 'Failed to download certificates',
+      success ? 'success' : 'error'
+    );
   }
 
   // Download the labels for the competition.
@@ -224,11 +199,11 @@ export default class CompetitionAdminController extends Controller {
     const response = await this.rrService.slotCheckedInEntries(this.model.id, this.number_rings);
 
     if (response.ok) {
-      alert('Successfully slotted checked in rings');
+      this.flashMessageService.show('Successfully slotted checked in rings', 'success');
       console.log('Successfully slotted checked in rings');
       window.location.reload();
     } else {
-      alert('Failed to slot checked in rings');
+      this.flashMessageService.show('Failed to slot checked in rings', 'error');
       console.log('Failed to slot checked in rings');
     }
   }
@@ -243,7 +218,7 @@ export default class CompetitionAdminController extends Controller {
     if (response.ok) {
 
       console.log('Successfully reset ring assignments');
-      alert('Successfully reset ring assignments');
+      this.flashMessageService.show('Ring assignments reset successfully', 'success');
 
       this.number_rings = 0;
       this.model.slottedRings = 0;
@@ -251,7 +226,7 @@ export default class CompetitionAdminController extends Controller {
 
     }else {
       console.log('Failed to reset ring assignments');
-      alert('Failed to reset ring assignments');
+      this.flashMessageService.show('Failed to reset ring assignments', 'error');
     }
   }
 }

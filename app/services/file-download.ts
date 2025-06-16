@@ -1,7 +1,7 @@
 import Service from '@ember/service';
 
 export default class FileDownloadService extends Service {
-  async downloadFile(url: string, body: object, filename: string): Promise<void> {
+  async downloadFile(url: string, body: object, filename: string): Promise<boolean> {
     const response = await fetch(url, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -10,9 +10,11 @@ export default class FileDownloadService extends Service {
 
     if (response.ok) {
       await this.processResponse(response, filename);
-      alert('File downloaded successfully');
+      // alert('File downloaded successfully');
+      return true;
     } else {
-      alert('Failed to download file');
+      // alert('Failed to download file');
+      return false;
     }
   }
 

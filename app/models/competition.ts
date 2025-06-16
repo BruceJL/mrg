@@ -48,4 +48,12 @@ export default class CompetitionModel extends Model {
   get uncheckedinSpaces() {
     return this.maxEntries - this.robotCheckedInCount;
   }
+
+  get sortedRobots() {
+    return this.robot
+    .slice()
+    .sort(    (a, b) => {
+      return a.name.localeCompare(b.name);
+    });
+  }
 }
