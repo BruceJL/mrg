@@ -80,7 +80,8 @@ CREATE TYPE robots.payment_status AS ENUM (
     'INVOICED',
     'COMPLEMENTARY',
     'CREDIT CARD',
-    'UNPAID'
+    'UNPAID',
+    'DEBIT'
 );
 
 

@@ -47,7 +47,7 @@ export default class RobotModel extends Model {
   declare paid: number;
 
   @attr('string', {
-    // Unpaid / Cash / Credit Card / Cheque / Invoiced
+    // Unpaid / Cash / Credit Card / Cheque / Invoiced/ Debit
     defaultValue: 'UNPAID',
   })
   declare paymentType:
@@ -55,6 +55,7 @@ export default class RobotModel extends Model {
     | 'CASH'
     | 'CREDIT CARD'
     | 'CHEQUE'
+    | 'DEBIT'
     | 'INVOICED'
     | 'COMPLEMENTARY';
 

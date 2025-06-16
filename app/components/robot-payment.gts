@@ -28,7 +28,7 @@ export default class RobotCheckinController extends Component<ComponentSignature
   }
 
   get PaymentOptions() {
-    return ['CASH', 'INVOICED', 'CHEQUE', 'CREDIT CARD', 'COMPLEMENTARY'];
+    return ['CASH', 'INVOICED', 'CHEQUE', 'CREDIT CARD','DEBIT', 'COMPLEMENTARY'];
   }
 
   get paymentSelectDisabled(): boolean {
@@ -45,6 +45,7 @@ export default class RobotCheckinController extends Component<ComponentSignature
     this.robot.paid = amount;
     this.robot.save();
     this.createLogEntry('PAID $' + amount + ' ' + this.robot.paymentType);
+    console.log('Paid $' + amount + ' ' + this.robot.paymentType);
   }
 
   @action
@@ -72,6 +73,7 @@ export default class RobotCheckinController extends Component<ComponentSignature
       this.createLogEntry('MARKED AS INVOICED');
     } else {
       this.robot.paymentType = value;
+      console.log('Payment type changed to ' + value);
       this.robot.save();
     }
   }
