@@ -1,6 +1,7 @@
 import Service from '@ember/service';
 
 export default class FileDownloadService extends Service {
+
   async downloadFile(url: string, body: object, filename: string): Promise<boolean> {
     const response = await fetch(url, {
       method: 'POST',

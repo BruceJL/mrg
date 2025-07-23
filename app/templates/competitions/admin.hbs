@@ -147,6 +147,28 @@
 </div>
 
 <hr />
+{{!-- Participation Certificates --}}
+<h3>Participation Certificates</h3>
+<p>
+  Note: Participation Certificates are only available for participants who have checked in.
+</p>
+<div>
+  <div>
+    <button
+      type="button"
+      {{on "click" (fn this.downloadEventParticipationCertificates true)}}
+    >
+      Download Participation Certificates(PDF)
+    </button>
+    <button
+      type="button"
+      {{on "click" (fn this.downloadEventParticipationCertificates false)}}
+    >
+      Download Participation Certificates(libreoffice)
+    </button>
+  </div>
+</div>
+<hr />
 
 {{!-- Winners Certificates --}}
 <div>
