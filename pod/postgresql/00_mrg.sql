@@ -240,6 +240,37 @@ $$;
 
 ALTER FUNCTION robots.update_measured_status() OWNER TO postgres;
 
+
+--
+-- Name: set_measured_if_not_required(); Type: FUNCTION; Schema: robots; Owner: postgres
+--
+
+CREATE FUNCTION robots.set_measured_if_not_required() RETURNS trigger
+LANGUAGE plpgsql
+AS $$
+DECLARE
+  comp_rec RECORD;
+  needs_measurement BOOLEAN;
+BEGIN
+  SELECT * INTO comp_rec FROM robots.competition WHERE id = NEW.competition;
+
+  needs_measurement :=
+     comp_rec."measureMass" OR
+     comp_rec."measureSize" OR
+     comp_rec."measureTime" OR
+     comp_rec."measureScratch" OR
+     comp_rec."measureDeadman";
+
+  IF NOT needs_measurement THEN
+    NEW.measured := true;
+  END IF;
+
+  RETURN NEW;
+END;
+$$;
+
+ALTER FUNCTION robots.set_measured_if_not_required() OWNER TO postgres;
+
 --
 -- Name: update_slotted_status(); Type: FUNCTION; Schema: robots; Owner: postgres
 --
@@ -777,7 +808,7 @@ SSR	SSR	Super Scramble Rookie	5	2	2	i	2023-02-06 17:36:42.201776+00	t	t	f	f	f	0	
 JC1	JC1	Judges' Choice	4	4	8	i	2023-02-06 17:36:42.201776+00	f	f	f	f	f	0	0	0
 RC1	RC1	Robo Critter	1	1	1	i	2023-02-06 17:36:42.201776+00	f	f	f	f	f	0	0	0
 MS1	MS1	Mini Sumo 1	8	4	8	i	2023-02-06 18:16:13.069706+00	t	f	f	t	f	0	0	0
-NXT	NXT	Lego Challenge	4	4	8	i	2023-02-06 17:36:42.201776+00	f	t	f	f	f	0	0	0
+NXT	NXT	Lego Challenge	4	4	8	i	2023-02-06 17:36:42.201776+00	f	f	f	f	f	0	0	0
 MSR	MSR	Mini Sumo Rookie	4	4	8	i	2023-02-06 17:36:42.201776+00	t	f	f	t	f	0	0	0
 MS3	MS3	Mini Sumo 3	8	4	8	i	2023-02-06 17:36:42.201776+00	t	f	f	t	f	0	0	0
 PSA	PSA	Prarie Sumo Autonomous	4	4	8	i	2023-02-06 17:36:42.201776+00	t	t	t	t	f	0	0	0
@@ -946,6 +977,11 @@ CREATE TRIGGER count_competition_robots AFTER INSERT OR UPDATE OF competition ON
 
 
 --
+-- Name: robot set_measured_if_not_required; Type: TRIGGER; Schema: robots; Owner: postgres
+--
+CREATE TRIGGER set_measured_if_not_required BEFORE INSERT ON robots.robot FOR EACH ROW EXECUTE FUNCTION robots.set_measured_if_not_required();
+
+--
 -- Name: competition reset_robot_measurements; Type: TRIGGER; Schema: robots; Owner: postgres
 --
 
@@ -957,7 +993,6 @@ CREATE TRIGGER reset_robot_measurements AFTER UPDATE OF "registrationTime" ON ro
 --
 
 CREATE TRIGGER update_measurement AFTER INSERT ON robots.measurement FOR EACH ROW EXECUTE FUNCTION robots.update_measured_status();
-
 
 --
 -- Name: robot update_slotting_status; Type: TRIGGER; Schema: robots; Owner: postgres
