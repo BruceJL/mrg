@@ -20,7 +20,7 @@ SET row_security = off;
 -- Data for Name: robot; Type: TABLE DATA; Schema: robots; Owner: postgres
 --
 
-COPY robots.robot (name, competition, driver1, driver1gr, driver2, driver2gr, driver3, driver3gr, school, coach, email, ph, invoiced, paid, late, "checkInStatus", "paymentType", registered, participated, id, "slottedStatus", measured) FROM stdin;
+COPY robots.robot (name, competition, driver1, driver1gr, driver2, driver2gr, driver3, driver3gr, school, coach, email, ph, fee, paid, late, "checkInStatus", "paymentType", registered, participated, id, "slottedStatus", measured) FROM stdin;
 The Line Raptor	LFS	Stinky Miles	7	\N	\N	\N	\N	Broad River Elementary School	Ryder Stone	fiona.miles@example.com	204-555-0145	0.00	10.00	0	CHECKED-IN	INVOICED	2023-03-09 23:20:27	f	403	CONFIRMED	f
 Abschlepper	TPM	Cliff Hanger	11	Bud Lightyear	11	\N	\N	Broad River Elementary	Maren Blake	grant.stone@example.com	204-555-0167	0.00	0.00	0	UNKNOWN	INVOICED	2023-03-10 11:03:17	f	398	UNSEEN	f
 Conner	MS3	Grant Stone	9	Justin Sue Flaye	9	\N	\N	Collège Miles Macdonell Collegiate	Cruz Harper	mila.west@example.com	204-555-0189	0.00	10.00	0	CHECKED-IN	CASH	2023-03-09 15:37:10	t	412	CONFIRMED	f

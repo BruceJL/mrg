@@ -35,10 +35,9 @@ export default class RobotModel extends Model {
 
   // Check-in information
   @attr('number', {
-    // dollar amount the entry was invoiced.
     defaultValue: 0,
   })
-  declare invoiced: number;
+  declare fee: number;
 
   @attr('number', {
     // Amount entry paid.
@@ -141,9 +140,9 @@ export default class RobotModel extends Model {
     }
   }
 
-  get formattedInvoicedDollars(): string {
-    const invoiced = this.invoiced;
-    return formatDollars(invoiced);
+  get formattedFeeDollars(): string {
+    const fee = this.fee;
+    return formatDollars(fee);
   }
 
   get formattedMeasured(): string {

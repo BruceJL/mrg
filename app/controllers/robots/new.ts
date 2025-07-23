@@ -30,9 +30,9 @@ export default class RobotNewController extends Controller {
 
     const competitionId: CompetitionModel = changeset.get('competition');
     if (competitionId.id === 'RC1') {
-      changeset.set('invoiced', '5.00');
+      changeset.set('fee', '5.00');
     } else {
-      changeset.set('invoiced', '10.00');
+      changeset.set('fee', '10.00');
     }
 
     const c = this.store.peekRecord('competition', competitionId.id);

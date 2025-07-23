@@ -25,12 +25,12 @@ export default class RobotBulkPaymentController extends RefreshedController {
         coaches[robot.email].entries = [];
         coaches[robot.email].name = robot.coach;
         coaches[robot.email].school = robot.school;
-        coaches[robot.email].invoiced = 0.0;
+        coaches[robot.email].totalInvoicedFee = 0.0; // fee summation of all INVOICED and PARTICIPATED robots
         coaches[robot.email].email = robot.email;
       }
       coaches[robot.email].entries.push(robot);
       if (robot.paymentType === 'INVOICED' && robot.participated) {
-        coaches[robot.email].invoiced += robot.invoiced;
+        coaches[robot.email].totalInvoicedFee += robot.fee;
       }
     });
     return coaches;

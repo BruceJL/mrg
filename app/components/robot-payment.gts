@@ -96,7 +96,7 @@ export default class RobotCheckinController extends Component<ComponentSignature
       <tbody>
         <tr>
           <td>Fee:</td>
-          <td colspan="2">{{@data.formattedInvoicedDollars}}</td>
+          <td colspan="2">{{@data.formattedFeeDollars}}</td>
         </tr>
         <tr>
           <td>Paid:</td>
@@ -118,9 +118,9 @@ export default class RobotCheckinController extends Component<ComponentSignature
           </td>
           <td colspan="2">
             {{#if (eq @data.paymentType "INVOICED") }}
-                Invoiced
+                INVOICED
             {{else if (eq @data.paymentType "COMPLEMENTARY")}}
-                Complementary
+                COMPLEMENTARY
             {{else if (notEq @data.paymentType null)}}
               {{#if @data.isPaid}}
                 {{@data.formattedPaidDollars}}

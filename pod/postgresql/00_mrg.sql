@@ -664,7 +664,7 @@ CREATE TABLE robots.robot (
     coach character varying(100),
     email character varying(100) NOT NULL,
     ph character varying(16) NOT NULL,
-    invoiced numeric(4,2) DEFAULT 0 NOT NULL,
+    fee numeric(4,2) DEFAULT 0 NOT NULL,
     paid numeric(4,2) DEFAULT 0 NOT NULL,
     late integer DEFAULT 0 NOT NULL,
     "checkInStatus" robots.check_in_status DEFAULT 'UNKNOWN'::robots.check_in_status NOT NULL,

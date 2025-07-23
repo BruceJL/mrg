@@ -79,9 +79,9 @@ export default class RobotIndexController extends RefreshedController {
     return returnRobots;
   }
 
-  get invoicedTotal(): string {
+  get feeTotal(): string {
     const items = this.filteredRobots;
-    return getTotalDollars(items, 'invoiced');
+    return getTotalDollars(items, 'fee');
   }
 
   get paidTotal(): string {
