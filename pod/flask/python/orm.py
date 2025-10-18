@@ -45,7 +45,7 @@ class Robot(DeclarativeBase):
     coach: Mapped[str]
     email: Mapped[str]
     ph: Mapped[str]
-    invoiced: Mapped[bool]
+    fee: Mapped[bool]
     paid: Mapped[int]
     late: Mapped[bool]
     checkinStatus: Mapped[str]

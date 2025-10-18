@@ -1,5 +1,6 @@
 {{page-title "Documents"}}
 <h2>Documents</h2>
+{{!-- Robot Labels --}}
 <h3 data-test-header="Robot Labels">Robot Labels</h3>
 <div>
   <button
@@ -12,6 +13,8 @@
   >Download Robot Labels (libreoffice)</button>
 </div>
 <hr />
+
+{{!-- Participation Certificates --}}
 <h3 data-test-header="Participation Certificates">Participation Certificates for all Participants</h3>
 <p>
   Note: Participation Certificates are only available for participants who have checked in.
@@ -28,32 +31,7 @@
 </div>
 <hr />
 
-<h3 data-test-header="Event Participation Certificates">Participation Certificates for an Event</h3>
-<div>
-  <label for="event_id">Event ID (ex:LFS):</label>
-  <input
-    id="event_id"
-    type="text"
-    placeholder="Event ID"
-    {{on "input" this.updateEventId}}
-  >
-
-  <div>
-    <button
-      type="button"
-      {{on "click" (fn this.downloadEventParticipationCertificates true)}}
-    >
-      Download Participation Certificates for an Event (PDF)
-    </button>
-    <button
-      type="button"
-      {{on "click" (fn this.downloadEventParticipationCertificates false)}}
-    >
-      Download Participation Certificates for an Event (libreoffice)
-    </button>
-  </div>
-</div>
-<hr />
+{{!-- Volunteer Certificate --}}
 <h3 data-test-header="Volunteer Certificate">Volunteer Certificate</h3>
 <div>
   <div>
@@ -65,7 +43,7 @@
       size="30"
       autocomplete="off"
       required
-      {{on "input" this.updateVolunteerName}}
+      {{on "change" this.updateVolunteerName}}
     />
   </div>
   <br />

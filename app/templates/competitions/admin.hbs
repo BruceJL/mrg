@@ -1,191 +1,297 @@
+{{this.poll this.refreshData 5000}}
 <h2 data-test-header>{{this.model.longName}}</h2>
-<h3>Competition Capacity</h3>
-<p>
-  {{#let (changeset this.model) as |changeset|}}
-    <table class="form">
-      <tbody>
-        <tr>
-          <td><b>Rings:</b></td>
-          <td><input
-              id="Ring Count"
-              value={{changeset.rings}}
-              type="number"
-              title="This is the number of rings that will be used."
-            /></td>
-        </tr>
-        <tr>
-          <td><b>Maximum Entries per ring:</b></td>
-          <td><input
-              id="Max Entries"
-              value={{changeset.maxRobotsPerRing}}
-              type="number"
-              title="This is the maximum allowable number of robots in a given ring"
-            /></td>
-        </tr>
-        <tr>
-          <td><b>Minimum Entries per ring:</b></td>
-          <td><input
-              id="Min Entries"
-              value={{changeset.minRobotsPerRing}}
-              type="number"
-              title="This is the maximum allowable number of robots in a given ring"
-            /></td>
-        </tr>
-        <tr>
-          <td><b>Maximum Entries:</b></td>
-          <td>{{this.model.maxEntries}}</td>
-        </tr>
-      </tbody>
-    </table>
-    <button data-test-button="Save" type="button" {{on "click" (fn this.save changeset)}}>Save</button>
-    <button data-test-button="Undo"
-      type="button"
-      {{on "click" (fn this.rollback changeset)}}
-    >Undo</button>
-  {{/let}}
-</p>
-<hr />
-<h3>Restart Measurements</h3>
-<p>
-  <button data-test-button="Set Measurment Time"
-    type="button"
-    {{on "click" (fn this.resetMeasurementTime this.model)}}
-  >
-    Set Measurment Time
-  </button>
-  <b>Current Measurement Time:</b>
-  {{moment-format this.model.registrationTime "YYYY MMM DD, h:mm:ss"}}
-</p>
-<hr />
-<h3>Required Measurements</h3>
-<table class="form">
-  <thead>
-    <th> Measurement </th>
-    <th> Required </th>
-  </thead>
-  <tbody>
-    <tr>
-      <td>Mass:</td>
-      <td>
-        <input
-          id="Mass"
-          type="checkbox"
-          name="model.measureMass"
-          checked={{this.model.measureMass}}
-          {{on "click" (fn this.toggleMeasurement this.model "measureMass")}}
-        />
-      </td>
-    </tr>
-    <tr>
-      <td>Size:</td>
-      <td>
-        <input
-          id="Size"
-          type="checkbox"
-          name="model.measureSize"
-          checked={{this.model.measureSize}}
-          {{on "click" (fn this.toggleMeasurement this.model "measureSize")}}
-        />
-      </td>
-    </tr>
-    <tr>
-      <td>Time:</td>
-      <td>
-        <input
-          id="Time"
-          type="checkbox"
-          name="model.measureTime"
-          checked={{this.model.measureTime}}
-          {{on "click" (fn this.toggleMeasurement this.model "measureTime")}}
-        />
-      </td>
-    </tr>
-    <tr>
-      <td>Scratch:</td>
-      <td>
-        <input
-          id="Scratch"
-          type="checkbox"
-          name="model.measureScratch"
-          checked={{this.model.measureScratch}}
-          {{on "click" (fn this.toggleMeasurement this.model "measureScratch")}}
-        />
-      </td>
-    </tr>
-    <tr>
-      <td>Deadman:</td>
-      <td>
-        <input
-          id="deadman"
-          type="checkbox"
-          name="model.measureDeadMan"
-          checked={{this.model.measureDeadman}}
-          {{on "click" (fn this.toggleMeasurement this.model "measureDeadman")}}
-        />
-      </td>
-    </tr>
-  </tbody>
-</table>
-<hr />
-<h3>Winners Certificates</h3>
-<form aria-label="Download Winners Certificates" {{on "submit" (fn this.downloadCertificates  true)}}>
-  <div>
-    <label for="place1">1st place Robot's ID:</label>
-    <Input
-      @type="text"
-      id="place1"
-      placeholder="Ex:403"
-      size="10"
-      @value={{this.place1}}
-      autocomplete="off"
-    />
-    <label for="place2">2nd place Robot's ID::</label>
-    <Input
-      @type="text"
-      id="place2"
-      placeholder="Ex:398"
-      size="10"
-      @value={{this.place2}}
-      autocomplete="off"
-    />
-    <label for="place3">3rd place Robot's ID:</label>
-    <Input
-      @type="text"
-      id="place3"
-      placeholder="Ex:410"
-      size="10"
-      @value={{this.place3}}
-      autocomplete="off"
-    />
+{{#if this.flashMessageService.message}}
+  <div class="{{if (eq this.flashMessageService.type 'success') 'flash-success' 'flash-error'}}">
+    {{this.flashMessageService.message}}
   </div>
-  <div><button data-test-button="Download Winners Certificates (PDF)" type="button" {{on "click" (fn this.downloadCertificates true)}}>Download Certificates (PDF)</button></div>
-  <div><button data-test-button="Download Winners Certificates (ODF)" type="button" {{on "click" (fn this.downloadCertificates false)}}>Download Certificates (libreoffice)</button></div>
-</form>
-<hr />
-<h3>Label Sheets</h3>
+{{/if}}
+{{!-- Competition Capacity --}}
 <div>
-  <button data-test-button="Download Labels (PDF)" type="button" {{on "click" (fn this.downloadLabels true)}}>Download Labels (PDF)</button>
-  <button data-test-button="Download Labels (ODF)" type="button" {{on "click" (fn this.downloadLabels false)}}>Download Labels (libreoffice)</button>
+  <h3>Competition Capacity</h3>
+  <p>
+    {{#let (changeset this.model) as |changeset|}}
+      <table class="form">
+        <tbody>
+          <tr>
+            <td><b>Rings:</b></td>
+            <td><input
+                id="Ring Count"
+                value={{changeset.rings}}
+                type="number"
+                title="This is the number of rings that will be used."
+              /></td>
+          </tr>
+          <tr>
+            <td><b>Maximum Entries per ring:</b></td>
+            <td><input
+                id="Max Entries"
+                value={{changeset.maxRobotsPerRing}}
+                type="number"
+                title="This is the maximum allowable number of robots in a given ring"
+              /></td>
+          </tr>
+          <tr>
+            <td><b>Minimum Entries per ring:</b></td>
+            <td><input
+                id="Min Entries"
+                value={{changeset.minRobotsPerRing}}
+                type="number"
+                title="This is the maximum allowable number of robots in a given ring"
+              /></td>
+          </tr>
+          <tr>
+            <td><b>Maximum Entries:</b></td>
+            <td>{{this.model.maxEntries}}</td>
+          </tr>
+        </tbody>
+      </table>
+      <button data-test-button="Save" type="button" {{on "click" (fn this.save changeset)}}>Save</button>
+      <button data-test-button="Undo"
+        type="button"
+        {{on "click" (fn this.rollback changeset)}}
+      >Undo</button>
+    {{/let}}
+  </p>
+</div>
+
+<hr />
+
+<div>
+  {{! -- Restart Measurements --}}
+  <h3>Restart Measurements</h3>
+  <p>
+    <button data-test-button="Set Measurment Time"
+      type="button"
+      {{on "click" (fn this.resetMeasurementTime this.model)}}
+    >
+      Set Measurment Time
+    </button>
+    <b>Current Measurement Time:</b>
+    {{moment-format this.model.registrationTime "YYYY MMM DD, h:mm:ss"}}
+  </p>
+</div>
+
+<hr />
+
+{{!-- Required Measurements --}}
+<div>
+  <h3>Required Measurements</h3>
+  <table class="form">
+    <thead>
+      <th> Measurement </th>
+      <th> Required </th>
+    </thead>
+    <tbody>
+      <tr>
+        <td>Mass:</td>
+        <td>
+          <input
+            id="Mass"
+            type="checkbox"
+            name="model.measureMass"
+            checked={{this.model.measureMass}}
+            {{on "click" (fn this.toggleMeasurement this.model "measureMass")}}
+          />
+        </td>
+      </tr>
+      <tr>
+        <td>Size:</td>
+        <td>
+          <input
+            id="Size"
+            type="checkbox"
+            name="model.measureSize"
+            checked={{this.model.measureSize}}
+            {{on "click" (fn this.toggleMeasurement this.model "measureSize")}}
+          />
+        </td>
+      </tr>
+      <tr>
+        <td>Time:</td>
+        <td>
+          <input
+            id="Time"
+            type="checkbox"
+            name="model.measureTime"
+            checked={{this.model.measureTime}}
+            {{on "click" (fn this.toggleMeasurement this.model "measureTime")}}
+          />
+        </td>
+      </tr>
+      <tr>
+        <td>Scratch:</td>
+        <td>
+          <input
+            id="Scratch"
+            type="checkbox"
+            name="model.measureScratch"
+            checked={{this.model.measureScratch}}
+            {{on "click" (fn this.toggleMeasurement this.model "measureScratch")}}
+          />
+        </td>
+      </tr>
+      <tr>
+        <td>Deadman:</td>
+        <td>
+          <input
+            id="deadman"
+            type="checkbox"
+            name="model.measureDeadMan"
+            checked={{this.model.measureDeadman}}
+            {{on "click" (fn this.toggleMeasurement this.model "measureDeadman")}}
+          />
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+<hr />
+{{!-- Participation Certificates --}}
+<h3>Participation Certificates</h3>
+<p>
+  Note: Participation Certificates are only available for participants who have checked in.
+</p>
+<div>
+  <div>
+    <button
+      type="button"
+      {{on "click" (fn this.downloadEventParticipationCertificates true)}}
+    >
+      Download Participation Certificates(PDF)
+    </button>
+    <button
+      type="button"
+      {{on "click" (fn this.downloadEventParticipationCertificates false)}}
+    >
+      Download Participation Certificates(libreoffice)
+    </button>
+  </div>
 </div>
 <hr />
-{{#if this.isRoundRobin}}
-  <h3 >Score Sheet</h3>
+
+{{!-- Winners Certificates --}}
+<div>
+  <h3>Winners Certificates</h3>
+  <form aria-label="Download Winners Certificates" {{on "submit" (fn this.downloadCertificates true)}}>
+    <div>
+      <label for="place1">1st place Robot:</label>
+      <select
+        id="place1"
+        value={{this.place1}}
+        {{on "change" (fn this.updatePlace "place1")}}
+      >
+        <option value="" selected={{eq this.place1 ""}}>Select Robot</option>
+        {{#each this.model.sortedRobots as |robot|}}
+          <option value={{robot.id}} selected={{eq this.place1 robot.id}}>{{robot.name}}</option>
+        {{/each}}
+      </select>
+
+      <label for="place2">2nd place Robot:</label>
+      <select
+        id="place2"
+        value={{this.place2}}
+        {{on "change" (fn this.updatePlace "place2")}}
+        disabled={{not this.place1}}
+      >
+        <option value="" selected={{eq this.place2 ""}}>Select Robot</option>
+        {{#each this.model.sortedRobots as |robot|}}
+          <option value={{robot.id}} selected={{eq this.place2 robot.id}}>{{robot.name}}</option>
+        {{/each}}
+      </select>
+
+      <label for="place3">3rd place Robot:</label>
+      <select
+        id="place3"
+        value={{this.place3}}
+        {{on "change" (fn this.updatePlace "place3")}}
+        disabled={{not this.place2}}
+      >
+        <option value="" selected={{eq this.place3 ""}}>Select Robot</option>
+        {{#each this.model.sortedRobots as |robot|}}
+          <option value={{robot.id}} selected={{eq this.place3 robot.id}}>{{robot.name}}</option>
+        {{/each}}
+      </select>
+    </div>
+
+    <div>
+      <button
+        data-test-button="Download Winners Certificates (PDF)"
+        type="button"
+        {{on "click" (fn this.downloadCertificates true)}}
+      >
+        Download Certificates (PDF)
+      </button>
+    </div>
+
+    <div>
+      <button
+        data-test-button="Download Winners Certificates (ODF)"
+        type="button"
+        {{on "click" (fn this.downloadCertificates false)}}
+      >
+        Download Certificates (libreoffice)
+      </button>
+    </div>
+  </form>
+</div>
+
+<hr />
+
+{{!-- Label Sheets --}}
+<div>
+  <h3>Label Sheets</h3>
   <div>
-    <button data-test-button="Download Score Sheet (PDF)" type="button" {{on "click" (fn this.downloadScoreSheet true)}}>Download Score Sheet (PDF)</button>
-    <button data-test-button="Download Score Sheet (ODF)" type="button" {{on "click" (fn this.downloadScoreSheet false)}}>Download Score Sheet (libreoffice)</button>
+    <button data-test-button="Download Labels (PDF)" type="button" {{on "click" (fn this.downloadLabels true)}}>Download Labels (PDF)</button>
+    <button data-test-button="Download Labels (ODF)" type="button" {{on "click" (fn this.downloadLabels false)}}>Download Labels (libreoffice)</button>
   </div>
+</div>
+
+<hr />
+
+{{!-- Robot Deletion --}}
+<div>
+  <h3>Robot Deletion</h3>
+
+  <div>
+    <label for="delete_robot_id">Robot:</label>
+    <select id="delete_robot_id" {{on "change" this.updateDeleteRobotId}}>
+      <option value="">Select a robot</option>
+      {{#each this.model.sortedRobots as |robot|}}
+        <option value={{robot.id}} selected={{eq this.deleteRobotId robot.id}}>
+          {{robot.name}}
+        </option>
+      {{/each}}
+    </select>
+    <button data-test-button="Delete Robot by ID" type="button" {{on "click" this.deleteRobot}}>Delete</button>
+  </div>
+</div>
+
+<hr />
+{{#if this.isRoundRobin}}
+  <div>
+    <h3 >Score Sheet</h3>
+    <div>
+      <button data-test-button="Download Score Sheet (PDF)" type="button" {{on "click" (fn this.downloadScoreSheet true)}}>Download Score Sheet (PDF)</button>
+      <button data-test-button="Download Score Sheet (ODF)" type="button" {{on "click" (fn this.downloadScoreSheet false)}}>Download Score Sheet (libreoffice)</button>
+    </div>
+  </div>
+
   <hr />
 
+  {{!-- Slot Checked In Entries --}}
+  <div>
   <h3>Slot Checked In Entries</h3>
   <p>(set number of rings to 0 will use the maximum number of rings with a zero remainder)</p>
   <form aria-label="Slot checked in entries" {{on "submit" this.slotCheckedInRings}}>
     <div>
       <label for="number_rings">Number of Rings:</label>
-      <Input data-test-input="number_rings"
+      <input data-test-input="number_rings"
         id="number_rings"
-        @type="number"
-        @value={{this.number_rings}}
+        type="number"
+        value={{this.number_rings}}
         autocomplete="off"
+        {{on "change" this.updateNumberRings}}
         required
       />
     </div>
@@ -193,23 +299,33 @@
       <button data-test-button="Slot Checked In Entries" type="submit">Slot Checked In Entries</button>
     </div>
   </form>
+  </div>
+
   <hr />
-  <h3 data-test-header="Live Score Board">Live Score Board</h3>
-  {{#each (range 1 this.model.slottedRings) as |ring|}}
-    <li>
-      <LinkTo data-test-link="live-score-{{ring}}" @route="competitions.tournament.live-score" @models={{array this.model.id ring}}>{{this.model.id}}-Ring-{{ring}}-Live-Score</LinkTo>
-    </li>
-  {{/each}}
-  <hr/>
-    <h3 data-test-header="Live Ranking">Live Ranking</h3>
-  {{#each (range 1 this.model.slottedRings) as |ring|}}
-    <li>
-      <LinkTo data-test-link="live-ranking-{{ring}}"@route="competitions.tournament.rank" @models={{array this.model.id ring}}>{{this.model.id}}-Ring-{{ring}}-Live-Ranking</LinkTo>
-    </li>
-  {{/each}}
-  <hr/>
-  <h3>Reset Competition ringAssignment</h3>
+  {{!-- Live Score Board and Live Ranking --}}
   <div>
-    <button data-test-button="Reset ringAssignment" type="button" {{on "click" this.resetRingAssignment }}>Reset Ring Assignments</button>
+    <h3 data-test-header="Live Score Board">Live Score Board</h3>
+    {{#each (range 1 this.model.slottedRings) as |ring|}}
+      <li>
+        <LinkTo data-test-link="live-score-{{ring}}" @route="competitions.tournament.live-score" @models={{array this.model.id ring}}>{{this.model.id}}-Ring-{{ring}}-Live-Score</LinkTo>
+      </li>
+    {{/each}}
+    <hr/>
+      <h3 data-test-header="Live Ranking">Live Ranking</h3>
+    {{#each (range 1 this.model.slottedRings) as |ring|}}
+      <li>
+        <LinkTo data-test-link="live-ranking-{{ring}}"@route="competitions.tournament.rank" @models={{array this.model.id ring}}>{{this.model.id}}-Ring-{{ring}}-Live-Ranking</LinkTo>
+      </li>
+    {{/each}}
+  </div>
+
+  <hr/>
+
+  {{!-- Reset Competition ringAssignment --}}
+  <div>
+    <h3>Reset Competition ringAssignment</h3>
+    <div>
+      <button data-test-button="Reset ringAssignment" type="button" {{on "click" this.resetRingAssignment }}>Reset Ring Assignments</button>
+    </div>
   </div>
 {{/if}}

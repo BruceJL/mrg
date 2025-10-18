@@ -342,3 +342,39 @@ nav li.dropdown-right {
   background-color: #f1f1f1;
   color: #1976D2;
 }
+
+.text-red {
+  color: red;
+}
+
+.mx-2 {
+  margin-left: 0.5rem;
+  margin-right: 0.5rem;
+}
+
+.flash-success {
+  position: fixed;
+  top: 1.25rem;
+  left: 50%;
+  transform: translateX(-50%);
+  background: #d4edda;
+  color: #155724;
+  padding: 0.75rem 1.25rem;
+  border-radius: 0.375rem;
+  z-index: 9999;
+  box-shadow: 0 0.25rem 0.5rem rgba(0, 0, 0, 0.2);
+}
+
+.flash-error {
+  position: fixed;
+  top: 1.25rem; /* 20px → 1.25rem */
+  left: 50%;
+  transform: translateX(-50%);
+  background: #f8d7da;
+  color: #721c24;
+  padding: 0.75rem 1.25rem;
+  border-radius: 0.375rem;
+  z-index: 9999;
+  box-shadow: 0 0.25rem 0.5rem rgba(0, 0, 0, 0.2);
+  border: 0.0625rem solid #f5c6cb;
+}

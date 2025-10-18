@@ -14,17 +14,6 @@ export default class RobotEditController extends Controller {
   RobotValidation = RobotValidation;
 
   @action
-  deleteRobot(robot: RobotModel) {
-    const ok = confirm('Are you sure you want to delete this entry?');
-
-    if (!ok) return;
-
-    robot.deleteRecord();
-    robot.save();
-    this.router.transitionTo('robots.index');
-  }
-
-  @action
   done(competition: CompetitionModel) {
     this.router.transitionTo('competitions.show', competition);
   }
@@ -44,20 +33,39 @@ export default class RobotEditController extends Controller {
     return changeset.rollback();
   }
 
-  @action
-  updateCompetition(r: RobotModel, event: Event) {
+@action
+async updateCompetition(r: RobotModel, event: Event) {
     const competitionId = (event.target as HTMLInputElement).value;
+
     const ok = confirm(
       'Changing the competition of this entry will cause the registration' +
         ' of the entry to be reset to the current time, moving this entry to ' +
-        ' the end of the stand-by queue. Are you Sure?',
+        ' the end of the stand-by queue. All previous measurements will be invalidated and must be redone. Are you sure?',
     );
-    if (ok) {
-      this.store.findRecord('competition', competitionId).then((c) => {
-        r.registered = 'now()';
-        r.competition = c;
-        r.save();
-      });
+
+    if (!ok) {
+      // Revert the dropdown selection
+      (event.target as HTMLSelectElement).value = r.competition.id;
+      return;
     }
+
+    const c = await this.store.findRecord('competition', competitionId);
+    r.competition = c;
+    r.registered = 'now()';
+
+    // Fail all previous measurements after competition change.
+    for (const m of r.measurement) {
+      m.result = false;
+      await m.save();
+    }
+
+    r.measured = false;
+    await r.save();
+
+    await r.reload();
+    await r.hasMany('measurement').reload();
+
+    // Scroll to the measurement section
+    document.getElementById('measurement-info')?.scrollIntoView({ behavior: 'smooth' });
   }
 }

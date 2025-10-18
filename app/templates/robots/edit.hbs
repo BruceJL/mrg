@@ -23,10 +23,6 @@
     {{/each}}
   </select>
 </p>
-<button
-  type="button"
-  {{on "click" (fn this.deleteRobot this.model.robot)}}
->Delete Robot</button>
 {{#let (changeset this.model.robot this.RobotValidation) as |c|}}
   <RobotDetail @changeset={{c}} />
   <button type="button" {{on "click" (fn this.rollback c)}}>Undo</button>

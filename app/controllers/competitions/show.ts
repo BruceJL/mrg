@@ -13,6 +13,10 @@ export default class CompetitionShowController extends RefreshedController {
   @tracked robotFilter = '';
   @tracked model: CompetitionModel;
 
+  get isSlotted() {
+    return this.model.slottedRings > 0;
+  }
+
   get isRoundRobin() {
     return ['MSR', 'MS1', 'MS2', 'MS3', 'MSA', 'PST', 'PSA'].includes(
       this.model.id,

@@ -15,7 +15,7 @@
          <th>Robot</th>
          <th>Competition</th>
          <th>Driver</th>
-         <th>Price</th>
+         <th>Fee</th>
          <th>Payment</th>
          <th>Participated</th>
        </tr>
@@ -24,7 +24,7 @@
            <td><LinkTo @route="robots.edit" @model={{entry.id}}>{{entry.name}}</LinkTo></td>
            <td>{{entry.competition.name}}</td>
            <td>{{entry.driver1}}</td>
-           <td>{{entry.formattedInvoicedDollars}}</td>
+           <td>{{entry.formattedFeeDollars}}</td>
            <td>{{entry.paymentType}}</td>
            <td>{{if entry.participated "✓"}}</td>
          </tr>
@@ -33,8 +33,8 @@
          <td></td>
          <td></td>
          <td></td>
-         <td><b>Invoiced:</b></td>
-         <td>${{data.invoiced}}.00</td>
+         <td><b>Total Invoiced Fee:</b></td>
+         <td>${{data.totalInvoicedFee}}.00</td>
        </tr>
        <tr></tr>
      {{/each-in}}
