@@ -27,6 +27,7 @@
 # python
 **/__pycache__/
 **.pyc
+.mypy_cache
 pod/flask/python/ScoreSheets/*
 pod/flask/python/*.csv
 
