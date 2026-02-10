@@ -4,17 +4,11 @@ import type ModelRegistry from 'ember-data/types/registries/model';
 
 //import { inject as service } from '@ember/service';
 import RSVP, { reject } from 'rsvp';
-import fetch from 'fetch';
+import { waitForFetch } from '@ember/test-waiters';
 
 import type Store from '@ember-data/store';
 import type { Snapshot } from '@ember-data/store';
 import ENV from 'mrg-sign-in/config/environment';
-
-import {
-  isAbortError,
-  isServerErrorResponse,
-  isUnauthorizedResponse,
-} from 'ember-fetch/errors';
 
 export default class PostgrestAdapter extends MinimumInterfaceAdapter {
   namespace = ENV.APP['API_NAMESPACE'];
@@ -24,29 +18,31 @@ export default class PostgrestAdapter extends MinimumInterfaceAdapter {
     input: URL | RequestInfo,
     init?: RequestInit | undefined,
   ): RSVP.Promise<Response> {
-    return fetch(
-      input,
-      init,
-      // The following stolen from: https://github.com/ember-cli/ember-fetch
-    )
-      .then(function (response: Response) {
-        if (response.ok) {
-          return response.json();
-        } else if (isUnauthorizedResponse(response)) {
-          // handle 401 response
-          reject(response);
-        } else if (isServerErrorResponse(response)) {
-          // handle 5xx respones
-          reject(response);
-        }
-      })
-      .catch(function (error: Error) {
-        if (isAbortError(error)) {
-          // handle aborted network error
-          reject(error);
-        }
-        // handle network error
-      });
+    return waitForFetch(
+      fetch(
+        input,
+        init,
+        // The following stolen from: https://github.com/ember-cli/ember-fetch
+      )
+        .then(function (response: Response) {
+          if (response.ok) {
+            return response.json();
+          } else if (response.status === 401) {
+            // handle 401 response
+            reject(response);
+          } else if (response.status > 500) {
+            // handle 5xx respones
+            reject(response);
+          }
+        })
+        .catch(function (error: Error) {
+          if (error.name === 'AbortError') {
+            // handle aborted network error
+            reject(error);
+          }
+          // handle network error
+        }),
+    );
   }
 
   private makeQueryString(
@@ -205,7 +201,8 @@ export default class PostgrestAdapter extends MinimumInterfaceAdapter {
     if (type.modelName.includes('-')) {
       // remove the dash and capitalize the next letter
       const parts = type.modelName.split('-');
-      modelName = parts[0] + parts[1].charAt(0).toUpperCase() + parts[1].slice(1);
+      modelName =
+        parts[0] + parts[1].charAt(0).toUpperCase() + parts[1].slice(1);
     }
 
     url = this.prefixURL(modelName + '?' + s.join('&'));
@@ -232,7 +229,7 @@ export default class PostgrestAdapter extends MinimumInterfaceAdapter {
         s.push(key + '=eq.' + value);
       }
     }
-    url = this.prefixURL(type.modelName+ '?' + s.join('&'));
+    url = this.prefixURL(type.modelName + '?' + s.join('&'));
 
     return this._fetch(url);
   }

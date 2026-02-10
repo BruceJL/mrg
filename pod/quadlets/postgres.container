@@ -1,0 +1,13 @@
+[Unit]
+Description=PostgreSQL for MRG
+After=mrg-check-in-pod.service
+Requires=mrg-check-in-pod.service
+
+[Container]
+ContainerName=postgresql-mrg
+Pod=mrg-check-in.pod
+Image=localhost/postgresql-mrg
+Volume=mrg_db:/var/lib/postgresql/:Z
+Secret=postgres_pwd,type=env,target=POSTGRES_PASSWORD
+Environment=POSTGRES_DB=mrg
+AutoUpdate=registry

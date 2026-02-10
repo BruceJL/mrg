@@ -1,0 +1,4 @@
+FROM docker.io/library/postgres:latest
+
+# Copy in the database initalization scripts
+COPY ./*.sql /docker-entrypoint-initdb.d/

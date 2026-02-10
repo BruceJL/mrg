@@ -1,0 +1,9 @@
+[Unit]
+Description=MRG Check-in Pod
+After=network-online.target
+Wants=network-online.target
+
+[Pod]
+PodName=mrg-check-in
+PublishPort=443:443
+PublishPort=5432:5432

@@ -1,0 +1,5 @@
+FROM docker.io/library/nginx:latest
+
+# Copy only the files you want
+COPY ./ssl /etc/nginx/ssl
+COPY ./templates /etc/nginx/templates

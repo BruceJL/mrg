@@ -37,6 +37,7 @@ pod/postgresql/01_mrg_data.sql
 pod/nginx/ssl/*.crt
 pod/nginx/ssl/*.key
 pod/nginx/ssl/*.pem
+pod/secrets/*
 
 # Mac OS
 *.DS_Store

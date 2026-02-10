@@ -1,0 +1,11 @@
+[Unit]
+Description=NGINX Frontend
+After=postgrest.service
+Requires=postgrest.service
+
+[Container]
+ContainerName=nginx-mrg
+Pod=mrg-check-in.pod
+Image=localhost/nginx-mrg
+Volume=/var/www:/var/www:Z
+AutoUpdate=registry

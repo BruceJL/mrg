@@ -1,0 +1,15 @@
+[Unit]
+Description=PostgREST API
+After=postgres.service
+Requires=postgres.service
+
+[Container]
+ContainerName=postgrest
+Pod=mrg-check-in.pod
+Image=docker.io/postgrest/postgrest
+Secret=postgrest_pwd,type=env,target=POSTGRESTPWD
+Environment=PGRST_DB_URI=postgres://authenticator:$POSTGRESTPWD@localhost:5432/mrg
+Environment=PGRST_DB_SCHEMAS=robots,people
+Environment=PGRST_DB_ANON_ROLE=web_anon
+Environment=PGRST_SERVER_HOST=*
+AutoUpdate=registry

@@ -1,0 +1,12 @@
+[Unit]
+Description=Flask API
+After=postgres.service
+Requires=postgres.service
+
+[Container]
+ContainerName=flask-mrg
+Pod=mrg-check-in.pod
+Image=localhost/flask-mrg
+Secret=flask_pwd,type=env,target=DB_PASSWORD
+Environment=DB_USERNAME=python_api
+AutoUpdate=local
