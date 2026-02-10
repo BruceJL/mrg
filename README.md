@@ -20,24 +20,9 @@ You will need the following things properly installed on your computer.
 
 ## Running / Development
 
-- `ember serve --proxy http://check-in/api` where `http://check-in/api` is the URL to access the database/web server. See [Deploying](#Deploying) for instructions on creating a pod hosting the database server.
+- `npm start -- --proxy http://check-in/ --secure-proxy false` where `http://check-in/` is the URL to access the database/web server. Note that the pod is created with a self-signed certificate, and that `--secure-proxy false` will allow the development environment to attach without issue. See [Deploying](#Deploying) for instructions on creating a pod hosting the database server.
 - Visit your app at [http://localhost:4200](http://localhost:4200).
 - Visit your tests at [http://localhost:4200/tests](http://localhost:4200/tests).
-
-### Running Tests
-
-- `npm run test`
-- `npm run test:ember -- --server`
-
-### Linting
-
-- `npm run lint`
-- `npm run lint:fix`
-
-### Building
-****
-- `npm exec ember build` (development)
-- `npm run build` (production)
 
 ### Deploying
 The application is best hosted on dedicated hardware for the purposes of managing information at the Manitoba Robot Games. It's reccomended that a standalone computer be purposed as the check-in server (unless you really know what you're doing). Instructions on how to do so are listed below.
@@ -57,7 +42,8 @@ The application is best deployed on a debian stable (or occasionally testing) en
 Which can be installed using apt: `sudo  apt install openssh-server podman pwgen git dnsmasq`.
 
 #### Creation of the Pod
-The application is deployed as a Podman pod. After cloning the repo, change to the `pod` directory and run `sudo ./buildpod.sh`. This will download and configure the 4 containers in the pod to run the application.
+The application is deployed as a Podman pod. After cloning the repo, change to the `pod` directory and run `sudo ./rebuild.sh`. This will download and configure the 4 containers in the pod to run the application. It will also copy the quadlet files to the `/etc/containers/systemd/` directory, and run the `systemctl daemon-reexec` and `systemctl daemon-reload` and then start the pod using the `systemctl start mrg-check-in-pod`
+
 
 The containers created are:
 * **PostgreSQL** - Hosts the database containing all the competition information. It also includes a number of scripts to run business logic on the database. A default database schema is automatically installed.

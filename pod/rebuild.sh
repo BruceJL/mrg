@@ -25,8 +25,18 @@ mkdir -p "$NGINX_SSL_DIR"
 echo "Stopping pod $POD_NAME..."
 systemctl stop "$POD_NAME" || true
 
+# ------------------------------
+# Wipe the database volume
+# ------------------------------
 echo "Wiping the Data Volume..."
 podman volume rm mrg_db || true
+
+# ------------------------------
+# Copy the quadlet files and reinit systemd
+# ------------------------------
+cp ./quadlets/* /etc/containers/systemd/
+systemctl daemon-reexec
+systemctl daemon-reload
 
 # ------------------------------
 # Build Flask image
