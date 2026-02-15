@@ -25,3 +25,4 @@
 - Rename "Invoiced" to "fee" in the database for clarity.
 - Inline workflow documentation.
 - Ember version bump
+- Vite migration.

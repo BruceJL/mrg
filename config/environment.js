@@ -36,14 +36,12 @@ module.exports = function (environment) {
     ENV.locationType = 'none';
     ENV.APP = {
       API_NAMESPACE: 'api',
+      // keep test console output quieter
+      LOG_ACTIVE_GENERATION: false,
+      LOG_VIEW_LOOKUPS: false,
+      rootElement: '#ember-testing',
+      autoboot: false,
     };
-
-    // keep test console output quieter
-    ENV.APP.LOG_ACTIVE_GENERATION = false;
-    ENV.APP.LOG_VIEW_LOOKUPS = false;
-
-    ENV.APP.rootElement = '#ember-testing';
-    ENV.APP.autoboot = false;
   }
 
   if (environment === 'production') {
