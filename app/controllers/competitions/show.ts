@@ -4,6 +4,7 @@ import RobotModel from 'mrg-sign-in/models/robot';
 import CompetitionModel from 'mrg-sign-in/models/competition';
 import RefreshedController from '../RefreshedController';
 import type { Registry as Services } from '@ember/service';
+import { action } from '@ember/object';
 
 export default class CompetitionShowController extends RefreshedController {
   @service declare store: Services['store'];
@@ -21,6 +22,12 @@ export default class CompetitionShowController extends RefreshedController {
     return ['MSR', 'MS1', 'MS2', 'MS3', 'MSA', 'PST', 'PSA'].includes(
       this.model.id,
     );
+  }
+
+  @action
+  updateRobotFilter(event: Event) {
+    const value = (event.target as HTMLInputElement).value;
+    this.robotFilter = value;
   }
 
   get filteredRobotsByName(): Array<RobotModel> {
