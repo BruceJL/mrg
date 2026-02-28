@@ -498,9 +498,10 @@ def make_odf5160_labels_odt(
             )
         )
 
+        competition_baseName = competition.split("_")[0]
         table_cell.addElement(
             P(
-                text=competition,
+                text=competition_baseName,
                 stylename=competition_paragraph_style_name,
             )
         )

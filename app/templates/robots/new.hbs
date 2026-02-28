@@ -1,4 +1,4 @@
-<h2 data-test-header>Adding a new Entry for: {{this.model.competition.name}}</h2>
+<h2 data-test-header>Adding a new Entry for: {{this.model.competition.id}}</h2>
 {{#let (changeset this.model this.RobotValidation) as |c|}}
   <RobotDetail @changeset={{c}}/>
   <button type="button" {{on "click" (fn this.unload c)}}>Cancel Creation</button>

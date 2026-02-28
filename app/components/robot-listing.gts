@@ -23,7 +23,7 @@ import { LinkTo } from '@ember/routing';
         <tr class={{item.readyToCompete}}>
           <td>{{item.id}}</td>
           <td ><LinkTo data-test-link={{item.name}} @route="robots.edit" @model={{item.id}}>{{item.name}}</LinkTo></td>
-          <td>{{item.competition.name}}</td>
+          <td>{{item.competition.baseName}}</td>
           <td>{{item.school}}</td>
           <td>{{item.driver1}}</td>
           <td>{{#if item.late}}LATE{{/if}}</td>

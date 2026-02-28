@@ -50,7 +50,7 @@
     @route="robots.new"
     @query={{hash competition=this.model.name}}
   >New Entry</LinkTo><br /><br />
-  Filter by robot name:<input id="Name Filter" value={{this.robotFilter}} /><br
+  Filter by robot name:<input id="Name Filter" value={{this.robotFilter}} {{on "input" this.updateRobotFilter}}/><br
   />
 </p>
 <RobotListing @robots={{this.filteredRobotsByName}} @edit-link="robots.edit" />

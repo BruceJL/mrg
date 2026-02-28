@@ -4,6 +4,7 @@ import type RingAssignmentModel from './ring-assignment';
 import type TournamentModel from './tournament';
 
 export default class CompetitionModel extends Model {
+  @attr('string') declare baseName: string;
   @attr('string') declare name: string;
   @attr('string') declare longName: string;
   @attr('number') declare rings: number;
@@ -20,6 +21,7 @@ export default class CompetitionModel extends Model {
   @attr('number') declare maxEntries: number;
   @attr('number') declare robotCount: number;
   @attr('number') declare robotCheckedInCount: number;
+  @attr('number') declare year: number;
 
 
   @hasMany('robot', {

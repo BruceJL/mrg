@@ -12,7 +12,7 @@ export default class CompetitionShowController extends RefreshedController {
   queryParams = ['robotFilter'];
 
   @tracked robotFilter = '';
-  @tracked model: CompetitionModel;
+  @tracked model!: CompetitionModel;
 
   get isSlotted() {
     return this.model.slottedRings > 0;
@@ -20,7 +20,7 @@ export default class CompetitionShowController extends RefreshedController {
 
   get isRoundRobin() {
     return ['MSR', 'MS1', 'MS2', 'MS3', 'MSA', 'PST', 'PSA'].includes(
-      this.model.id,
+      this.model.baseName,
     );
   }
 
@@ -41,7 +41,7 @@ export default class CompetitionShowController extends RefreshedController {
 
     returnRobots = returnRobots.filter((robot: RobotModel) => {
       if (robot.competition) {
-        return robot.competition.name === competitionId;
+        return robot.competition.id === competitionId;
       }
     });
 

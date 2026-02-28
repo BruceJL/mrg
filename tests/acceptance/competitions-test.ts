@@ -6,7 +6,8 @@ import { authenticateSession } from 'ember-simple-auth/test-support';
 // Should use mock data generated in frontend later: ember-cli-mirage?
 module('Acceptance | competitions', function (hooks) {
   setupApplicationTest(hooks);
-  const competitionId = 'MSA';
+  const year = new Date().getFullYear();
+  const competitionId = `MSA_${year}`;
 
   hooks.beforeEach(async function () {
     await authenticateSession();
@@ -33,7 +34,8 @@ module('Acceptance | competitions', function (hooks) {
     assert.dom('[data-test-button="Save"]').exists();
     assert.dom('[data-test-button="Undo"]').exists();
     assert.dom('[data-test-button="Set Measurment Time"]').exists();
-    assert.dom('[data-test-button="Download Winners Certificates"]').exists();
+    assert.dom('[data-test-button="Download Winners Certificates (PDF)"]').exists();
+    assert.dom('[data-test-button="Download Winners Certificates (libreoffice)"]').exists();
     assert.dom('[data-test-button="Download Labels (PDF)"]').exists();
     assert.dom('[data-test-button="Download Labels (libreoffice)"]').exists();
     assert.dom('[data-test-button="Download Score Sheet (PDF)"]').exists();

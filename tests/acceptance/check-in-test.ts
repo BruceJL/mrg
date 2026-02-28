@@ -5,7 +5,8 @@ import { authenticateSession } from 'ember-simple-auth/test-support';
 
 module('Acceptance | check in', function (hooks) {
   setupApplicationTest(hooks);
-  const competitionId = 'MSA';
+  const year = new Date().getFullYear();
+  const competitionId = `MSA_${year}`;
 
   hooks.beforeEach(async function () {
     await authenticateSession();

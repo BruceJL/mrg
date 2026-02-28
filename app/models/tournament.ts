@@ -11,7 +11,7 @@ export default class TournamentModel extends Model {
 
   @belongsTo('competition', {
     async: true,
-    inverse:null,
+    inverse:'tournament',
   }) declare competition: AsyncBelongsTo<CompetitionModel>;
 
   @hasMany('match',{

@@ -28,14 +28,14 @@ export default class RobotNewController extends Controller {
     changeset.set('paid', 0);
     changeset.set('registered', 'now()');
 
-    const competitionId: CompetitionModel = changeset.get('competition');
-    if (competitionId.id === 'RC1') {
+    const competition: CompetitionModel = changeset.get('competition');
+    if (competition.baseName === 'RC1') {
       changeset.set('fee', '5.00');
     } else {
       changeset.set('fee', '10.00');
     }
 
-    const c = this.store.peekRecord('competition', competitionId.id);
+    const c = this.store.peekRecord('competition', competition.id);
     changeset.set('competition', c);
 
     changeset.save().then(() => {

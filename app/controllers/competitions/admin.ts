@@ -36,7 +36,7 @@ export default class CompetitionAdminController extends RefreshedController {
       'SSL',
       'SSR',
       'DRA',
-    ].includes(this.model.id);
+    ].includes(this.model.baseName);
   }
 
   @tracked deleteRobotId = '';
@@ -63,7 +63,7 @@ export default class CompetitionAdminController extends RefreshedController {
     if (!robot) return;
 
     const ok = confirm(
-      `Are you sure you want to delete ${robot.name} (Id: ${robot.id}) in competition ${robot.competition.name}?`,
+      `Are you sure you want to delete ${robot.name} (Id: ${robot.id}) in competition ${robot.competition.baseName}?`,
     );
     if (!ok) return;
 

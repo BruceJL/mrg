@@ -22,7 +22,7 @@
        {{#each data.entries as |entry|}}
          <tr>
            <td><LinkTo @route="robots.edit" @model={{entry.id}}>{{entry.name}}</LinkTo></td>
-           <td>{{entry.competition.name}}</td>
+           <td>{{entry.competition.baseName}}</td>
            <td>{{entry.driver1}}</td>
            <td>{{entry.formattedFeeDollars}}</td>
            <td>{{entry.paymentType}}</td>

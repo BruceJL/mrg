@@ -6,6 +6,8 @@ import { authenticateSession } from 'ember-simple-auth/test-support';
 // Better use mock data generated in frontend later
 module('Acceptance | robots', function (hooks) {
   setupApplicationTest(hooks);
+  const year = new Date().getFullYear();
+  const competitionId = `LFS_${year}`;
 
 
   hooks.beforeEach(async function () {
@@ -31,8 +33,9 @@ module('Acceptance | robots', function (hooks) {
   })
 
   test('/robots/new is well loaded', async function (assert) {
-    await visit('/robots/new?competition=LFS');
-    assert.strictEqual(currentURL(), '/robots/new?competition=LFS');
-    assert.dom('[data-test-header]').hasText('Adding a new Entry for: LFS');
+    const url_newRobot = `/robots/new?competition=${competitionId}`
+    await visit(url_newRobot);
+    assert.strictEqual(currentURL(), url_newRobot);
+    assert.dom('[data-test-header]').hasText(`Adding a new Entry for: ${competitionId}`);
   })
 });

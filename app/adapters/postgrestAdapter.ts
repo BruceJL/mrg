@@ -218,21 +218,28 @@ export default class PostgrestAdapter extends MinimumInterfaceAdapter {
   queryRecord<K extends keyof ModelRegistry>(
     store: Store,
     type: ModelRegistry[K],
-    query: { [key: string]: object }, //Dict<unknown>, as per MinimumAdapterInterface
-    //options: { adapterOptions?: unknown }, Spec'd in MinimumInterfaceAdapter, but not Adapter?
+    query: { [key: string]: any },
   ): RSVP.Promise<any> {
-    let url = '';
-    const s = [];
+
+    const s: string[] = [];
+
     for (const key in query) {
-      console.log(key, query[key]);
       const value = query[key];
-      if (typeof value == 'boolean') {
-        s.push(key + '=is.' + value);
+
+      // Skip operator prefix for PostgREST reserved params
+      if (key === 'select' || key === 'order' || key === 'limit' || key === 'offset') {
+        s.push(`${key}=${value}`);
+        continue;
+      }
+
+      if (typeof value === 'boolean') {
+        s.push(`${key}=is.${value}`);
       } else {
-        s.push(key + '=eq.' + value);
+        s.push(`${key}=eq.${value}`);
       }
     }
-    url = this.prefixURL(type.modelName+ '?' + s.join('&'));
+
+    const url = this.prefixURL(type.modelName + '?' + s.join('&'));
 
     return this._fetch(url);
   }

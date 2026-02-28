@@ -10,8 +10,10 @@ export default class CheckinRoute extends Route {
   @service declare store: Services['store'];
 
   model(params: any): Promise<CompetitionModel> {
-    return this.store.findRecord('competition', params.competition_id, {
-      include: 'robot',
+    return this.store.queryRecord('competition', {
+      id: params.competition_id,
+      year: new Date().getFullYear(),
+      select: '*,robot(*)'
     });
   }
 }
