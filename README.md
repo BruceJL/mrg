@@ -51,27 +51,6 @@ The containers created are:
 * **Python/Flask** - Provides a python environment for generating documents (as libreoffice/PDF files) as well as other business logic not suited for execution natively in PostgreSQL (e.g. slotting of competitors in round robin tournaments.)
 * **Nginx** - Serves the web files, as well as provides a reverse proxy for the Postgrest and Flask daemons.
 
-#### Configuration of the Network Interfaces
-TODO - Add stuff to do with DHCP and DNS (dnsmasq) functionality and network setup.
-
-#### Importing of data from GravityForms into the PostgreSQL database.
-Before the games, it is necessary to competitor registration data from the data collected by Gravityforms into the database. This is most easily accomplished with the Dbeaver tool.
-
-TODO - flesh out how to import the data.
-
-## Further Reading / Useful Links
-
-- [podman](https://podman.io/)
-- [nginx](https://nginx.org/en/)
-- [Postgrest](https://postgrest.org)
-- [PostgreSQL](https://www.postgresql.org/)
-- [Dbeaver](https://dbeaver.io/)
-- [ember.js](https://emberjs.com/)
-- [ember-cli](https://cli.emberjs.com/release/)
-- Development Browser Extensions
-  - [ember inspector for chrome](https://chrome.google.com/webstore/detail/ember-inspector/bmdblncegkenkacieihfhpjfppoconhi)
-  - [ember inspector for firefox](https://addons.mozilla.org/en-US/firefox/addon/ember-inspector/)
-
 ### Mac Development Setup (UTM)
 
 On macOS, the server pod can be run inside a Debian 12 VM using [UTM](https://mac.getutm.app/). The Ember frontend runs natively on the Mac and proxies API requests to the VM.
@@ -136,3 +115,24 @@ npm start -- --proxy https://<vm-ip-address>/ --secure-proxy false
 Replace `<vm-ip-address>` with the IP of the Debian VM (find it with `ip addr` inside the VM). The `--secure-proxy false` flag is needed because the pod uses a self-signed certificate.
 
 Visit the app at [http://localhost:4200](http://localhost:4200).
+
+#### Configuration of the Network Interfaces
+TODO - Add stuff to do with DHCP and DNS (dnsmasq) functionality and network setup.
+
+#### Importing of data from GravityForms into the PostgreSQL database.
+Before the games, it is necessary to competitor registration data from the data collected by Gravityforms into the database. This is most easily accomplished with the Dbeaver tool.
+
+TODO - flesh out how to import the data.
+
+## Further Reading / Useful Links
+
+- [podman](https://podman.io/)
+- [nginx](https://nginx.org/en/)
+- [Postgrest](https://postgrest.org)
+- [PostgreSQL](https://www.postgresql.org/)
+- [Dbeaver](https://dbeaver.io/)
+- [ember.js](https://emberjs.com/)
+- [ember-cli](https://cli.emberjs.com/release/)
+- Development Browser Extensions
+  - [ember inspector for chrome](https://chrome.google.com/webstore/detail/ember-inspector/bmdblncegkenkacieihfhpjfppoconhi)
+  - [ember inspector for firefox](https://addons.mozilla.org/en-US/firefox/addon/ember-inspector/)
