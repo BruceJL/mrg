@@ -126,8 +126,8 @@ export default class RobotCheckinController extends Component<ComponentSignature
                 {{@data.formattedPaidDollars}}
                 <button type="button" {{on "click" this.refund}}>Refund</button>
               {{else}}
-                <button type="button" {{on "click" (fn this.paid "5")}}>Paid $5.00</button><br>
-                <button type="button" {{on "click" (fn this.paid "10")}}>Paid $10.00</button>
+                <button type="button" {{on "click" (fn this.paid "10")}}>Paid $10.00</button><br>
+                <button type="button" {{on "click" (fn this.paid "15")}}>Paid $15.00</button>
               {{/if}}
             {{/if}}
           </td>
