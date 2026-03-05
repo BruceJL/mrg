@@ -71,3 +71,68 @@ TODO - flesh out how to import the data.
 - Development Browser Extensions
   - [ember inspector for chrome](https://chrome.google.com/webstore/detail/ember-inspector/bmdblncegkenkacieihfhpjfppoconhi)
   - [ember inspector for firefox](https://addons.mozilla.org/en-US/firefox/addon/ember-inspector/)
+
+### Mac Development Setup (UTM)
+
+On macOS, the server pod can be run inside a Debian 12 VM using [UTM](https://mac.getutm.app/). The Ember frontend runs natively on the Mac and proxies API requests to the VM.
+
+#### 1. Create the Debian VM
+
+1. Download and install [UTM](https://mac.getutm.app/).
+2. Download a [Debian 12 (Bookworm) ISO](https://mac.getutm.app/gallery/debian-12).
+3. Create a new VM in UTM using the Debian ISO. A minimal install with SSH server is sufficient.
+4. Under the VM's settings, add this repository as a shared directory (it will be accessible at `/media/share` inside the VM).
+5. Boot the VM and verify the shared directory is mounted:
+   ```bash
+   ls /media/share
+   ```
+
+#### 2. Install dependencies inside the VM
+
+```bash
+sudo apt-get update
+sudo apt-get install -y podman pwgen git
+```
+
+> **Note:** Debian 12 ships Podman 4.3, which does not support quadlets (requires >= 4.4). To upgrade Podman, add the Debian Trixie repo with low priority pinning:
+> ```bash
+> echo 'deb http://deb.debian.org/debian trixie main' | sudo tee /etc/apt/sources.list.d/trixie.list
+> echo -e 'Package: *\nPin: release n=trixie\nPin-Priority: 100' | sudo tee /etc/apt/preferences.d/trixie
+> sudo apt-get update
+> sudo apt-get -t trixie install -y podman crun
+> ```
+
+#### 3. Build and start the pod
+
+```bash
+cd /media/share/pod
+chmod +x rebuild.sh
+sudo ./rebuild.sh
+```
+
+Verify all containers are running:
+```bash
+sudo podman ps -a
+```
+
+#### 4. Install Node.js on the Mac (host)
+
+Install [nvm](https://github.com/nvm-sh/nvm) and Node.js on your Mac for running the Ember frontend:
+
+```bash
+curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.3/install.sh | bash
+\. "$HOME/.nvm/nvm.sh"
+nvm install 24
+```
+
+#### 5. Run the Ember frontend on the Mac
+
+```bash
+cd /path/to/mrg
+npm install
+npm start -- --proxy https://<vm-ip-address>/ --secure-proxy false
+```
+
+Replace `<vm-ip-address>` with the IP of the Debian VM (find it with `ip addr` inside the VM). The `--secure-proxy false` flag is needed because the pod uses a self-signed certificate.
+
+Visit the app at [http://localhost:4200](http://localhost:4200).
