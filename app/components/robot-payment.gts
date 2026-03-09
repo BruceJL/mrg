@@ -8,6 +8,7 @@ import { on } from '@ember/modifier';
 import { fn } from '@ember/helper';
 import { eq } from 'ember-truth-helpers';
 import { notEq } from 'ember-truth-helpers';
+import { or } from 'ember-truth-helpers';
 
 
 export interface ComponentSignature {
@@ -42,6 +43,10 @@ export default class RobotCheckinController extends Component<ComponentSignature
 
   @action
   paid(amount: number): void {
+    if (this.robot.paymentType === 'UNPAID') {
+      alert('Please select a payment type before recording payment.');
+      return;
+    }
     this.robot.paid = amount;
     this.robot.save();
     this.createLogEntry('PAID $' + amount + ' ' + this.robot.paymentType);
@@ -106,7 +111,7 @@ export default class RobotCheckinController extends Component<ComponentSignature
               {{on "change" this.selectPaymentType}}
               disabled={{this.paymentSelectDisabled}}
             >
-              <option value="" selected={{eq @data.paymentType null}} disabled={{true}}>
+              <option value="" selected={{or (eq @data.paymentType null) (eq @data.paymentType "UNPAID")}} disabled={{true}}>
                 Select payment method
               </option>
               {{#each this.PaymentOptions as |o|}}
@@ -126,8 +131,8 @@ export default class RobotCheckinController extends Component<ComponentSignature
                 {{@data.formattedPaidDollars}}
                 <button type="button" {{on "click" this.refund}}>Refund</button>
               {{else}}
-                <button type="button" {{on "click" (fn this.paid "5")}}>Paid $5.00</button><br>
-                <button type="button" {{on "click" (fn this.paid "10")}}>Paid $10.00</button>
+                <button type="button" disabled={{eq @data.paymentType "UNPAID"}} {{on "click" (fn this.paid "10")}}>Paid $10.00</button><br>
+                <button type="button" disabled={{eq @data.paymentType "UNPAID"}} {{on "click" (fn this.paid "15")}}>Paid $15.00</button>
               {{/if}}
             {{/if}}
           </td>
