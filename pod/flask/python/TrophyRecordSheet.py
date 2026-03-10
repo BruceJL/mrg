@@ -18,7 +18,7 @@ from Entry import Entry
 from Event import Event
 
 
-def _make_ordinal(n: int) -> str:
+def _ordinal_suffix(n: int) -> str:
     """Return the ordinal suffix for an integer (e.g. 1 -> 'st', 2 -> 'nd')."""
     n = int(n)
     suffix = ["th", "st", "nd", "rd", "th"][min(n % 10, 4)]
@@ -84,7 +84,7 @@ def _build_document(event: Event, winners: list) -> OpenDocumentText:
 
     for i, winner in enumerate(winners):
         place_num = i + 1
-        place_str = str(place_num) + _make_ordinal(place_num) + " Place"
+        place_str = str(place_num) + _ordinal_suffix(place_num) + " Place"
         drivers = [d for d in [winner.driver1, winner.driver2, winner.driver3] if d]
         drivers_str = ", ".join(drivers) if drivers else ""
 
@@ -98,7 +98,6 @@ def _build_document(event: Event, winners: list) -> OpenDocumentText:
 
         _add_sheet(
             body=body,
-            doc=doc,
             event=event,
             winner=winner,
             place_str=place_str,
@@ -132,7 +131,7 @@ def _blank_row(body, label_style, value_style, label: str):
 
 
 def _add_sheet(
-    body, doc, event, winner, place_str, drivers_str,
+    body, event, winner, place_str, drivers_str,
     date_str, year_str, heading_style, subheading_style,
     label_style, value_style,
 ):

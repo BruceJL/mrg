@@ -1,5 +1,4 @@
 import os
-import sys
 from Entry import Entry
 from Event import Event
 from TrophyRecordSheet import make_trophy_record_sheet
