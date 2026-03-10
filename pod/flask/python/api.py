@@ -21,7 +21,6 @@ from EventScoresheet import make_odf_score_sheets
 from EventCertificate import make_odf_winners_certificates
 from EventLabels import make_odf5160_labels, make_odf5160_all_event_labels_with_extra
 from ParticipationCertificate import make_odf_participation_certificates
-from pathlib import Path
 import tempfile
 from TrophyRecordSheet import make_trophy_record_sheet
 from pypdf import PdfWriter, PdfReader
