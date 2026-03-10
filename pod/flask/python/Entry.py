@@ -19,6 +19,8 @@ class Entry(object):
         measured: str = "",
         registered: datetime = datetime.min,
         paymentType: str = "UNPAID",
+        email: str = "",
+        ph: str = "",
     ):
         self.id = id
         self.robotName = robotName
@@ -35,6 +37,8 @@ class Entry(object):
         self.measured = measured
         self.registered = registered
         self.paymentType = paymentType
+        self.email = email
+        self.ph = ph
 
     def __eq__(self, other):
         return self.id == other.id
