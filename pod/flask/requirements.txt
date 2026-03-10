@@ -5,3 +5,4 @@ flask_cors
 pyGreSQL
 gunicorn
 retrying
+pypdf
