@@ -30,7 +30,7 @@ class Entry(object):
         self.driver1 = driver1
         self.driver1Grade = driver1Grade
         self.driver2 = driver2
-        self.driver1Grade = driver2Grade
+        self.driver2Grade = driver2Grade
         self.driver3 = driver3
         self.driver3Grade = driver3Grade
         self.checkInStatus = checkInStatus
