@@ -1,6 +1,6 @@
 import datetime
 import os
-from pathlib import Path
+import tempfile
 from zoneinfo import ZoneInfo
 
 from odf.opendocument import OpenDocumentText
@@ -32,7 +32,8 @@ def make_trophy_record_sheet(
     winners: list,
 ) -> str:
     doc = _build_document(event=event, winners=winners)
-    file_name = str(Path(__file__).parent / f"{event.id}-trophy-sheets.odt")
+    fd, file_name = tempfile.mkstemp(suffix=f"-{event.id}-trophy-sheets.odt")
+    os.close(fd)
     doc.save(file_name)
     return file_name
 
