@@ -85,6 +85,7 @@ podman cp ./nginx/. nginx:/etc/nginx/
 
 # Build the flask image.
 podman build \
+  --dns=8.8.8.8 \
   --tag flask-mrg \
   --file ./flask/Containerfile
 

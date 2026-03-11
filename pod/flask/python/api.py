@@ -410,20 +410,17 @@ def get_cursor():
 
 def _interleave_cert_and_trophy_pages(cert_pdf: str, trophy_pdf: str) -> str:
     """
-    Interleave pages from cert PDF and trophy PDF.
-    cert1, trophy1, cert2, trophy2, cert3, trophy3...
+    Merge cert PDF pages followed by all trophy PDF pages at the end.
     Returns path to merged PDF. Removes cert_pdf and trophy_pdf.
     """
     cert_reader = PdfReader(cert_pdf)
     trophy_reader = PdfReader(trophy_pdf)
 
     writer = PdfWriter()
-    num_pages = max(len(cert_reader.pages), len(trophy_reader.pages))
-    for i in range(num_pages):
-        if i < len(cert_reader.pages):
-            writer.add_page(cert_reader.pages[i])
-        if i < len(trophy_reader.pages):
-            writer.add_page(trophy_reader.pages[i])
+    for page in cert_reader.pages:
+        writer.add_page(page)
+    for page in trophy_reader.pages:
+        writer.add_page(page)
 
     fd, output_path = tempfile.mkstemp(suffix=".pdf")
     os.close(fd)
@@ -451,11 +448,14 @@ def convert_odt_to_pdf(
     """
     output_file = os.path.splitext(input_file)[0] + ".pdf"
 
+    output_dir = os.path.dirname(input_file)
     cmd = [
         "libreoffice",
         "--headless",
         "--convert-to",
         'pdf:writer_pdf_Export:{"SelectPdfVersion":{"type":"long","value":"2"}}',
+        "--outdir",
+        output_dir,
         input_file,
     ]
 
