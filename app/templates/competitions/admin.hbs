@@ -215,6 +215,17 @@
     </div>
 
     <div>
+      <label>
+        <input
+          type="checkbox"
+          checked={{this.includeBorder}}
+          {{on "change" this.updateIncludeBorder}}
+        />
+        Include border
+      </label>
+    </div>
+
+    <div>
       <button
         data-test-button="Download Winners Certificates (PDF)"
         type="button"

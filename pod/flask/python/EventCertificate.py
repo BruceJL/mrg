@@ -23,10 +23,12 @@ from Event import Event
 def make_odf_winners_certificates(
     event: Event,
     winners: list[Entry],
+    include_border: bool = False,
 ) -> str:
     doc = make_odf_winners_certificates_odoc(
         event=event,
         winners=winners,
+        include_border=include_border,
     )
     file_name = Path(__file__).parent / f"{event.id}-certificates.odg"
     doc.save(file_name)
@@ -37,6 +39,7 @@ def make_odf_winners_certificates(
 def make_odf_winners_certificates_odoc(
     event: Event,
     winners: list[Entry],
+    include_border: bool = False,
 ) -> OpenDocument:
 
     now = datetime.datetime.now()
@@ -367,6 +370,11 @@ def make_odf_winners_certificates_odoc(
     # Add in the robot logo picture.
     robot_logo_href = document.addPicture("logos/robot.png")
 
+    # Add border image if requested.
+    border_href = None
+    if include_border:
+        border_href = document.addPicture("logos/border.png")
+
     for i in range(len(winners)):
         place = i + 1
 
@@ -377,6 +385,18 @@ def make_odf_winners_certificates_odoc(
             stylename=drawing_page,
         )
         document.drawing.addElement(page)
+
+        # Add border image as background if requested
+        if border_href:
+            border_frame = Frame(
+                stylename=frame_style,
+                width="11in",
+                height="8.5in",
+                x="0in",
+                y="0in",
+            )
+            border_frame.addElement(Image(href=border_href))
+            page.addElement(border_frame)
 
         # Replace winner's information
         competitorname = winners[i].driver1

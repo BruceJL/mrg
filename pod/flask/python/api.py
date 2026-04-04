@@ -90,6 +90,7 @@ class EventCertificate(Resource):
         place1 = data.get("place1")
         place2 = data.get("place2")
         place3 = data.get("place3")
+        include_border = data.get("include_border", False)
 
         # Get the current competition
         cursor = get_cursor()
@@ -112,6 +113,7 @@ class EventCertificate(Resource):
         file_name = make_odf_winners_certificates(
             event=event,
             winners=winners,
+            include_border=include_border,
         )
 
         if pdf:
