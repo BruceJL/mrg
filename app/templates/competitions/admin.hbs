@@ -154,6 +154,16 @@
 </p>
 <div>
   <div>
+    <label>
+      <input
+        type="checkbox"
+        checked={{this.includeParticipationBorder}}
+        {{on "change" this.updateIncludeParticipationBorder}}
+      />
+      Include border
+    </label>
+  </div>
+  <div>
     <button
       type="button"
       {{on "click" (fn this.downloadEventParticipationCertificates true)}}

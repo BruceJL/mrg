@@ -123,6 +123,7 @@ export default class CompetitionAdminController extends RefreshedController {
   @tracked place2: string = '';
   @tracked place3: string = '';
   @tracked includeBorder: boolean = false;
+  @tracked includeParticipationBorder: boolean = false;
 
   @action
   updatePlace(place: 'place1' | 'place2' | 'place3', event: Event) {
@@ -136,6 +137,11 @@ export default class CompetitionAdminController extends RefreshedController {
   }
 
   @action
+  updateIncludeParticipationBorder(event: Event) {
+    this.includeParticipationBorder = (event.target as HTMLInputElement).checked;
+  }
+
+  @action
   async downloadEventParticipationCertificates(pdf: boolean) {
     const eventId = this.model.id;
     const filename = pdf
@@ -144,6 +150,7 @@ export default class CompetitionAdminController extends RefreshedController {
     const body = {
       competition: eventId,
       pdf,
+      include_border: this.includeParticipationBorder,
     };
     const success = await this.fileDownloadService.downloadFile(
       '/api/flask/generate-event-participation-certificates',

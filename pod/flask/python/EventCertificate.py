@@ -370,10 +370,13 @@ def make_odf_winners_certificates_odoc(
     # Add in the robot logo picture.
     robot_logo_href = document.addPicture("logos/robot.png")
 
-    # Add border image if requested.
-    border_href = None
+    # Pre-load all border images if requested.
+    border_hrefs = {}
     if include_border:
-        border_href = document.addPicture("logos/border.png")
+        border_hrefs[1] = document.addPicture("logos/certificates-gold.png")
+        border_hrefs[2] = document.addPicture("logos/certificates-blue.png")
+        border_hrefs[3] = document.addPicture("logos/certificates-red.png")
+        border_hrefs[0] = document.addPicture("logos/certificates-green.png")
 
     for i in range(len(winners)):
         place = i + 1
@@ -387,7 +390,8 @@ def make_odf_winners_certificates_odoc(
         document.drawing.addElement(page)
 
         # Add border image as background if requested
-        if border_href:
+        if border_hrefs:
+            border_href = border_hrefs.get(place, border_hrefs[0])
             border_frame = Frame(
                 stylename=frame_style,
                 width="11in",
