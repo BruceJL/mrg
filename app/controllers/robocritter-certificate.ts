@@ -16,6 +16,12 @@ export default class RobocritterCertificateController extends Controller {
     minutes: '',
     seconds: '',
   }
+  @tracked includeBorder: boolean = false;
+
+  @action
+  updateIncludeBorder(event: Event) {
+    this.includeBorder = (event.target as HTMLInputElement).checked;
+  }
 
   @action
   handleInput(event:Event) {
@@ -37,7 +43,8 @@ export default class RobocritterCertificateController extends Controller {
       body: JSON.stringify(
         {
           ...this.userInput,
-          pdf: pdf
+          pdf: pdf,
+          include_border: this.includeBorder,
         }
       ),
     });
