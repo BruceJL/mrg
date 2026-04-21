@@ -90,6 +90,7 @@ class EventCertificate(Resource):
         place1 = data.get("place1")
         place2 = data.get("place2")
         place3 = data.get("place3")
+        include_border = data.get("include_border", False)
 
         # Get the current competition
         cursor = get_cursor()
@@ -112,6 +113,7 @@ class EventCertificate(Resource):
         file_name = make_odf_winners_certificates(
             event=event,
             winners=winners,
+            include_border=include_border,
         )
 
         if pdf:
@@ -313,13 +315,14 @@ class ParticipationCertificate(Resource):
     def post(self):
         data = request.get_json()
         pdf = data.get("pdf")
+        include_border = data.get("include_border", False)
 
         cursor = get_cursor()
 
         # get all the entries
         entries = get_all_entries_from_database(cursor)
 
-        file_name = make_odf_participation_certificates(competitors=entries)
+        file_name = make_odf_participation_certificates(competitors=entries, include_border=include_border)
 
         if pdf:
             file_name = convert_odt_to_pdf(file_name)
@@ -339,6 +342,7 @@ class EventParticipationCertificate(Resource):
         data = request.get_json()
         competition = data.get("competition")
         pdf = data.get("pdf")
+        include_border = data.get("include_border", False)
 
         cursor = get_cursor()
 
@@ -350,7 +354,7 @@ class EventParticipationCertificate(Resource):
         get_event_entries_from_database(cursor, event)
         entries = event.entries
 
-        file_name = make_odf_participation_certificates(competitors=entries)
+        file_name = make_odf_participation_certificates(competitors=entries, include_border=include_border)
 
         if pdf:
             file_name = convert_odt_to_pdf(file_name)

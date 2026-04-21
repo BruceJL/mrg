@@ -21,8 +21,9 @@ from pathlib import Path
 
 def make_odf_participation_certificates(
     competitors: list[Entry],
+    include_border: bool = False,
 ) -> str:
-    doc = make_odf_participation_certificates_odoc(competitors)
+    doc = make_odf_participation_certificates_odoc(competitors, include_border=include_border)
     filename = Path(__file__).parent / "participation_certificates.odg"
     doc.save(filename)
     return str(filename)
@@ -30,6 +31,7 @@ def make_odf_participation_certificates(
 
 def make_odf_participation_certificates_odoc(
     competitors: list[Entry],
+    include_border: bool = False,
 ) -> OpenDocument:
 
     now = datetime.datetime.now()
@@ -359,6 +361,11 @@ def make_odf_participation_certificates_odoc(
     picture_path = Path(__file__).parent / "logos/robot.png"
     robot_logo_href = document.addPicture(picture_path)
 
+    # Pre-load border image if requested (green for participation).
+    border_href = None
+    if include_border:
+        border_href = document.addPicture("logos/certificates-green.png")
+
     # filter out robots by  who checked in.
     bots = []
     for c in competitors:
@@ -374,6 +381,18 @@ def make_odf_participation_certificates_odoc(
             stylename=drawing_page,
         )
         document.drawing.addElement(page)
+
+        # Add border image as background if requested
+        if border_href:
+            border_frame = Frame(
+                stylename=frame_style,
+                width="11in",
+                height="8.5in",
+                x="0in",
+                y="0in",
+            )
+            border_frame.addElement(Image(href=border_href))
+            page.addElement(border_frame)
 
         # Replace winner's information
         competitorname = c.driver1
