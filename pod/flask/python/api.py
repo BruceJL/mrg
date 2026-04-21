@@ -59,9 +59,10 @@ class RobotCritterCertificate(Resource):
         player = data.get("player")
         robot = data.get("robot")
         pdf = data.get("pdf")
+        include_border = data.get("include_border", False)
 
         # Generate certificate
-        file_name = make_odf_certificate(minutes, seconds, player, robot)
+        file_name = make_odf_certificate(minutes, seconds, player, robot, include_border=include_border)
 
         if pdf:
             file_name = convert_odt_to_pdf(file_name)

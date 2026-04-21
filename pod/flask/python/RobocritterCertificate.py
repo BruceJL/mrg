@@ -19,10 +19,10 @@ from utilities import make_ordinal
 import logging
 
 
-def make_odf_certificate(minutes: int, seconds, player, robot) -> str:
+def make_odf_certificate(minutes: int, seconds, player, robot, include_border: bool = False) -> str:
 
     logging.info(f"Generating certificate for {player} with {robot}")
-    doc = make_odf_certificate_odoc(minutes, seconds, player, robot)
+    doc = make_odf_certificate_odoc(minutes, seconds, player, robot, include_border=include_border)
     file_name = (
         Path(__file__).parent / f"{player} with {robot}-robotcritter-certificate.odg"
     )
@@ -35,6 +35,7 @@ def make_odf_certificate_odoc(
     seconds: int,
     player: str,
     robot: str,
+    include_border: bool = False,
 ) -> OpenDocument:
     now = datetime.datetime.now()
     games_iteration: "int" = now.year - 1995
@@ -364,6 +365,11 @@ def make_odf_certificate_odoc(
     picture_path = Path(__file__).parent / "logos/robocritters_logo.png"
     robot_logo_href = document.addPicture(picture_path)
 
+    # Pre-load border image if requested (green for participation).
+    border_href = None
+    if include_border:
+        border_href = document.addPicture("logos/certificates-green.png")
+
     # Create a page to contain the drawing
     page = Page(
         masterpagename=masterpage,
@@ -371,6 +377,18 @@ def make_odf_certificate_odoc(
         stylename=drawing_page,
     )
     document.drawing.addElement(page)
+
+    # Add border image as background if requested
+    if border_href:
+        border_frame = Frame(
+            stylename=frame_style,
+            width="11in",
+            height="8.5in",
+            x="0in",
+            y="0in",
+        )
+        border_frame.addElement(Image(href=border_href))
+        page.addElement(border_frame)
 
     # Add image
     photoframe = Frame(
