@@ -9,6 +9,8 @@ export default class DocumentsController extends Controller {
   @service('file-download') declare fileDownloadService: FileDownloadService;
   @tracked volunteer_name: string = "";
   @tracked eventId = '';
+  @tracked includeParticipationBorder: boolean = false;
+  @tracked includeVolunteerBorder: boolean = false;
 
   @action
   updateEventId(event: Event) {
@@ -25,10 +27,21 @@ export default class DocumentsController extends Controller {
   }
 
   @action
+  updateIncludeParticipationBorder(event: Event) {
+    this.includeParticipationBorder = (event.target as HTMLInputElement).checked;
+  }
+
+  @action
+  updateIncludeVolunteerBorder(event: Event) {
+    this.includeVolunteerBorder = (event.target as HTMLInputElement).checked;
+  }
+
+  @action
   async downloadParticipationCertificates(pdf: boolean) {
     const filename = pdf? 'participation_certificates.pdf' : 'participation_certificates.odg';
     const body = {
-      pdf
+      pdf,
+      include_border: this.includeParticipationBorder,
     }
 
     const success = await this.fileDownloadService.downloadFile(
@@ -49,7 +62,8 @@ export default class DocumentsController extends Controller {
     const filename = pdf? 'volunteer_certificate.pdf' : 'volunteer_certificate.odg';
     const body = {
       volunteer: this.volunteer_name,
-      pdf
+      pdf,
+      include_border: this.includeVolunteerBorder,
     }
 
     const success = await this.fileDownloadService.downloadFile(

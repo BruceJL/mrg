@@ -21,8 +21,9 @@ from pathlib import Path
 
 def make_odf_volunteer_certificate(
     name: str,
+    include_border: bool = False,
 ) -> str:
-    doc = make_odf_volunteer_certificate_odoc(name)
+    doc = make_odf_volunteer_certificate_odoc(name, include_border=include_border)
     filename = Path(__file__).parent / f"{name}_volunteer_certificate.odg"
     doc.save(filename)
     return str(filename)
@@ -30,6 +31,7 @@ def make_odf_volunteer_certificate(
 
 def make_odf_volunteer_certificate_odoc(
     name: str,
+    include_border: bool = False,
 ) -> OpenDocument:
 
     now = datetime.datetime.now()
@@ -358,6 +360,11 @@ def make_odf_volunteer_certificate_odoc(
     picture_path = Path(__file__).parent / "logos/robot.png"
     robot_logo_href = document.addPicture(picture_path)
 
+    # Pre-load border image if requested (green for participation/volunteer).
+    border_href = None
+    if include_border:
+        border_href = document.addPicture("logos/certificates-green.png")
+
     # Create a page to contain the drawing
     page = Page(
         masterpagename=masterpage,
@@ -365,6 +372,18 @@ def make_odf_volunteer_certificate_odoc(
         stylename=drawing_page,
     )
     document.drawing.addElement(page)
+
+    # Add border image as background if requested
+    if border_href:
+        border_frame = Frame(
+            stylename=frame_style,
+            width="11in",
+            height="8.5in",
+            x="0in",
+            y="0in",
+        )
+        border_frame.addElement(Image(href=border_href))
+        page.addElement(border_frame)
 
     # Add image
     photoframe = Frame(

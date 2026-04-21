@@ -20,6 +20,16 @@
   Note: Participation Certificates are only available for participants who have checked in.
 </p>
 <div>
+  <label>
+    <input
+      type="checkbox"
+      checked={{this.includeParticipationBorder}}
+      {{on "change" this.updateIncludeParticipationBorder}}
+    />
+    Include border
+  </label>
+</div>
+<div>
   <button
     type="button"
     {{on "click" (fn this.downloadParticipationCertificates true)}}
@@ -45,6 +55,17 @@
       required
       {{on "change" this.updateVolunteerName}}
     />
+  </div>
+  <br />
+  <div>
+    <label>
+      <input
+        type="checkbox"
+        checked={{this.includeVolunteerBorder}}
+        {{on "change" this.updateIncludeVolunteerBorder}}
+      />
+      Include border
+    </label>
   </div>
   <br />
   <button

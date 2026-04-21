@@ -375,8 +375,9 @@ class VolunteerCertificate(Resource):
         data = request.get_json()
         volunteer = data.get("volunteer")
         pdf = data.get("pdf")
+        include_border = data.get("include_border", False)
 
-        file_name = make_odf_volunteer_certificate(volunteer)
+        file_name = make_odf_volunteer_certificate(volunteer, include_border=include_border)
 
         if pdf:
             file_name = convert_odt_to_pdf(file_name)
