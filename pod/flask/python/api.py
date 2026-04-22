@@ -21,6 +21,9 @@ from EventScoresheet import make_odf_score_sheets
 from EventCertificate import make_odf_winners_certificates
 from EventLabels import make_odf5160_labels, make_odf5160_all_event_labels_with_extra
 from ParticipationCertificate import make_odf_participation_certificates
+import tempfile
+from TrophyRecordSheet import make_trophy_record_sheet
+from pypdf import PdfWriter, PdfReader
 
 
 DEBUGMODE = True
@@ -84,7 +87,6 @@ class RobotCritterCertificate(Resource):
 class EventCertificate(Resource):
 
     def post(self):
-        # Get JSON data from POST request body
         data = request.get_json()
         competition = data.get("competition")
         pdf = data.get("pdf")
@@ -93,14 +95,11 @@ class EventCertificate(Resource):
         place3 = data.get("place3")
         include_border = data.get("include_border", False)
 
-        # Get the current competition
         cursor = get_cursor()
-
         events = get_event_list_from_database(cursor)
         event = events[competition]
 
         winners = []
-
         if len(place1):
             winners.append(get_robot_entry_from_database(cursor, place1))
         if len(place2):
@@ -111,24 +110,27 @@ class EventCertificate(Resource):
         if not winners:
             print("No winners found")
 
-        file_name = make_odf_winners_certificates(
+        cert_file = make_odf_winners_certificates(
             event=event,
             winners=winners,
             include_border=include_border,
         )
+        trophy_file = make_trophy_record_sheet(event=event, winners=winners)
 
         if pdf:
-            file_name = convert_odt_to_pdf(file_name)
+            cert_pdf = convert_odt_to_pdf(cert_file)
+            trophy_pdf = convert_odt_to_pdf(trophy_file)
+            file_name = _interleave_cert_and_trophy_pages(cert_pdf, trophy_pdf)
+        else:
+            file_name = cert_file
+            os.remove(trophy_file)
 
         response = send_file(
             file_name,
             as_attachment=True,
             download_name=file_name,
         )
-
-        # Remove the file after sending
         os.remove(file_name)
-
         return response
 
 
@@ -406,6 +408,30 @@ def get_cursor():
     return DB_CONNECTION.cursor()
 
 
+def _interleave_cert_and_trophy_pages(cert_pdf: str, trophy_pdf: str) -> str:
+    """
+    Merge cert PDF pages followed by all trophy PDF pages at the end.
+    Returns path to merged PDF. Removes cert_pdf and trophy_pdf.
+    """
+    cert_reader = PdfReader(cert_pdf)
+    trophy_reader = PdfReader(trophy_pdf)
+
+    writer = PdfWriter()
+    for page in cert_reader.pages:
+        writer.add_page(page)
+    for page in trophy_reader.pages:
+        writer.add_page(page)
+
+    fd, output_path = tempfile.mkstemp(suffix=".pdf")
+    os.close(fd)
+    with open(output_path, "wb") as f:
+        writer.write(f)
+
+    os.remove(cert_pdf)
+    os.remove(trophy_pdf)
+    return output_path
+
+
 def convert_odt_to_pdf(
     input_file: str,
 ) -> str:
@@ -422,11 +448,14 @@ def convert_odt_to_pdf(
     """
     output_file = os.path.splitext(input_file)[0] + ".pdf"
 
+    output_dir = os.path.dirname(input_file)
     cmd = [
         "libreoffice",
         "--headless",
         "--convert-to",
         'pdf:writer_pdf_Export:{"SelectPdfVersion":{"type":"long","value":"2"}}',
+        "--outdir",
+        output_dir,
         input_file,
     ]
 

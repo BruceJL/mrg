@@ -125,6 +125,8 @@ def make_entry(row: tuple[str, "Any"]) -> Entry:
         measured=row.measured,
         registered=row.registered,
         paymentType=row.paymentType,
+        email=row.email if hasattr(row, 'email') else "",
+        ph=row.ph if hasattr(row, 'ph') else "",
     )
 
 
